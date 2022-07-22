@@ -24,7 +24,7 @@
 
 <script>
 export default {
-	name: 'loginPage',
+	name: 'LoginPage',
 	data : function() {
 		return {
 			memberId : '',

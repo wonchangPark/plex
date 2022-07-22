@@ -1,5 +1,5 @@
 <template>
-  <div class="sign-up">
+  <div class="signup">
     <h1>회원가입</h1>
     <form class="signupform">
         <p>
@@ -31,7 +31,7 @@
 
 <script>
 export default {
-    name: "signupPage",
+    name: "SignupPage",
     data(){
         return {
             email: '',
