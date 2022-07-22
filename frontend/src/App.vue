@@ -24,6 +24,12 @@
 			<div id="session-header">
 				<h1 id="session-title">{{ mySessionId }}</h1>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="stopPublish" value="송출 중지">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="!videoMute" value="비디오 중지">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="videoMute" value="비디오 시작">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
+				<input type="text" v-model="msg" @keypress.enter="sendMSG">
 			</div>
 			<div id="main-video" class="col-md-6">
 				<user-video :stream-manager="mainStreamManager"/>
@@ -32,6 +38,10 @@
 				<user-video :stream-manager="publisher" @click.native="updateMainVideoStreamManager(publisher)"/>
 				<user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
 			</div>
+		</div>
+		<div v-if="session">
+			<h2>채팅</h2>
+			<p v-for="message in chat" :key="message">{{ message }}</p>
 		</div>
 	</div>
 </template>
@@ -63,10 +73,29 @@ export default {
 
 			mySessionId: 'SessionA',
 			myUserName: 'Participant' + Math.floor(Math.random() * 100),
+			videoMute: false,
+			audioMute: false,
+			msg: "",
+			chat: [],
 		}
 	},
 
 	methods: {
+		sendMSG () {
+			this.session.signal({
+				data: this.msg,  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'my-chat'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			});
+			this.msg = ''
+		},
+
 		joinSession () {
 			// --- Get an OpenVidu object ---
 			this.OV = new OpenVidu();
@@ -94,6 +123,13 @@ export default {
 			// On every asynchronous exception...
 			this.session.on('exception', ({ exception }) => {
 				console.warn(exception);
+			});
+
+			this.session.on('signal:my-chat', (event) => {
+				console.log(`메시지 수신: ${event.data}`); // Message
+				this.chat.push(event.data)
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
 			});
 
 			// --- Connect to the session with a valid user token ---
@@ -133,6 +169,30 @@ export default {
 			// });
 
 			window.addEventListener('beforeunload', this.leaveSession)
+		},
+
+		stopPublish () {
+			this.session.unpublish(this.publisher)
+		},
+
+		videoControl () {
+			if (this.videoMute) {
+				this.publisher.publishVideo(true)
+				this.videoMute = false
+			} else {
+				this.publisher.publishVideo(false)
+				this.videoMute = true
+			}
+		},
+
+		audioControl () {
+			if (this.audioMute) {
+				this.publisher.publishAudio(true)
+				this.audioMute = false
+			} else {
+				this.publisher.publishAudio(false)
+				this.audioMute = true
+			}
 		},
 
 		leaveSession () {
@@ -184,7 +244,7 @@ export default {
 							resolution: '640x480',  // The resolution of your video
 							frameRate: 30,			// The frame rate of your video
 							insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-							mirror: false       	// Whether to mirror your local video or not
+							mirror: true       	// Whether to mirror your local video or not
 						});
 
 						this.mainStreamManager = publisher;
