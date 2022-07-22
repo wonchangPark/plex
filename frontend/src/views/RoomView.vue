@@ -39,7 +39,7 @@
 <script>
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
-import UserVideo from '../components/UserVideo';
+import UserVideo from '../components/Room/UserVideo.vue';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
