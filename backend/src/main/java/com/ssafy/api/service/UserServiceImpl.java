@@ -5,7 +5,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.api.request.UserRegisterPostReq;
-import com.ssafy.api.request.UserUpdatePatchReq;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.repository.UserRepository;
 import com.ssafy.db.repository.UserRepositorySupport;
@@ -30,35 +29,13 @@ public class UserServiceImpl implements UserService {
 		user.setUserId(userRegisterInfo.getId());
 		// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
 		user.setPassword(passwordEncoder.encode(userRegisterInfo.getPassword()));
-		user.setDepartment(userRegisterInfo.getDepartment());
-		user.setName(userRegisterInfo.getName());
-		user.setPosition(userRegisterInfo.getPosition());
 		return userRepository.save(user);
 	}
 
 	@Override
-	public User getUserByUserId(String userId) throws NullPointerException {
+	public User getUserByUserId(String userId) {
 		// 디비에 유저 정보 조회 (userId 를 통한 조회).
-//		User user = userRepositorySupport.findUserByUserId(userId).get();
-//		return user;
-
-		User user = userRepositorySupport.findUserByUserId(userId).orElseThrow(NullPointerException::new);
+		User user = userRepositorySupport.findUserByUserId(userId).get();
 		return user;
-	}
-	
-	@Override
-	public void updateUser(UserUpdatePatchReq userUpdateInfo, String userId) throws NullPointerException 
-	{
-		User user = userRepositorySupport.findUserByUserId(userId).orElseThrow(NullPointerException::new);
-		user.setDepartment(userUpdateInfo.getDepartment());
-		user.setName(userUpdateInfo.getName());
-		user.setPosition(userUpdateInfo.getPosition());
-		userRepository.save(user);
-	}
-	
-	@Override
-	public void deleteUser(String userId) {
-		User user = userRepositorySupport.findUserByUserId(userId).orElseThrow(NullPointerException::new);
-		userRepository.delete(user);
 	}
 }
