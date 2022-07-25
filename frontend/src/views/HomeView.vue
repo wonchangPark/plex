@@ -1,6 +1,9 @@
 <template>
   <div class="home">
-    <router-link to="/login">로그인</router-link>
+    <div class="container">
+      <img src="@/assets/logo.png" alt="logo" class="item">
+    </div>
+      <router-link to="/login" class="item">로그인</router-link>
   </div>
 </template>
 
@@ -13,3 +16,9 @@ export default {
   }
 }
 </script>
+
+<style>
+img {
+  width: 50%;
+}
+</style>

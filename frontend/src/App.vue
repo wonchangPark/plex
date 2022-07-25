@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :style="{backgroundImage:'url('+require('./assets/background.png')+')'}">
+  <div id="app" class="background">
     <nav>
       <router-link to="/">Home</router-link>  |
       <router-link to="/waiting">WaitingRoom</router-link>
@@ -15,6 +15,16 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.background{
+  height: 100vh;
+  overflow: hidden;
+  margin:0;
+  background-image: url("@/assets/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 nav {

@@ -1,7 +1,19 @@
 <template>
   <div id="chatting">
     <h2>Vue.js WebSocket Tutorial</h2>
-    <button v-on:click="sendMessage('hello')">Send Message</button>
+    <div class="background">
+      <div id="divChatData">{{ text }}</div>
+    </div>
+    <div style="width: 100%; height: 10%; padding: 10px">
+      <input
+        v-model="message"
+        type="text"
+        id="message"
+        size="110"
+        v-on:keyup.enter="sendMessage"
+      />
+      <button v-on:click="sendMessage">Send</button>
+    </div>
   </div>
 </template>
 
@@ -10,29 +22,30 @@ export default {
   name: 'ChattingStage',
   data: function() {
     return {
-      connection: null
+      message: "",
+      text: "hello",
     }
   },
   methods: {
-    sendMessage: function(message) {
-      console.log("Hello")
-      console.log(this.connection);
-      this.connection.send(message);
-    }
+    sendMessage: function (event) {
+      console.log(event);
+      this.message = this.connection.send(this.message);
+    },
   },
   created: function() {
     console.log("Starting connection to WebSocket Server")
-    this.connection = new WebSocket("wss://echo.websocket.org")
+    this.connection = new WebSocket("ws://localhost:8080/ws/chat")
 
-    this.connection.onmessage = function(event) {
+    this.connection.onmessage = (event)=> {
       console.log(event);
+      this.text += event.data;
+      this.text += "\n";
     }
 
     this.connection.onopen = function(event) {
       console.log(event)
       console.log("Successfully connected to the echo websocket server...")
     }
-
   }
 }
 </script>
@@ -45,5 +58,23 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+#chatting .background{
+  display: flex;
+  justify-content: center;
+  height: 50vh;
+  width: 80vw;
+  overflow: hidden;
+  margin:0;
+  background-image: url("@/assets/box.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#divChatData {
+  margin: 2%;
+  text-decoration-color: #D6910B;
 }
 </style>
