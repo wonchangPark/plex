@@ -63,8 +63,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
 let model, webcam, ctx, labelContainer, maxPredictions;
 
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-// const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
 	name: 'App',
@@ -174,35 +172,6 @@ export default {
 			// 'token' parameter should be retrieved and returned by your own backend
 			
 			this.getToken(this.mySessionId, this.myUserName)
-			// this.getToken(this.mySessionId).then(token => {
-			// 	console.log(token)
-			// 	this.session.connect(token, { clientData: this.myUserName })
-			// 		.then(() => {
-
-			// 			// --- Get your own camera stream with the desired properties ---
-
-			// 			let publisher = this.OV.initPublisher(undefined, {
-			// 				audioSource: undefined, // The source of audio. If undefined default microphone
-			// 				videoSource: undefined, // The source of video. If undefined default webcam
-			// 				publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-			// 				publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-			// 				resolution: '640x480',  // The resolution of your video
-			// 				frameRate: 30,			// The frame rate of your video
-			// 				insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-			// 				mirror: false       	// Whether to mirror your local video or not
-			// 			});
-
-			// 			this.mainStreamManager = publisher;
-			// 			this.publisher = publisher;
-
-			// 			// --- Publish your stream ---
-
-			// 			this.session.publish(this.publisher);
-			// 		})
-			// 		.catch(error => {
-			// 			console.log('There was an error connecting to the session:', error.code, error.message);
-			// 		});
-			// });
 
 			this.init()
 			window.addEventListener('beforeunload', this.leaveSession)
@@ -250,79 +219,79 @@ export default {
 
 		async init () {
 			const modelURL = URL + 'model.json';
-        	const metadataURL = URL + 'metadata.json';
+			const metadataURL = URL + 'metadata.json';
 
-        // load the model and metadata
-        // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-        	model = await tmPose.load(modelURL, metadataURL);
-        	maxPredictions = model.getTotalClasses();
+		// load the model and metadata
+		// Refer to tmPose.loadFromFiles() in the API to support files from a file picker
+			model = await tmPose.load(modelURL, metadataURL);
+			maxPredictions = model.getTotalClasses();
 
-        // Convenience function to setup a webcam
-        	const flip = true; // whether to flip the webcam
-        	webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-        	await webcam.setup(); // request access to the webcam
-        	webcam.play();
-    		window.requestAnimationFrame(this.loop);
+		// Convenience function to setup a webcam
+			const flip = true; // whether to flip the webcam
+			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+			await webcam.setup(); // request access to the webcam
+			webcam.play();
+		window.requestAnimationFrame(this.loop);
 
-        // append/get elements to the DOM
-        	// append/get elements to the DOM
-        	const canvas = document.getElementById('main-video-canvas');
-        	canvas.width = 200; canvas.height = 200;
-        	ctx = canvas.getContext('2d');
-        	labelContainer = document.getElementById('label-container');
-        	for (let i = 0; i < maxPredictions; i++) { // and class labels
-            	labelContainer.appendChild(document.createElement('div'));
-        	}
+		// append/get elements to the DOM
+			// append/get elements to the DOM
+			const canvas = document.getElementById('main-video-canvas');
+			canvas.width = 200; canvas.height = 200;
+			ctx = canvas.getContext('2d');
+			labelContainer = document.getElementById('label-container');
+			for (let i = 0; i < maxPredictions; i++) { // and class labels
+					labelContainer.appendChild(document.createElement('div'));
+			}
 		},
 
 		async loop(timestamp) {
-        	webcam.update(); // update the webcam frame
-        	await this.predict();
-        	window.requestAnimationFrame(this.loop);
-    	},
+			webcam.update(); // update the webcam frame
+			await this.predict();
+			window.requestAnimationFrame(this.loop);
+		},
 		async predict() {
-				// Prediction #1: run input through posenet
-				// estimatePose can take in an image, video or canvas html element
-				const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-				// Prediction 2: run input through teachable machine classification model
-				const prediction = await model.predict(posenetOutput);
-				if (prediction[0].probability.toFixed(2) >= 0.99) {
-					if (this.status == 1) {
-						this.session.signal({		// 운동 점수 송신
-							data: this.myUserName,  // Any string (optional)
-							to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-							type: 'score'             // The type of message (optional)
-						})
-						.then(() => {
-								console.log('Message successfully sent');
-						})
-						.catch(error => {
-								console.error(error);
-						});
-					}
-					this.status = 0
-				} else if (prediction[1].probability.toFixed(2) >= 0.99) {
-					this.status = 1
+			// Prediction #1: run input through posenet
+			// estimatePose can take in an image, video or canvas html element
+			const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+			// Prediction 2: run input through teachable machine classification model
+			const prediction = await model.predict(posenetOutput);
+			if (prediction[0].probability.toFixed(2) >= 0.99) {
+				if (this.status == 1) {
+					this.session.signal({		// 운동 점수 송신
+						data: this.myUserName,  // Any string (optional)
+						to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+						type: 'score'             // The type of message (optional)
+					})
+					.then(() => {
+							console.log('Message successfully sent');
+					})
+					.catch(error => {
+							console.error(error);
+					});
 				}
-				for (let i = 0; i < maxPredictions; i++) {
-						const classPrediction =
-								prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
-						labelContainer.childNodes[i].innerHTML = classPrediction;
-				}
+				this.status = 0
+			} else if (prediction[1].probability.toFixed(2) >= 0.99) {
+				this.status = 1
+			}
+			for (let i = 0; i < maxPredictions; i++) {
+					const classPrediction =
+							prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+			}
 
-			// finally draw the poses
-			//this.drawPose(pose);
-    	},
+		// finally draw the poses
+		//this.drawPose(pose);
+		},
 
-    	drawPose(pose) {
-        	ctx.drawImage(webcam.canvas, 0, 0);
-        	// draw the keypoints and skeleton
-        	if (pose) {
-            	const minPartConfidence = 0.5;
-            	tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-            	tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-        	}
-    	},
+		drawPose(pose) {
+			ctx.drawImage(webcam.canvas, 0, 0);
+			// draw the keypoints and skeleton
+			if (pose) {
+				const minPartConfidence = 0.5;
+				tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+				tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+			}
+		},
 		
 		//END OF TEACHABLE MACHINE METHODS
 
@@ -374,49 +343,6 @@ export default {
 				})
 		},
 
-		// // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
-		// createSession (sessionId) {
-		// 	return new Promise((resolve, reject) => {
-		// 		axios
-		// 			.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`, JSON.stringify({
-		// 				customSessionId: sessionId,
-		// 			}), {
-		// 				auth: {
-		// 					username: 'OPENVIDUAPP',
-		// 					password: OPENVIDU_SERVER_SECRET,
-		// 				},
-		// 			})
-		// 			.then(response => response.data)
-		// 			.then(data => resolve(data.id))
-		// 			.catch(error => {
-		// 				if (error.response.status === 409) {
-		// 					resolve(sessionId);
-		// 				} else {
-		// 					console.warn(`No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`);
-		// 					if (window.confirm(`No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`)) {
-		// 						location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
-		// 					}
-		// 					reject(error.response);
-		// 				}
-		// 			});
-		// 	});
-		// },
-
-		// // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-		// createToken (sessionId) {
-		// 	return new Promise((resolve, reject) => {
-		// 		axios
-		// 			.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`, {}, {
-		// 				auth: {
-		// 					username: 'OPENVIDUAPP',
-		// 					password: OPENVIDU_SERVER_SECRET,
-		// 				},
-		// 			})
-		// 			.then(response => response.data)
-		// 			.then(data => resolve(data.token))
-		// 			.catch(error => reject(error.response));
-		// 	});
-		// },
 	}
 }
 </script>
