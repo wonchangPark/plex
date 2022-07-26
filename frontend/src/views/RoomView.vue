@@ -87,8 +87,8 @@ export default {
 			chat: [],		// 채팅 메시지 수신
 
 			status: 0,		// 동작 인식 상태
-			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
-			team2: ['d', 'e', 'f'],
+			team1: [],		// 팀
+			team2: [],
 			personalScore: {		// 개인별 점수
 				'a': 0,
 				'b': 0,
@@ -128,10 +128,18 @@ export default {
 			// --- Specify the actions when events take place in the session ---
 
 			// On every new Stream received...
-			this.session.on('streamCreated', ({ stream }) => {
-				// console.log(this.session)
-				const subscriber = this.session.subscribe(stream);
+			this.session.on('streamCreated', (event) => {
+				console.log(event)
+				console.log('hear')
+				const subscriber = this.session.subscribe(event.stream);
 				this.subscribers.push(subscriber);
+				const { connection } = event.stream;
+				const { clientData, team_num} = JSON.parse(connection.data.split('%/%')[0]);
+				if (team_num % 2 == 1) {
+						this.team1.push(clientData)
+					} else {
+						this.team2.push(clientData)
+					}
 			});
 
 			// On every Stream destroyed...
@@ -214,6 +222,60 @@ export default {
 				this.audioMute = true
 			}
 		},
+		/**
+		 * --------------------------
+		 * SERVER-SIDE RESPONSIBILITY
+		 * --------------------------
+		 * These methods retrieve the mandatory user token from OpenVidu Server.
+		 * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
+		 * the API REST, openvidu-java-client or openvidu-node-client):
+		 *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+		 *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+		 *   3) The Connection.token must be consumed in Session.connect() method
+		 */
+
+		getToken (mySessionId, myUserName) {
+			axios
+				.post("https://localhost:8080/api/v1/rooms/get-token", {"sessionName" : mySessionId, "id" : myUserName})
+				.then((res) => {
+					console.log(res.data.response)
+					const token = res.data.response[0]
+					const team_num = res.data.response[1]
+					if (team_num % 2 == 1) {
+						this.team1.push(myUserName)
+					} else {
+						this.team2.push(myUserName)
+					}
+					this.session.connect(token, { clientData: this.myUserName, team_num })
+					
+					.then(() => {
+
+						// --- Get your own camera stream with the desired properties ---
+
+						let publisher = this.OV.initPublisher(undefined, {
+							audioSource: undefined, // The source of audio. If undefined default microphone
+							videoSource: undefined, // The source of video. If undefined default webcam
+							publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+							publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+							resolution: '640x480',  // The resolution of your video
+							frameRate: 30,			// The frame rate of your video
+							insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+							mirror: true       	// Whether to mirror your local video or not
+						});
+
+						this.mainStreamManager = publisher;
+						console.log(this.mainStreamManager)
+						this.publisher = publisher;
+
+						// --- Publish your stream ---
+
+						this.session.publish(this.publisher);
+					})
+					.catch(error => {
+						console.log('There was an error connecting to the session:', error.code, error.message);
+					});
+				})
+			},
 
 		//Methods related to Teachable Machine
 
@@ -295,53 +357,6 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-		/**
-		 * --------------------------
-		 * SERVER-SIDE RESPONSIBILITY
-		 * --------------------------
-		 * These methods retrieve the mandatory user token from OpenVidu Server.
-		 * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-		 * the API REST, openvidu-java-client or openvidu-node-client):
-		 *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-		 *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-		 *   3) The Connection.token must be consumed in Session.connect() method
-		 */
-
-		getToken (mySessionId, myUserName) {
-			axios
-				.post("https://localhost:8080/api/v1/rooms/get-token", {"sessionName" : mySessionId, "id" : myUserName})
-				.then((res) => {
-					console.log(res.data[0])
-					const token = res.data[0]
-					this.session.connect(token, { clientData: this.myUserName })
-					.then(() => {
-
-						// --- Get your own camera stream with the desired properties ---
-
-						let publisher = this.OV.initPublisher(undefined, {
-							audioSource: undefined, // The source of audio. If undefined default microphone
-							videoSource: undefined, // The source of video. If undefined default webcam
-							publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-							publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-							resolution: '640x480',  // The resolution of your video
-							frameRate: 30,			// The frame rate of your video
-							insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-							mirror: true       	// Whether to mirror your local video or not
-						});
-
-						this.mainStreamManager = publisher;
-						console.log(this.mainStreamManager)
-						this.publisher = publisher;
-
-						// --- Publish your stream ---
-
-						this.session.publish(this.publisher);
-					})
-					.catch(error => {
-						console.log('There was an error connecting to the session:', error.code, error.message);
-					});
-				})
-		},
 
 	}
 }
