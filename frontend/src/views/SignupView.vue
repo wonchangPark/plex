@@ -22,10 +22,9 @@
             <button class="button">가입하기</button>
         </p>
     </form>
-    <button>
-        <router-link to="/login">로그인</router-link>
-    </button>
-
+        <div class="buttons">
+        <router-link to="/login" class="button">로그인</router-link>
+        </div>
   </div>
 </template>
 
@@ -47,7 +46,13 @@ export default {
 </script>
 
 <style>
-.sign-up { width:800px; margin:20px auto; }
+.signup {
+  padding-top: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+ }
 .signupform { width:400px; margin:auto; }
 .signupform p > label { display:inline-block; width:100px; font-size:14px; padding-right:10px; }
 .signupform p > .input_text { width:200px; font-size:14px; height:32px; }

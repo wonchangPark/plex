@@ -16,9 +16,7 @@
 			</p>
 		</form>
 		<p>{{ errorMessage }}</p>
-    <button class="button">
-      <router-link to="/signup">회원가입</router-link>
-    </button>
+      <router-link to="/signup" class="buttons">회원가입</router-link>
 	</div>
 </template>
 
@@ -55,7 +53,17 @@ export default {
 </script>
 
 <style scoped>
-.login { width:800px; margin:20px auto; }
+h1 {
+	line-height: 200%;
+}
+
+.login {
+	padding-top: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+ }
 .loginform { width:400px; margin:auto; }
 .loginform p > label { display:inline-block; width:100px; font-size:14px; padding-right:10px; }
 .loginform p > .input_text { width:200px; font-size:14px; height:32px; }
