@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <div id="v-app">
+      <div id="v-app" class="d-flex">
         <router-view />
       </div>
     </v-main>
@@ -17,12 +17,13 @@ export default {
   }),
 };
 </script>
-<style>
+<style scoped>
 #v-app {
   background-image: url(./assets/background.jpg);
   margin: 0;
   height: 100vh;
   width: 100vw;
   background-size: cover;
+  font-size: 10vw;
 }
 </style>
