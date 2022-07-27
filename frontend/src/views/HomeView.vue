@@ -10,6 +10,7 @@
       <router-link to="/waiting" class="item">대기방</router-link>
       </v-btn>
     </div>
+  </div>
 </template>
 
 <script>
