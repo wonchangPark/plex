@@ -29,7 +29,6 @@ public class ChatHandler extends TextWebSocketHandler {
     // client session 추가
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws IOException {
-        System.out.println(session);
         list.add(session);
         System.out.println("hello");
         // 여기에서 다른 서버와의 회원인지 체크 진행
