@@ -182,6 +182,7 @@ export default {
 			this.getToken(this.mySessionId, this.myUserName)
 
 			this.init()
+
 			window.addEventListener('beforeunload', this.leaveSession)
 		},
 
@@ -358,6 +359,11 @@ export default {
 		//END OF TEACHABLE MACHINE METHODS
 
 
+	},
+	beforeRouteLeave(to, from, next) {
+		console.log('leave')
+		this.leaveSession()
+		next()
 	}
 }
 </script>

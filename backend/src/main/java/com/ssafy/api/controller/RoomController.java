@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 @CrossOrigin("*")
 public class RoomController {
 
-	int num = 0;
+	int num;
 
 	private OpenVidu openVidu;
 
@@ -38,6 +38,7 @@ public class RoomController {
 		this.SECRET = secret;
 		this.OPENVIDU_URL = openviduUrl;
 		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
+		this.num = 0;
 	}
 
 	@PostMapping("/get-token")
