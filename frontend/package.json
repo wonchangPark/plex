@@ -9,13 +9,20 @@
   },
   "dependencies": {
     "axios": "0.21.1",
-    "openvidu-browser": "2.22.0",
     "core-js": "^3.8.3",
+    "openvidu-browser": "2.22.0",
     "sockjs-client": "^1.6.1",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
     "vuetify": "^2.6.0",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "webstomp-client": "^1.2.6",
+    "ws": "^8.8.1",
+    "sass": "~1.32.0",
+    "sass-loader": "^13.0.2",
+    "vue-cli-plugin-vuetify": "~2.5.1",
+    "vue-template-compiler": "^2.6.14",
+    "vuetify-loader": "^1.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -42,19 +49,5 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:OpenVidu/openvidu-tutorials.git"
-    "sass": "~1.32.0",
-    "sass-loader": "^10.0.0",
-    "vue-cli-plugin-vuetify": "~2.5.1",
-    "vue-template-compiler": "^2.6.14",
-    "vuetify-loader": "^1.7.0"
   }
 }

@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <div class="wrap">
+      
       <img src="@/assets/logo.png" alt="logo" class="item">
       <v-btn>
       <router-link to="/login" class="item">로그인</router-link>
