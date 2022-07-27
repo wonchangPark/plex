@@ -1,6 +1,9 @@
-// const { defineConfig } = require('@vue/cli-service')
+//const { defineConfig } = require('@vue/cli-service')
 // module.exports = defineConfig({
-//   transpileDependencies: true
+//   transpileDependencies: [
+//     'vuetify'
+//   ],
+//   lintOnSave: false
 // })
 
 module.exports = {
@@ -17,7 +20,8 @@ module.exports = {
     hot: true
   },
   transpileDependencies: [
-    'element-plus'
+    'element-plus',
+    'vuetify'
   ],
   lintOnSave: false,
   outputDir: '../backend/src/main/resources/dist'
