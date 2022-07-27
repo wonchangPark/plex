@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Navbar from '@/components/common/Navbar.vue'
+import Navbar from '@/components/Home/Navbar.vue'
 
 export default {
   name: "App",
@@ -22,7 +22,7 @@ export default {
   }),
 };
 </script>
-<style scoped>
+<style>
 #v-app {
   background-image: url(./assets/background.jpg);
   margin: 0;

@@ -3,7 +3,11 @@
     <chatting></chatting><br>
     <room-list></room-list><br>
     <user-list></user-list><br>
-    <router-link to="/room" >게임방 입장</router-link>
+    <v-btn>방 만들기</v-btn>
+    <router-link to="/rank">
+      <v-btn>랭킹보기</v-btn>
+    </router-link>
+    <router-link to="/room">게임방 입장</router-link>
   </div>
 </template>
 
@@ -18,6 +22,7 @@ export default {
     Chatting,
     RoomList,
     UserList
+
   }
 }
 </script>

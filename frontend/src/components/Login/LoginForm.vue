@@ -1,14 +1,14 @@
 <template>
   <div id="login-form">
-    <div class="d-flex flox-row">
-      <div class="d-flex flex-column">
+    <div class="d-flex flex-row">
+      <v-container class="d-flex flex-column">
         <div>
-          <PrimaryInput label="ID" labelText="ID"></PrimaryInput>
+          <PrimaryInput :label-col="2" :input-col="10" :label="ID" labelText="ID"></PrimaryInput>
         </div>
         <div>
-          <PrimaryInput label="PW" labelText="PW"></PrimaryInput>
+          <PrimaryInput :label-col="2" :input-col="10" :label="PW" labelText="PW"></PrimaryInput>
         </div>
-      </div>
+      </v-container>
       <div class="d-flex justify-center align-center">
         <button class="submit primary">확인</button>
       </div>
@@ -24,14 +24,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #login-form {
   font-size: 1rem;
 }
 
 #login-form .submit {
   width: 58.84px;
-  height: 88%;
+  height: 70%;
   font-size: 1rem;
   font-weight: bold;
   border-radius: 5px;

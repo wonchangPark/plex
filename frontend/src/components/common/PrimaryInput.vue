@@ -1,10 +1,10 @@
 <template>
   <div id="primary-input">
     <v-row>
-        <v-col cols="2">
+        <v-col v-bind:cols="this.label-col">
             <label class="primary--text" v-bind:for="'input'+this.label">{{labelText}}</label>
         </v-col>
-        <v-col cols="10">
+        <v-col v-bind:cols="this.input-col">
             <input v-bind:id="'input'+this.label"/>
         </v-col>
     </v-row>
@@ -14,7 +14,7 @@
 <script>
 export default {
   name: "PrimaryInput",
-  props: ["label","labelText"],
+  props: ["label-col", "input-col","label","labelText"],
 };
 </script>
 
@@ -23,7 +23,8 @@ export default {
   margin: 2% 0;
 }
 label{
-    font-size: 16px;
+  font-weight: bold;
+  font-size: 16px;
 }
 input {
   background: white;
