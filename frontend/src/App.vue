@@ -1,32 +1,29 @@
 <template>
-  <div id="app" :style="{backgroundImage:'url('+require('./assets/background.png')+')'}">
-    <nav>
-      <router-link to="/">Home</router-link>  |
-      <router-link to="/waiting">WaitingRoom</router-link>
-    </nav>
-    <router-view/>
-  </div>
+  <v-app>
+    <v-main>
+      <div id="v-app" class="d-flex">
+        <router-view />
+      </div>
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+export default {
+  name: "App",
 
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+  data: () => ({
+    //
+  }),
+};
+</script>
+<style scoped>
+#v-app {
+  background-image: url(./assets/background.jpg);
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  font-size: 10vw;
 }
 </style>

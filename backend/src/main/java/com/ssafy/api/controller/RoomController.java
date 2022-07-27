@@ -22,9 +22,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/api/v1/rooms")
 @CrossOrigin("*")
 public class RoomController {
-
-	int num = 0;
-
+	
 	private OpenVidu openVidu;
 
 	private Map<String, Session> mapSessions = new ConcurrentHashMap<>();
@@ -62,7 +60,6 @@ public class RoomController {
 		// Build connectionProperties object with the serverData and the role
 		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).data(serverData).role(role).build();
 
-		JSONObject data = new JSONObject();
 		JSONObject responseJson = new JSONObject();
 
 		if (this.mapSessions.get(sessionName) != null) {
@@ -76,12 +73,8 @@ public class RoomController {
 				// Update our collection storing the new token
 				this.mapSessionNamesTokens.get(sessionName).put(token, role);
 
-				num = (num + 1) % 6;
-
 				// Prepare the response with the token
-				data.put(0, token);
-				data.put(1, num);
-				responseJson.put("response", data);
+				responseJson.put(0, token);
 
 				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);

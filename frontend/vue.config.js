@@ -1,11 +1,14 @@
-// const { defineConfig } = require('@vue/cli-service')
+//const { defineConfig } = require('@vue/cli-service')
 // module.exports = defineConfig({
-//   transpileDependencies: true
+//   transpileDependencies: [
+//     'vuetify'
+//   ],
+//   lintOnSave: false
 // })
 
 module.exports = {
   devServer: {
-    https: true,
+    https: false,
     port: 8083,
     open: true,
     proxy: {
@@ -17,8 +20,10 @@ module.exports = {
     hot: true
   },
   transpileDependencies: [
-    'element-plus'
+    'element-plus',
+    'vuetify'
   ],
   lintOnSave: false,
   outputDir: '../backend/src/main/resources/dist'
 }
+
