@@ -24,6 +24,14 @@
 			<div id="session-header">
 				<h1 id="session-title">{{ mySessionId }}</h1>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="!videoMute" value="비디오 중지">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="videoMute" value="비디오 시작">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
+				<input type="text" v-model="msg" @keypress.enter="sendMSG">
+				<h1>팀 점수</h1>
+				<h2>team1 {{ score1 }}</h2>
+				<h2>team2 {{ score2 }}</h2>
 			</div>
 			<div id="main-video" class="col-md-6">
 				<user-video :stream-manager="mainStreamManager"/>
@@ -35,6 +43,12 @@
 				<user-video v-for="sub in subscribers" :key="sub.stream.connection.connectionId" :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
 			</div>
 		</div>
+		<div v-if="session">
+			<h2>채팅</h2>
+			<p v-for="message in chat" :key="message">{{ message }}</p>
+			<h1>개인 점수</h1>
+			<p v-for="(user, index) in personalScore" :key="index">{{ user }}</p>
+		</div>
 	</div>
 </template>
 
@@ -45,7 +59,8 @@ import UserVideo from '../components/Room/UserVideo.vue';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
+// const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
+const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 // const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -68,10 +83,43 @@ export default {
 
 			mySessionId: 'SessionA',
 			myUserName: 'Participant' + Math.floor(Math.random() * 100),
+			videoMute: false,		// 영상 중지
+			audioMute: false,		// 음소거
+			msg: "",		// 채팅 메시지 송신
+			chat: [],		// 채팅 메시지 수신
+
+			status: 0,		// 동작 인식 상태
+			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
+			team2: ['d', 'e', 'f'],
+			personalScore: {		// 개인별 점수
+				'a': 0,
+				'b': 0,
+				'c': 0,
+				'd': 0,
+				'e': 0,
+				'f': 0
+			},
+			score1: 0,		// 팀별 점수
+			score2: 0,
 		}
 	},
 
 	methods: {
+		sendMSG () {
+			this.session.signal({
+				data: `${this.myUserName} : ${this.msg}`,  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'my-chat'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			});
+			this.msg = ''
+		},
+
 		joinSession () {
 			// --- Get an OpenVidu object ---
 			this.OV = new OpenVidu();
@@ -99,6 +147,25 @@ export default {
 			// On every asynchronous exception...
 			this.session.on('exception', ({ exception }) => {
 				console.warn(exception);
+			});
+			// 채팅 수신
+			this.session.on('signal:my-chat', (event) => {
+				console.log(`메시지 수신: ${event.data}`); // Message
+				this.chat.push(event.data)
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+			});
+			// 운동 점수 수신
+			this.session.on('signal:score', (event) => {
+				console.log(event.data); // Message
+				if (this.team1.includes(event.data)) {
+					this.score1 += 1
+				} else {
+					this.score2 += 1
+				}
+				this.personalScore[`${event.data}`] += 1
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
 			});
 
 			// --- Connect to the session with a valid user token ---
@@ -159,6 +226,26 @@ export default {
 			this.mainStreamManager = stream;
 		},
 
+		videoControl () {
+			if (this.videoMute) {
+				this.publisher.publishVideo(true)
+				this.videoMute = false
+			} else {
+				this.publisher.publishVideo(false)
+				this.videoMute = true
+			}
+		},
+
+		audioControl () {
+			if (this.audioMute) {
+				this.publisher.publishAudio(true)
+				this.audioMute = false
+			} else {
+				this.publisher.publishAudio(false)
+				this.audioMute = true
+			}
+		},
+
 		//Methods related to Teachable Machine
 
 		async init () {
@@ -193,21 +280,38 @@ export default {
         	await this.predict();
         	window.requestAnimationFrame(this.loop);
     	},
+		async predict() {
+				// Prediction #1: run input through posenet
+				// estimatePose can take in an image, video or canvas html element
+				const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+				// Prediction 2: run input through teachable machine classification model
+				const prediction = await model.predict(posenetOutput);
+				if (prediction[0].probability.toFixed(2) >= 0.99) {
+					if (this.status == 1) {
+						this.session.signal({		// 운동 점수 송신
+							data: this.myUserName,  // Any string (optional)
+							to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+							type: 'score'             // The type of message (optional)
+						})
+						.then(() => {
+								console.log('Message successfully sent');
+						})
+						.catch(error => {
+								console.error(error);
+						});
+					}
+					this.status = 0
+				} else if (prediction[1].probability.toFixed(2) >= 0.99) {
+					this.status = 1
+				}
+				for (let i = 0; i < maxPredictions; i++) {
+						const classPrediction =
+								prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+						labelContainer.childNodes[i].innerHTML = classPrediction;
+				}
 
-    	async predict() {
-        	// Prediction #1: run input through posenet
-        	// estimatePose can take in an image, video or canvas html element
-        	const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-        	// Prediction 2: run input through teachable machine classification model
-        	const prediction = await model.predict(posenetOutput);
-        	for (let i = 0; i < maxPredictions; i++) {
-           		const classPrediction =
-                	prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
-            	labelContainer.childNodes[i].innerHTML = classPrediction;
-        	}
-
-        // finally draw the poses
-        //this.drawPose(pose);
+			// finally draw the poses
+			//this.drawPose(pose);
     	},
 
     	drawPose(pose) {
@@ -253,7 +357,7 @@ export default {
 							resolution: '640x480',  // The resolution of your video
 							frameRate: 30,			// The frame rate of your video
 							insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-							mirror: false       	// Whether to mirror your local video or not
+							mirror: true       	// Whether to mirror your local video or not
 						});
 
 						this.mainStreamManager = publisher;
