@@ -8,7 +8,7 @@
 
 module.exports = {
   devServer: {
-    https: false,
+    https: true,
     port: 8083,
     open: true,
     proxy: {
@@ -26,4 +26,3 @@ module.exports = {
   lintOnSave: false,
   outputDir: '../backend/src/main/resources/dist'
 }
-
