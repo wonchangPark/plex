@@ -29,7 +29,6 @@ export default {
   height: 100vh;
   width: 100vw;
   background-size: cover;
-  /* font-size: 10vw; */
 }
 
 .no-scrollbars::-webkit-scrollbar {
