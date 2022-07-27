@@ -38,6 +38,11 @@ const routes = [
     path: '/signup',
     name: 'signup',
     component: SignUp
+  },
+  {
+    path: '/wait',
+    name: 'wait',
+    component: WaitingRoom
   }
 ];
 
