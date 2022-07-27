@@ -1,15 +1,11 @@
 <template>
   <div id="chatting">
-    <h2>Vue.js WebSocket Tutorial</h2>
-    <div style="width: 800px; height: 700px; padding: 10px; border: solid 1px">
+    <div class="chattingSpace d-flex flex-column">
       <div id="divChatData">{{ text }}</div>
-    </div>
-    <div style="width: 100%; height: 10%; padding: 10px">
       <input
         v-model="message"
         type="text"
         id="message"
-        size="110"
         v-on:keyup.enter="sendMessage"
       />
       <button v-on:click="sendMessage">Send</button>
@@ -50,13 +46,23 @@ export default {
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+
+#chatting .background{
+  display: flex;
+  justify-content: center;
+  height: 50vh;
+  width: 80vw;
+  overflow: hidden;
+  margin:0;
+  background-image: url("@/assets/box.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#divChatData {
+  margin: 2%;
+  text-decoration-color: #D6910B;
 }
 </style>
