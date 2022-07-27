@@ -14,8 +14,8 @@
     "sockjs-client": "^1.6.1",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
-    "vuex": "^3.6.2",
-    "webstomp-client": "^1.2.6"
+    "vuetify": "^2.6.0",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -51,5 +51,10 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:OpenVidu/openvidu-tutorials.git"
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
+    "vue-cli-plugin-vuetify": "~2.5.1",
+    "vue-template-compiler": "^2.6.14",
+    "vuetify-loader": "^1.7.0"
   }
 }

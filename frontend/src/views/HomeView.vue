@@ -1,24 +1,38 @@
 <template>
   <div class="home">
-    <div class="container">
+    <div class="wrap">
       <img src="@/assets/logo.png" alt="logo" class="item">
-    </div>
+      <v-btn>
       <router-link to="/login" class="item">로그인</router-link>
+      </v-btn>
+
+
+      <v-btn>
+      <router-link to="/waiting" class="item">대기방</router-link>
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 
-export default {
-  name: 'HomeView',
-  components: {
+  export default {
+    name: 'HomeView',
+
+    components: {
+    },
   }
-}
 </script>
 
-<style>
+<style scoped>
 img {
-  width: 50%;
+  width: 30%
+}
+.wrap {
+  padding-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>

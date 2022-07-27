@@ -1,15 +1,11 @@
 <template>
   <div id="chatting">
-    <h2>Vue.js WebSocket Tutorial</h2>
-    <div class="background">
+    <div class="chattingSpace d-flex flex-column">
       <div id="divChatData">{{ text }}</div>
-    </div>
-    <div style="width: 100%; height: 10%; padding: 10px">
       <input
         v-model="message"
         type="text"
         id="message"
-        size="110"
         v-on:keyup.enter="sendMessage"
       />
       <button v-on:click="sendMessage">Send</button>

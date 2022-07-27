@@ -4,7 +4,7 @@ import HomeView from '@/views/HomeView.vue'
 import Login from '@/views/LoginView.vue'
 import Signup from '@/views/SignupView.vue'
 import WaitingRoom from '@/views/WaitingRoomView.vue'
-import Room from '@/views/RoomView.vue'
+import Mypage from '@/views/MypageView.vue'
 
 Vue.use(VueRouter)
 
@@ -30,10 +30,10 @@ const routes = [
     component: WaitingRoom
   },
   {
-    path: '/room',
-    name: 'room',
-    component: Room
-  },
+    path: '/mypage',
+    name: 'mypage',
+    component: Mypage
+  }
 ]
 
 const router = new VueRouter({
