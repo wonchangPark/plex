@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <div id="v-app" class="d-flex no-scrollbars">
+      <div id="v-app" class="no-scrollbars">
         <navbar></navbar>
         <router-view />
       </div>
