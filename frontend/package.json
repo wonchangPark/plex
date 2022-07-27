@@ -51,14 +51,5 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:OpenVidu/openvidu-tutorials.git"
   }
 }

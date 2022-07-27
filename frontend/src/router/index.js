@@ -1,24 +1,24 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import Home from '@/views/HomeView.vue'
 import Login from '@/views/LoginView.vue'
 import Signup from '@/views/SignupView.vue'
 import WaitingRoom from '@/views/WaitingRoomView.vue'
-import Room from '@/views/RoomView.vue'
+import GameRoom from '@/views/RoomView.vue'
 import Mypage from '@/views/MypageView.vue'
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: "/",
+    name: "home",
+    component: Home,
   },
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
   },
   {
     path: '/signup',
@@ -31,21 +31,21 @@ const routes = [
     component: WaitingRoom
   },
   {
+    path: '/room',
+    name: 'gameroom',
+    component: GameRoom
+  },
+  {
     path: '/mypage',
     name: 'mypage',
     component: Mypage
   },
-  {
-    path: '/room',
-    name: 'room',
-    component: Room
-  }
-]
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

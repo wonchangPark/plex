@@ -4,8 +4,7 @@
     fluid
     height="10hv"
   >
-    <v-toolbar dense
-    opacity='0.5'>
+    <v-toolbar dense>
       <v-toolbar-title>
         <router-link to="/">LOGO</router-link>
       </v-toolbar-title>
