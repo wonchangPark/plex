@@ -5,7 +5,7 @@ import Login from '@/views/LoginView.vue'
 import WaitingRoom from '@/views/WaitingRoomView.vue'
 import GameRoom from '@/views/RoomView.vue'
 import Mypage from '@/views/MypageView.vue'
-
+import SignUp from '@/views/SignupView.vue'
 Vue.use(VueRouter);
 
 const routes = [
@@ -18,11 +18,6 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
-  },
-  {
-    path: "/login",
-    name:"login",
-    component: ()=> import("../views/LoginView.vue")
   },
   {
     path: '/waiting',
@@ -39,6 +34,11 @@ const routes = [
     name: 'mypage',
     component: Mypage
   },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignUp
+  }
 ];
 
 const router = new VueRouter({

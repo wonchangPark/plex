@@ -34,4 +34,5 @@ export default {
 .no-scrollbars::-webkit-scrollbar {
   display: none;
 }
+
 </style>
