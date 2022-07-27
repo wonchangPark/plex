@@ -1,13 +1,13 @@
 <template>
   <div class="home">
     <div class="wrap">
-      <img src="@/assets/logo.png" alt="logo" class="item" />
+      <img src="@/assets/logo.png" alt="logo" class="item">
       <v-btn>
-        <router-link to="/login" class="item">로그인</router-link>
+      <router-link to="/login" class="item">로그인</router-link>
       </v-btn>
 
       <v-btn>
-        <router-link to="/waiting" class="item">대기방</router-link>
+      <router-link to="/waiting" class="item">대기방</router-link>
       </v-btn>
     </div>
   </div>
@@ -17,7 +17,8 @@
 export default {
   name: "HomeView",
 
-  components: {},
+  components: {
+  },
 };
 </script>
 

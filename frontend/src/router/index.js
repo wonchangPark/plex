@@ -38,7 +38,7 @@ const routes = [
     path: '/mypage',
     name: 'mypage',
     component: Mypage
-  }
+  },
 ];
 
 const router = new VueRouter({
