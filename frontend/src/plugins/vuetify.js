@@ -14,5 +14,8 @@ export default new Vuetify({
         brown: "4A3E33",
       },
     },
+    opthions: {
+      customProperties: true,
+    },
   },
 });
