@@ -1,17 +1,21 @@
 <template>
   <div id="login-form">
-    <div class="d-flex flex-row">
-      <v-container class="d-flex flex-column">
-        <div>
-          <PrimaryInput :label-col="2" :input-col="10" :label="ID" labelText="ID"></PrimaryInput>
+    <div class="d-flex flex-column">
+      <div style="visibility: hidden;">temp</div>
+      <div class="d-flex flex-row">
+        <div class="d-flex flex-column">
+          <div>
+            <PrimaryInput label="ID" labelText="ID"></PrimaryInput>
+          </div>
+          <div>
+            <PrimaryInput label="PW" labelText="PW"></PrimaryInput>
+          </div>
         </div>
-        <div>
-          <PrimaryInput :label-col="2" :input-col="10" :label="PW" labelText="PW"></PrimaryInput>
+        <div class="d-flex justify-center align-center">
+          <button class="submit primary">확인</button>
         </div>
-      </v-container>
-      <div class="d-flex justify-center align-center">
-        <button class="submit primary">확인</button>
       </div>
+      <router-link to="/signup" class="primary--text" style="font-weight: bold">회원가입 / 비밀번호 찾기</router-link>
     </div>
   </div>
 </template>
@@ -31,7 +35,7 @@ export default {
 
 #login-form .submit {
   width: 58.84px;
-  height: 70%;
+  height: 88%;
   font-size: 1rem;
   font-weight: bold;
   border-radius: 5px;

@@ -1,17 +1,13 @@
 <template>
   <div
-    id="login-page"
+    id="signup-page"
     class="d-flex flex-column justify-center align-center align-self-center"
   >
   <div class="signup-logo">회원가입</div>
     <ContentBox :height="50" :width="40">
       <div
-        class="flex-grow-1 d-flex flex-row justify-center align-center">
-        <div class="flex-grow-1 d-flex flex-row justify-center">
-          <div class="d-flex flex-column">
+        class="d-flex flex-grow-1 flex-row justify-center align-center">
             <SignupForm></SignupForm>
-          </div>
-        </div>
       </div>
     </ContentBox>
   </div>
@@ -43,9 +39,13 @@ export default {
 </script>
 
 <style>
+#signup-page {
+  height: 100vh;
+  width: 100vw;
+}
 .signup-logo{
     font-weight: bold;
-    font-size: 4vw;
-    margin-bottom: 5%;
+    font-size: 3vw;
+    margin-bottom: 2rem;
 }
 </style>

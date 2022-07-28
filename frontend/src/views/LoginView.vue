@@ -8,12 +8,7 @@
         class="flex-grow-1 d-flex flex-row justify-center align-center">
         <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold login-box-logo">LOGIN</div>
         <div class="flex-grow-1 d-flex flex-row justify-center">
-          <div class="d-flex flex-column">
             <LoginForm></LoginForm>
-            <div>
-              <router-link to="signup">회원가입</router-link>
-            </div>
-          </div>
         </div>
       </div>
     </ContentBox>
@@ -57,7 +52,8 @@ export default {
 
 <style scoped>
 #login-page {
-  margin-top: 15%;
+  height: 100%;
+  width: 100%;
 }
 .login-box-logo{
     font-size: 4vw;

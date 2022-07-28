@@ -1,5 +1,5 @@
 <template>
-  <div id="content-box-wrap" v-bind:style="{width: this.width+'vw' ,height: this.height+'vh'}">
+  <div id="content-box-wrap" v-bind:style="{width: this.width+'%' ,height: this.height+'%'}">
     <div id="content-box" class="d-flex">
         <slot></slot>
     </div>
@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #content-box-wrap{
     background: rgba(46,41,35,1);
     padding: 10px;
