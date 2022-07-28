@@ -2,18 +2,18 @@
   <v-app>
     <v-main>
       <div id="v-app" class="no-scrollbars">
-        <router-view />
+        <v-container id="v-container">
+          <router-view />
+        </v-container>
       </div>
     </v-main>
   </v-app>
 </template>
 
 <script>
-
 export default {
   name: "App",
-  components: {
-  },
+  components: {},
   data: () => ({
     //
   }),
@@ -28,8 +28,14 @@ export default {
   background-size: cover;
 }
 
+#v-container{
+  height: 100%;
+  width: 100%;
+  min-width: 1440px;
+  padding: 0px 15px;
+}
+
 .no-scrollbars::-webkit-scrollbar {
   display: none;
 }
-
 </style>
