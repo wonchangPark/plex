@@ -2,21 +2,18 @@
   <v-app>
     <v-main>
       <div id="v-app" class="no-scrollbars">
-        <navbar></navbar>
-        <router-view />
+        <v-container id="v-container">
+          <router-view />
+        </v-container>
       </div>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Navbar from '@/components/Home/Navbar.vue'
-
 export default {
   name: "App",
-  components: {
-    Navbar
-  },
+  components: {},
   data: () => ({
     //
   }),
@@ -29,6 +26,13 @@ export default {
   height: 100vh;
   width: 100vw;
   background-size: cover;
+}
+
+#v-container{
+  height: 100%;
+  width: 100%;
+  min-width: 1440px;
+  padding: 0px 15px;
 }
 
 .no-scrollbars::-webkit-scrollbar {
