@@ -1,10 +1,8 @@
 <template>
-  <v-card
-    class="Navbar"
-    fluid
-    height="10hv"
-  >
-    <v-toolbar dense>
+    <v-toolbar dense 
+    height="50vh"
+    elevation="0"
+    color="transparent">
       <v-toolbar-title>
         <router-link to="/">LOGO</router-link>
       </v-toolbar-title>
@@ -39,30 +37,28 @@
           <div class="mx-auto text-center">
             <v-avatar
               color="white"
+              size="62"
             >
             </v-avatar>
             <v-divider class="my-3"></v-divider>
             <h4>{{ user.nickname }}</h4>
             <v-divider class="my-3"></v-divider>
-            <v-btn
-              rounded
-              text
-            >
-              <router-link to="mypage">마이페이지</router-link>
-            </v-btn>
-            <v-divider class="my-3"></v-divider>
-            <v-btn
-              rounded
-              text
-            >
-              로그아웃
-            </v-btn>
+            <router-link to="/mypage">
+              <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight:bold" width="12vw">
+                  마이페이지
+              </v-btn>
+            </router-link>
+
+            <router-link to="/">
+              <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight:bold" width="12vw">
+                로그아웃
+              </v-btn>
+            </router-link>
           </div>
         </v-list-item-content>
       </v-card>
       </v-menu>
     </v-toolbar>
-  </v-card>
 </template>
 
 <script>
@@ -82,5 +78,8 @@ export default {
 }
 </script>
 <style scoped>
-
+.page-btn{
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
 </style>

@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #content-box-wrap{
     background: rgba(46,41,35,1);
     padding: 10px;

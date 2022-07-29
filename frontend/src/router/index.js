@@ -6,6 +6,8 @@ import WaitingRoom from '@/views/WaitingRoomView.vue'
 import GameRoom from '@/views/RoomView.vue'
 import Mypage from '@/views/MypageView.vue'
 import SignUp from '@/views/SignupView.vue'
+import Rank from '@/views/RankView.vue'
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -43,6 +45,11 @@ const routes = [
     path: '/wait',
     name: 'wait',
     component: WaitingRoom
+  },
+  { 
+    path: '/rank',
+    name: 'rank',
+    component: Rank
   }
 ];
 
