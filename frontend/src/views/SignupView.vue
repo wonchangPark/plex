@@ -46,7 +46,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .sign-up { width:800px; margin:20px auto; }
 .signupform { width:400px; margin:auto; }
 .signupform p > label { display:inline-block; width:100px; font-size:14px; padding-right:10px; }

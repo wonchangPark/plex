@@ -1,23 +1,29 @@
 <template>
-  <div class="waiting-room">
-    <chatting></chatting><br>
-    <room-list></room-list><br>
-    <user-list></user-list><br>
-    <router-link to="/room" >게임방 입장</router-link>
+  <div id="waiting-room">
+    <div class="d-flex flex-row">
+      <div class="d-flex flex-column" style="flex: 1 0 30%">
+        <div class="d-flex" style="flex: 1 1 35%">
+          <ContentBox :height="50" :width="50"></ContentBox>
+        </div>
+        <div class="d-flex" style="flex: 1 1 65%">
+          asdfnvie
+        </div>
+      </div>
+      <div class="d-flex" style="flex: 1 0 70%">1234</div>
+    </div>
   </div>
 </template>
 
 <script>
-import Chatting from '@/components/WaitingRoom/Chatting.vue'
-import RoomList from '@/components/WaitingRoom/RoomList.vue'
-import UserList from '@/components/WaitingRoom/UserList.vue'
-
+import ContentBox from '@/components/common/ContentBox.vue';
 export default {
-  name: 'WaitingRoomView',
-  components: {
-    Chatting,
-    RoomList,
-    UserList
-  }
-}
+    name: "WaitingRoomView",
+    components: { ContentBox }
+};
 </script>
+<style scoped>
+#waiting-room {
+  width: 100vw;
+  height: 100vh;
+}
+</style>
