@@ -38,7 +38,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #signup-page {
   height: 90vh;
   width: 100vw;

@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex user-info flex-row justify-left align-center">
     <v-avatar class="mr-4 ml-4" color="white" size="45"></v-avatar>
-    <div class="white--text font">NickdddddddName</div>
+    <div class="white--text font">Name</div>
   </div>
 </template>
 
@@ -16,6 +16,7 @@ export default {};
   margin: 5px 0;
   border-radius: 15px;
   background: #4a3e33;
+  flex: 0 0 auto;
 }
 
 .user-info .font {
