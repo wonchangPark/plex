@@ -30,7 +30,7 @@ export default {
   },
   created: function() {
     console.log("Starting connection to WebSocket Server")
-    this.connection = new WebSocket("ws://localhost:8080/ws/chat")
+    this.connection = new WebSocket("wss://localhost:8080/ws/chat")
 
     this.connection.onmessage = (event)=> {
       console.log(event);
