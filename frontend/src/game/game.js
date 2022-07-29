@@ -1,0 +1,35 @@
+import Phaser from 'phaser'
+import BootScene from './BootScene'
+import RopeFightScene from './RopeFightScene'
+import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plugin.js';
+
+function launch() {
+    return new Phaser.Game({
+        type: Phaser.AUTO,
+        width: 800,
+        height: 400,
+        parent: 'game-container',
+        transparent: true,
+        canvas: document.getElementById('game-canvas'),
+        plugins: {
+            global: [
+            {
+                key: 'rexImageURILoader',
+                plugin: ImageURILoaderPlugin,
+                start: true
+            },
+        ]
+    },
+/*scene: {
+        preload: this.preload,
+        create: this.create,
+        update: this.update
+    },*/
+    scene: [
+        BootScene, RopeFightScene,
+    ]
+    })
+}
+
+export default launch
+export { launch }
