@@ -4,7 +4,7 @@
     class="d-flex flex-column justify-center align-center align-self-center"
   >
   <div class="signup-logo">회원가입</div>
-    <ContentBox :height="50" :width="40">
+    <ContentBox :height="70" :width="50">
       <div
         class="d-flex flex-grow-1 flex-row justify-center align-center">
             <SignupForm></SignupForm>

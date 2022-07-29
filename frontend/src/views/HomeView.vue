@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <v-container class="wrap d-flex flex-column align-center justify-center">
-      <div class="d-flex justify-center">
+    <div class="d-flex flex-column justify-center align-center align-self-center">
+      <div class="d-flex justify-center align-self-center">
         <img src="@/assets/logo.png" alt="logo">
       </div>
 
@@ -17,7 +17,7 @@
           </router-link>
         </div>
       </div>
-    </v-container>
+    </div>
   </div>
 </template>
 
