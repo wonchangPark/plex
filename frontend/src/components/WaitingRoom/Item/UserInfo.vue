@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex user-info flex-row justify-left align-center">
     <v-avatar class="mr-4 ml-4" color="white" size="45"></v-avatar>
-    <div class="white--text font">NickddddddName</div>
+    <div class="white--text font">NickdddddddName</div>
   </div>
 </template>
 
@@ -23,5 +23,6 @@ export default {};
   font-size: 1.6vw;
   text-overflow: ellipsis;
   overflow: hidden;
+  flex: 1 1 auto;
 }
 </style>
