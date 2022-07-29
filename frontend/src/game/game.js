@@ -18,8 +18,15 @@ function launch() {
                 plugin: ImageURILoaderPlugin,
                 start: true
             },
-        ]
-    },
+            ]
+        },
+        physics: {
+            default : 'arcade',
+            arcade: {
+                gravity: {y: 300},
+                debug: false,
+            }
+        },
 /*scene: {
         preload: this.preload,
         create: this.create,

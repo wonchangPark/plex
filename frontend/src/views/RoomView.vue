@@ -195,8 +195,10 @@ export default {
 				console.log(event.data); // Message
 				if (this.team1.includes(event.data)) {
 					this.score1 += 1
+					this.game.scene.getScene('ropeFightScene').goLeftHandler();
 				} else {
 					this.score2 += 1
+					this.game.scene.getScene('ropeFightScene').goRightHandler();
 				}
 				this.personalScore[`${event.data}`] += 1
 				console.log(event.from); // Connection object of the sender
