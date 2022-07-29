@@ -8,12 +8,12 @@
       <div class="d-flex flex-column">
         <div class="d-flex justify-center">
           <router-link to="/login">
-            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="25vw">로그인</v-btn>
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="10vw">로그인</v-btn>
           </router-link>
         </div>
         <div class="d-flex justify-center">
           <router-link to="/waiting">
-            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="2vw">대기방</v-btn>
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="10vw">대기방</v-btn>
           </router-link>
         </div>
       </div>
@@ -32,7 +32,7 @@ export default {
 </script>
 
 <style scoped>
-img {
+.home img {
   width: 45%
 }
 .routing-btn{

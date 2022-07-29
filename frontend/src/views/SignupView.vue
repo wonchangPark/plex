@@ -40,7 +40,7 @@ export default {
 
 <style>
 #signup-page {
-  height: 100vh;
+  height: 90vh;
   width: 100vw;
 }
 .signup-logo{

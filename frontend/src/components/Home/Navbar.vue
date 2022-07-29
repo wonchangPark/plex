@@ -3,9 +3,9 @@
     height="50vh"
     elevation="0"
     color="transparent">
-      <v-toolbar-title>
-        <router-link to="/">LOGO</router-link>
-      </v-toolbar-title>
+        <router-link to="/">
+          <img id="router-logo" src="@/assets/llogo.png" alt="logo">
+        </router-link>
       <v-spacer></v-spacer>
       
       
@@ -22,7 +22,7 @@
       >
         <v-avatar
           color="brown"
-          size="40"
+          size="46"
         >
         </v-avatar>
         </v-btn>
@@ -71,7 +71,7 @@ export default {
       return {
         dialog: false,
         user: {
-          nickname: '닉네임'
+          nickname: '병아리뿅뿅'
         }
       }
     },
@@ -81,5 +81,9 @@ export default {
 .page-btn{
   margin-top: 2%;
   margin-bottom: 2%;
+}
+
+#router-logo {
+  width: 200%;
 }
 </style>

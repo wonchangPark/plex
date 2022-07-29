@@ -22,7 +22,7 @@ export default {
 
 <style>
 .mypage{
-  height: 100%;
-  width: 100%;
+  height: 90vh;
+  width: 100vw;
 }
 </style>

@@ -25,16 +25,16 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="1">
+          <v-col cols="2">
             <label class="primary--text" for="PW">PW</label>
           </v-col>
-          <v-col cols="5">
+          <v-col cols="4">
             <input id="PW"/>
           </v-col>
-          <v-col cols="1">
+          <v-col cols="2">
             <label class="primary--text" for="checkPW">PW확인</label>
           </v-col>
-          <v-col cols="5">
+          <v-col cols="4">
             <input id="checkPW"/>
           </v-col>
         </v-row>
