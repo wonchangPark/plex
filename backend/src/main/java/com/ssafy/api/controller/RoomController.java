@@ -22,7 +22,8 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/api/v1/rooms")
 @CrossOrigin("*")
 public class RoomController {
-	
+	int num;
+
 	private OpenVidu openVidu;
 
 	private Map<String, Session> mapSessions = new ConcurrentHashMap<>();
@@ -36,6 +37,7 @@ public class RoomController {
 		this.SECRET = secret;
 		this.OPENVIDU_URL = openviduUrl;
 		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
+		this.num = 0;
 	}
 
 	@PostMapping("/get-token")
