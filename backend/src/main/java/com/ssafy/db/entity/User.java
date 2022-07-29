@@ -50,6 +50,9 @@ public class User {
     @Column(name = "user_totalscore")
     private Long totalScore;
 
+    @Column(name = "user_login")
+    private Boolean isLogin;
+
     protected User() {
 
     }
@@ -60,6 +63,7 @@ public class User {
         this.nick = nick;
         this.email = email;
         this.registerDate = LocalDateTime.now();
+        this.isLogin = false;
     }
     public static User createUser(String userId, String password, String nick, String email) {
         return new User(userId, password, nick, email);

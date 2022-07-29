@@ -1,5 +1,7 @@
 package com.ssafy.api.controller;
 
+import com.ssafy.db.entity.OAuth;
+import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,9 @@ import io.swagger.annotations.ApiResponse;
 public class AuthController {
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	OAuthRepository oAuthRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -48,10 +53,18 @@ public class AuthController {
 		String password = loginInfo.getPassword();
 		
 		User user = userService.getUserByUserId(userId);
+		if(user == null) {
+			return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Not Registered", null));
+		}
 		// 로그인 요청한 유저로부터 입력된 패스워드 와 디비에 저장된 유저의 암호화된 패스워드가 같은지 확인.(유효한 패스워드인지 여부 확인)
 		if(passwordEncoder.matches(password, user.getPassword())) {
 			// 유효한 패스워드가 맞는 경우, 로그인 성공으로 응답.(액세스 토큰을 포함하여 응답값 전달)
-			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", JwtTokenUtil.getToken(userId)));
+			String accessToken = JwtTokenUtil.getAccessToken(userId);
+			String refreshToken = JwtTokenUtil.getRefreshToken(userId); // 이 정보는 userId와 키밸류로 레디스에 들어갈 것.
+			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
+			oAuthRepository.save(oAuth);
+
+			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", accessToken));
 		}
 		// 유효하지 않는 패스워드인 경우, 로그인 실패로 응답.
 		return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Invalid Password", null));
