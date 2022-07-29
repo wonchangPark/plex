@@ -111,7 +111,7 @@ class RopeFightScene extends Scene {
             this.team2[j].x += 10;
         for (var k = 0 ; k < this.rope.length ; k++)
             this.rope[k].x += 10;*/
-            for (var i = 0 ; i < this.team1.length ; i++)   //move players to left
+            for (var i = 0 ; i < this.team1.length ; i++)   //move players to right
             this.team1[i].setX(this.team1[i].x + 50);
         for (var j = 0 ; j < this.team2.length ; j++)
             this.team2[j].setX(this.team2[j].x + 50);
