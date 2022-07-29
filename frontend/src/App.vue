@@ -1,41 +1,61 @@
 <template>
-  <v-app>
-    <v-main>
-      <div id="v-app" class="no-scrollbars">
-        <v-container id="v-container">
-          <router-view />
-        </v-container>
-      </div>
-    </v-main>
-  </v-app>
+    <v-app>
+        <v-main>
+            <div id="v-app" class="no-scrollbars">
+                <v-container id="v-container">
+                    <div id="header">
+                        <Navbar></Navbar>
+                    </div>
+                    <div id="content-body">
+                        <router-view />
+                    </div>
+                </v-container>
+            </div>
+        </v-main>
+    </v-app>
 </template>
 
 <script>
+import Navbar from "./components/Home/Navbar.vue";
 export default {
-  name: "App",
-  components: {},
-  data: () => ({
-    //
-  }),
+    name: "App",
+    components: { Navbar },
+    data: () => ({
+        //
+    }),
 };
 </script>
 <style>
 #v-app {
-  background-image: url(./assets/background.jpg);
-  margin: 0;
-  height: 100vh;
-  width: 100vw;
-  background-size: cover;
+    background-image: url(./assets/background.jpg);
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    background-size: cover;
 }
 
-#v-container{
-  height: 100%;
+#v-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    min-width: 1440px;
+    padding: 0px 15px;
+    flex-direction: column;
+}
+
+#content-body {
+    display: flex;
+    width: 100%;
+    height: 95%;
+    flex: 1 1 auto;
+}
+
+#header{
+  display: flex;
+  height: 5%;
   width: 100%;
-  min-width: 1440px;
-  padding: 0px 15px;
 }
-
 .no-scrollbars::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 </style>
