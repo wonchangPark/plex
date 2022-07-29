@@ -3,6 +3,8 @@ package com.ssafy.api.controller;
 import com.ssafy.db.entity.OAuth;
 import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +37,9 @@ public class AuthController {
 	UserService userService;
 
 	@Autowired
+	private RedisTemplate<String, String> redisTemplate;
+
+	@Autowired
 	OAuthRepository oAuthRepository;
 	
 	@Autowired
@@ -63,6 +68,10 @@ public class AuthController {
 			String refreshToken = JwtTokenUtil.getRefreshToken(userId); // 이 정보는 userId와 키밸류로 레디스에 들어갈 것.
 			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
 			oAuthRepository.save(oAuth);
+
+			// redis 로 바꿀 때 사용
+//			ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+//			valueOperations.set(userId, refreshToken);
 
 			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", accessToken));
 		}
