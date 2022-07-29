@@ -15,7 +15,7 @@
           <button class="submit primary">확인</button>
         </div>
       </div>
-      <div class="primary--text" style="font-weight: bold">회원가입 / 비밀번호 찾기</div>
+      <router-link to="/signup" class="primary--text" style="font-weight: bold">회원가입 / 비밀번호 찾기</router-link>
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #login-form {
   font-size: 1rem;
 }

@@ -19,7 +19,7 @@ export default {
   }),
 };
 </script>
-<style scoped>
+<style>
 #v-app {
   background-image: url(./assets/background.jpg);
   margin: 0;

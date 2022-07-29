@@ -1,15 +1,23 @@
 <template>
   <div class="home">
-    <div class="wrap">
-      <img src="@/assets/logo.png" alt="logo" class="item">
-      <v-btn>
-      <router-link to="/login" class="item">로그인</router-link>
-      </v-btn>
+    <v-container class="wrap d-flex flex-column align-center justify-center">
+      <div class="d-flex justify-center">
+        <img src="@/assets/logo.png" alt="logo">
+      </div>
 
-      <v-btn>
-      <router-link to="/waiting" class="item">대기방</router-link>
-      </v-btn>
-    </div>
+      <div class="d-flex flex-column">
+        <div class="d-flex justify-center">
+          <router-link to="/login">
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="25vw">로그인</v-btn>
+          </router-link>
+        </div>
+        <div class="d-flex justify-center">
+          <router-link to="/waiting">
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="2vw">대기방</v-btn>
+          </router-link>
+        </div>
+      </div>
+    </v-container>
   </div>
 </template>
 
@@ -18,19 +26,19 @@ export default {
   name: "HomeView",
 
   components: {
+
   },
 };
 </script>
 
 <style scoped>
 img {
-  width: 30%;
+  width: 45%
+}
+.routing-btn{
+  margin-bottom: 5%;
 }
 .wrap {
-  padding-top: 10%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding-top: 5%;
 }
 </style>
