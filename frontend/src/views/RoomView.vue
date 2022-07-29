@@ -63,6 +63,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
 let model, webcam, ctx, labelContainer, maxPredictions;
 
+// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+// const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
 	name: 'App',
@@ -87,8 +89,8 @@ export default {
 			chat: [],		// 채팅 메시지 수신
 
 			status: 0,		// 동작 인식 상태
-			team1: [],		// 팀
-			team2: [],
+			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
+			team2: ['d', 'e', 'f'],
 			personalScore: {		// 개인별 점수
 				'a': 0,
 				'b': 0,
@@ -128,18 +130,10 @@ export default {
 			// --- Specify the actions when events take place in the session ---
 
 			// On every new Stream received...
-			this.session.on('streamCreated', (event) => {
-				console.log(event)
-				console.log('hear')
-				const subscriber = this.session.subscribe(event.stream);
+			this.session.on('streamCreated', ({ stream }) => {
+				// console.log(this.session)
+				const subscriber = this.session.subscribe(stream);
 				this.subscribers.push(subscriber);
-				const { connection } = event.stream;
-				const { clientData, team_num} = JSON.parse(connection.data.split('%/%')[0]);
-				if (team_num % 2 == 1) {
-						this.team1.push(clientData)
-					} else {
-						this.team2.push(clientData)
-					}
 			});
 
 			// On every Stream destroyed...
@@ -223,32 +217,14 @@ export default {
 				this.audioMute = true
 			}
 		},
-		/**
-		 * --------------------------
-		 * SERVER-SIDE RESPONSIBILITY
-		 * --------------------------
-		 * These methods retrieve the mandatory user token from OpenVidu Server.
-		 * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-		 * the API REST, openvidu-java-client or openvidu-node-client):
-		 *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-		 *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-		 *   3) The Connection.token must be consumed in Session.connect() method
-		 */
 
 		getToken (mySessionId, myUserName) {
 			axios
 				.post("https://localhost:8080/api/v1/rooms/get-token", {"sessionName" : mySessionId, "id" : myUserName})
 				.then((res) => {
-					console.log(res.data.response)
-					const token = res.data.response[0]
-					const team_num = res.data.response[1]
-					if (team_num % 2 == 1) {
-						this.team1.push(myUserName)
-					} else {
-						this.team2.push(myUserName)
-					}
-					this.session.connect(token, { clientData: this.myUserName, team_num })
-					
+					console.log(res.data[0])
+					const token = res.data[0]
+					this.session.connect(token, { clientData: this.myUserName })
 					.then(() => {
 
 						// --- Get your own camera stream with the desired properties ---
@@ -276,90 +252,90 @@ export default {
 						console.log('There was an error connecting to the session:', error.code, error.message);
 					});
 				})
-			},
+		},
 
 		//Methods related to Teachable Machine
 
 		async init () {
 			const modelURL = URL + 'model.json';
-			const metadataURL = URL + 'metadata.json';
+        	const metadataURL = URL + 'metadata.json';
 
-		// load the model and metadata
-		// Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-			model = await tmPose.load(modelURL, metadataURL);
-			maxPredictions = model.getTotalClasses();
+        // load the model and metadata
+        // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
+        	model = await tmPose.load(modelURL, metadataURL);
+        	maxPredictions = model.getTotalClasses();
 
-		// Convenience function to setup a webcam
-			const flip = true; // whether to flip the webcam
-			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-			await webcam.setup(); // request access to the webcam
-			webcam.play();
-		window.requestAnimationFrame(this.loop);
+        // Convenience function to setup a webcam
+        	const flip = true; // whether to flip the webcam
+        	webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+        	await webcam.setup(); // request access to the webcam
+        	webcam.play();
+    		window.requestAnimationFrame(this.loop);
 
-		// append/get elements to the DOM
-			// append/get elements to the DOM
-			const canvas = document.getElementById('main-video-canvas');
-			canvas.width = 200; canvas.height = 200;
-			ctx = canvas.getContext('2d');
-			labelContainer = document.getElementById('label-container');
-			for (let i = 0; i < maxPredictions; i++) { // and class labels
-					labelContainer.appendChild(document.createElement('div'));
-			}
+        // append/get elements to the DOM
+        	// append/get elements to the DOM
+        	const canvas = document.getElementById('main-video-canvas');
+        	canvas.width = 200; canvas.height = 200;
+        	ctx = canvas.getContext('2d');
+        	labelContainer = document.getElementById('label-container');
+        	for (let i = 0; i < maxPredictions; i++) { // and class labels
+            	labelContainer.appendChild(document.createElement('div'));
+        	}
 		},
 
 		async loop(timestamp) {
-			webcam.update(); // update the webcam frame
-			await this.predict();
-			window.requestAnimationFrame(this.loop);
-		},
+        	webcam.update(); // update the webcam frame
+        	await this.predict();
+        	window.requestAnimationFrame(this.loop);
+    	},
 		async predict() {
-			// Prediction #1: run input through posenet
-			// estimatePose can take in an image, video or canvas html element
-			const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-			// Prediction 2: run input through teachable machine classification model
-			const prediction = await model.predict(posenetOutput);
-			if (prediction[0].probability.toFixed(2) >= 0.99) {
-				if (this.status == 1) {
-					this.session.signal({		// 운동 점수 송신
-						data: this.myUserName,  // Any string (optional)
-						to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-						type: 'score'             // The type of message (optional)
-					})
-					.then(() => {
-							console.log('Message successfully sent');
-					})
-					.catch(error => {
-							console.error(error);
-					});
+				// Prediction #1: run input through posenet
+				// estimatePose can take in an image, video or canvas html element
+				const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+				// Prediction 2: run input through teachable machine classification model
+				const prediction = await model.predict(posenetOutput);
+				if (prediction[0].probability.toFixed(2) >= 0.99) {
+					if (this.status == 1) {
+						this.session.signal({		// 운동 점수 송신
+							data: this.myUserName,  // Any string (optional)
+							to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+							type: 'score'             // The type of message (optional)
+						})
+						.then(() => {
+								console.log('Message successfully sent');
+						})
+						.catch(error => {
+								console.error(error);
+						});
+					}
+					this.status = 0
+				} else if (prediction[1].probability.toFixed(2) >= 0.99) {
+					this.status = 1
 				}
-				this.status = 0
-			} else if (prediction[1].probability.toFixed(2) >= 0.99) {
-				this.status = 1
-			}
-			for (let i = 0; i < maxPredictions; i++) {
-					const classPrediction =
-							prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
-					labelContainer.childNodes[i].innerHTML = classPrediction;
-			}
+				for (let i = 0; i < maxPredictions; i++) {
+						const classPrediction =
+								prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+						labelContainer.childNodes[i].innerHTML = classPrediction;
+				}
 
-		// finally draw the poses
-		//this.drawPose(pose);
-		},
+			// finally draw the poses
+			//this.drawPose(pose);
+    	},
 
-		drawPose(pose) {
-			ctx.drawImage(webcam.canvas, 0, 0);
-			// draw the keypoints and skeleton
-			if (pose) {
-				const minPartConfidence = 0.5;
-				tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-				tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-			}
-		},
+    	drawPose(pose) {
+        	ctx.drawImage(webcam.canvas, 0, 0);
+        	// draw the keypoints and skeleton
+        	if (pose) {
+            	const minPartConfidence = 0.5;
+            	tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+            	tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+        	}
+    	},
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-
 	},
+
 	beforeRouteLeave(to, from, next) {
 		console.log('leave')
 		this.leaveSession()

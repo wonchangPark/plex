@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '@/views/HomeView.vue'
 import Login from '@/views/LoginView.vue'
-import Signup from '@/views/SignupView.vue'
 import WaitingRoom from '@/views/WaitingRoomView.vue'
 import GameRoom from '@/views/RoomView.vue'
 import Mypage from '@/views/MypageView.vue'
@@ -21,9 +20,9 @@ const routes = [
     component: Login,
   },
   {
-    path: '/signup',
-    name: 'signup',
-    component: Signup
+    path: "/login",
+    name:"login",
+    component: ()=> import("../views/LoginView.vue")
   },
   {
     path: '/waiting',

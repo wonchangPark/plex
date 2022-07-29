@@ -24,7 +24,7 @@ export default {
 
 <style scoped>
 img {
-  width: 30%
+  width: 30%;
 }
 .wrap {
   padding-top: 10%;
