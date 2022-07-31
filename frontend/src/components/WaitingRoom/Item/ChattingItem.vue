@@ -1,5 +1,17 @@
 <template>
-    <div></div>
+    <div class="d-flex flex-row align-center">
+        <div class="d-flex flex-column justify-center">
+            <div>
+                asdf
+            </div>
+            <div>
+                asdf
+            </div>
+        </div>
+        <div>
+            asdf
+        </div>
+    </div>
 </template>
 
 <script>
