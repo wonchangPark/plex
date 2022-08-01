@@ -2,10 +2,10 @@
   <div id="primary-input">
     <v-row>
         <v-col cols="2">
-            <label class="primary--text" v-bind:for="'input'+this.label">{{labelText}}</label>
+          <label class="primary--text" v-bind:for="'input'+this.label">{{labelText}}</label>
         </v-col>
         <v-col cols="10">
-            <input v-bind:id="'input'+this.label"/>
+          <input v-bind:id="'input'+this.label" v-model="inputdata" @keypress="onDataInput"/>
         </v-col>
     </v-row>
   </div>
@@ -14,7 +14,17 @@
 <script>
 export default {
   name: "PrimaryInput",
+  data: () => {
+    return {
+      inputdata: '',
+    }
+  },
   props: ["label","labelText"],
+  methods: {
+    onDataInput() {
+    this.$emit('input', this.inputdata)
+    }
+  }
 };
 </script>
 

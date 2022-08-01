@@ -82,13 +82,19 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(JwtTokenUtil.HEADER_STRING);
         OAuth oAuth = null;
         boolean newAccessToken = false;
+        System.out.println("test1");
         // 요청 헤더에 Authorization 키값에 jwt 토큰이 포함된 경우에만, 토큰 검증 및 인증 처리 로직 실행.
         if (token != null) {
             // parse the token and validate it (decode)
             JWTVerifier verifier = JwtTokenUtil.getAccessTokenVerifier();
+            System.out.println("test2");
+
             try {
                 JwtTokenUtil.accessHandleError(token); // 이곳에서 토큰 만료 여부가 체크됨
+                System.out.println("test2");
+
             } catch (TokenExpiredException e){ // accessToken time expired
+                System.out.println("expired");
                 // refresh token도 만료되었는지 확인
                 // redis에는 accessToken과 refreshToken이 키:밸류로 저장됨
                 // 따라서 redis에서 accessToken을 키로 가지고 가서 refreshToken을 가지고 온다.
@@ -102,6 +108,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             }
             DecodedJWT decodedJWT = verifier.verify(token.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
             String userId = decodedJWT.getSubject();
+            System.out.println("test3");
+
 
             // Search in the DB if we find the user by token subject (username)
             // If so, then grab user details and create spring auth token using username, pass, authorities/roles

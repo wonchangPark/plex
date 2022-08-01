@@ -1,15 +1,15 @@
 <template>
-  <div class="information-box">
-    <ContentBox :height="80" :width="40">
+  <div class="information-box d-flex" style="flex: 1">
+    <ContentBox :height="100" :width="80">
       <v-container>
         <v-row justify="center" align="center">
-          <v-col cols="10">
+          <v-col cols="11">
             <label class="primary--text" for="nickname">닉네임</label>
           </v-col>
           <v-col cols="5">
             <input id="nickname" :placeholder="user.nickname"/>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="4">
             <div class="overlap d-flex align-center secondary--text"> 중복이 아닙니다 </div>
           </v-col>
           <v-col cols="2">
@@ -17,10 +17,10 @@
           </v-col>
         </v-row>
         <v-row justify="center" align="center">
-          <v-col cols="10">
+          <v-col cols="11">
             <label class="primary--text" for="introducing">자기소개</label>
           </v-col>
-          <v-col cols="8">
+          <v-col cols="9">
             <v-textarea/>
           </v-col>
           <v-col cols="2">
@@ -31,7 +31,7 @@
           <v-col cols="2">
             <label class="primary--text" for="introducing">랭킹</label>
           </v-col>
-          <v-col cols="5" justify="center" align="center" class="my-ranking secondary--text">
+          <v-col cols="6" justify="center" align="center" class="my-ranking secondary--text">
             <v-card color="#28363F" flat>
               <div class="secondary--text">#1 2300</div>
             </v-card>
@@ -85,13 +85,13 @@ export default {
   background: white;
   border-radius: 5px;
   border: 3px solid #ffb82f;
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 .information-box textarea{
   background: white;
   border-radius: 5px;
   border: 3px solid #ffb82f;
-  font-size: 1rem;
+  font-size: 1.2rem;
   resize: none;
 }
 .my-ranking div{
