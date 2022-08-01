@@ -13,6 +13,7 @@
             <button
               class="primary"
               style="width: 70%; height: 40px; font-weight: bold"
+              @click="createRoom"
             >
               방 만들기
             </button>
@@ -54,9 +55,23 @@
 import UserList from "@/components/WaitingRoom/UserList.vue";
 import RoomList from "@/components/WaitingRoom/RoomList.vue";
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
+import { mapActions } from "vuex"
+
 export default {
   name: "WaitingRoomView",
   components: { UserList, RoomList, ChattingList },
+  methods: {
+    ...mapActions(['setRoomCreate',]),
+    createRoom() {
+        const roomInfo = {
+            name: 'testRoom',
+            host: 'test1',
+            roomSize: 6
+            }
+        this.setRoomCreate(roomInfo)
+        this.$router.push('/room')
+    },
+  }
 };
 </script>
 <style scoped>

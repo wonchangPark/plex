@@ -55,23 +55,11 @@
 	</div>
 </template>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
+import { mapGetters } from 'vuex'
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -350,6 +338,22 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
+	},
+
+	computed : {
+		...mapGetters(['roomCreate', 'roomInfo']),
+	},
+	created () {
+		if (this.roomCreate) {
+			axios
+				.post("https://localhost:8080/api/v1/rooms/create-room", this.roomInfo )
+				.then((res) => {
+					console.log(res.data)
+					this.mySessionId = res.data.privateCode
+					this.myUserName = res.data.host
+					this.joinSession()
+				})
+		}
 	},
 
 	beforeRouteLeave(to, from, next) {
