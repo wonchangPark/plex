@@ -5,26 +5,8 @@
         <div style="visibility: hidden;">temp</div>
         <div class="d-flex flex-row">
           <div class="d-flex flex-column">
-            <div id="primary-input">
-              <v-row>
-                  <v-col cols="2">
-                    <label class="primary--text" for="ID">ID</label>
-                  </v-col>
-                  <v-col cols="10">
-                    <input id="ID" v-model="user.id" type="text" v-validate="'required'"/>
-                  </v-col>
-              </v-row>
-            </div>
-            <div id="primary-input">
-              <v-row>
-                <v-col cols="2">
-                  <label class="primary--text" for="PW">PW</label>
-                </v-col>
-                <v-col cols="10">
-                  <input id="PW" v-model="user.password" type="password" v-validate="'required'"/>
-                </v-col>
-              </v-row>
-            </div>
+            <PrimaryInput label="ID" labelText="ID" inputType="text" @input="IdListened"></PrimaryInput>
+            <PrimaryInput label="PW" labelText="PW" inputType="password" @input="PWListened"></PrimaryInput>
           </div>
           <div class="d-flex justify-center align-center">
             <button class="submit primary">확인</button>
@@ -37,9 +19,10 @@
 </template>
 
 <script>
+import PrimaryInput from '@/components/common/PrimaryInput.vue'
 export default {
   name: "LoginForm",
-  components: {},
+  components: { PrimaryInput },
   data() {
     return {
       user: {
@@ -60,6 +43,12 @@ export default {
     }
   },
   methods: {
+    IdListened(id){
+      this.user.id = id 
+    },
+    PWListened(PW){
+      this.user.password = PW
+    },
     handleLogin() {
       this.loading = true;
       this.$validator.validateAll().then(isValid => {

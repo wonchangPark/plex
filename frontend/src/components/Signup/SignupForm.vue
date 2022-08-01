@@ -79,6 +79,9 @@ export default {
       this.$validator.validate().then(isValid => {
         if (isValid) {
           this.$store.dispatch('auth/register', this.user).then(
+            () => {
+              this.$router.push('/login');
+            },
             data => {
               console.log(data)
               this.succesful = true;

@@ -25,10 +25,9 @@
                   <router-link to="/mypage">
                       <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 마이페이지 </v-btn>
                   </router-link>
-
-                  <router-link to="/">
-                      <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 로그아웃 </v-btn>
-                  </router-link>
+                  <a href @click.prevent="logOut">
+                    <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 로그아웃 </v-btn>
+                  </a>
               </div>
           </v-list-item-content>
       </v-card>
@@ -50,6 +49,12 @@ export default {
         }
       }
     },
+  methods: {
+    logOut() {
+      this.$store.dispatch('auth/logout');
+      this.$router.push('/login');
+    }
+  }
 };
 </script>
 <style>
