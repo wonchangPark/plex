@@ -1,0 +1,32 @@
+package com.ssafy.db.repository;
+
+import com.ssafy.api.response.RoomInfoRes;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+@Repository
+public class WaitingRoomRepository {
+
+    @PersistenceContext
+    EntityManager em;
+
+    // from 부터 to 까지의 대기방을 뽑아온다.
+    public List<RoomInfoRes> getCurrentRoomList(int from, int to){
+        System.out.println("repository on "+ from + " "+to);
+
+        List<RoomInfoRes> result = em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
+                "from Room r, RoomUser ru " +
+                "where r = ru.room and r.endTime is null " +
+                "group by ru.room " +
+                "having COUNT(ru) <> r.roomSize " +
+                "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).setFirstResult(from).setMaxResults(to).getResultList();
+
+        for (RoomInfoRes room : result){
+            System.out.println(room);
+        }
+        return result;
+    }
+}
