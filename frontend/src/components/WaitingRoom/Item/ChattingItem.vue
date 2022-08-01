@@ -1,15 +1,15 @@
 <template>
-    <div class="d-flex flex-row align-center">
-        <div class="d-flex flex-column justify-center">
+    <div class="chatting-item d-flex flex-row align-center mr-4 ml-4 brown px-2 py-1">
+        <div class="d-flex flex-column justify-center align-center mr-2">
             <div>
-                asdf
+                <v-avatar size="25" color="white"></v-avatar>
             </div>
-            <div>
-                asdf
+            <div class="white--text">
+                name
             </div>
         </div>
-        <div>
-            asdf
+        <div class="white--text" style="font-weight: bold; font-size: 1.5vw;">
+            chatting
         </div>
     </div>
 </template>
@@ -20,4 +20,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.chatting-item{
+    border-radius: 15px;
+}
+</style>
