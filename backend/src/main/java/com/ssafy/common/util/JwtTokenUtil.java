@@ -13,7 +13,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -22,58 +21,95 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 @Component
 public class JwtTokenUtil {
-    private static String secretKey;
-    private static Integer expirationTime;
-
+    private static String accessSecretKey;
+    private static String refreshSecretKey;
+    private static Integer accessExpirationTime;
+    private static Integer refreshExpirationTime;
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String ISSUER = "ssafy.com";
     
     @Autowired
-	public JwtTokenUtil(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") Integer expirationTime) {
-		this.secretKey = secretKey;
-		this.expirationTime = expirationTime;
-	}
-    
-	public void setExpirationTime() {
-    		//JwtTokenUtil.expirationTime = Integer.parseInt(expirationTime);
-    		JwtTokenUtil.expirationTime = expirationTime;
+	public JwtTokenUtil(@Value("${jwt.secret}") String accessSecretKey,@Value("${jwt.refreshsecret}") String refreshSecretKey, @Value("${jwt.expiration}") Integer accessExpirationTime, @Value("${jwt.refreshexpiration}") Integer refreshExpirationTime) {
+		JwtTokenUtil.accessSecretKey = accessSecretKey;
+        JwtTokenUtil.refreshSecretKey = refreshSecretKey;
+		JwtTokenUtil.accessExpirationTime = accessExpirationTime;
+        JwtTokenUtil.refreshExpirationTime = refreshExpirationTime;
 	}
 
-	public static JWTVerifier getVerifier() {
+	public static JWTVerifier getAccessTokenVerifier() {
         return JWT
-                .require(Algorithm.HMAC512(secretKey.getBytes()))
+                .require(Algorithm.HMAC512(accessSecretKey.getBytes()))
                 .withIssuer(ISSUER)
                 .build();
     }
-    
-    public static String getToken(String userId) {
-    		Date expires = JwtTokenUtil.getTokenExpiration(expirationTime);
-        return JWT.create()
-                .withSubject(userId)
-                .withExpiresAt(expires)
+
+    public static JWTVerifier getRefreshTokenVerifier(){
+        return JWT
+                .require(Algorithm.HMAC512(refreshSecretKey.getBytes()))
                 .withIssuer(ISSUER)
-                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-                .sign(Algorithm.HMAC512(secretKey.getBytes()));
+                .build();
     }
 
-    public static String getToken(Instant expires, String userId) {
+    // 로그인 시도할 때, 이 메서드를 사용
+    public static String getAccessToken(String userId) {
+        Date accessExpires = JwtTokenUtil.getTokenExpiration(accessExpirationTime); // 만료 시간 세팅
         return JWT.create()
                 .withSubject(userId)
-                .withExpiresAt(Date.from(expires))
+                .withExpiresAt(accessExpires)
                 .withIssuer(ISSUER)
                 .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-                .sign(Algorithm.HMAC512(secretKey.getBytes()));
+                .sign(Algorithm.HMAC512(accessSecretKey.getBytes())); // jwt 생성
     }
-    
+
+    public static String getRefreshToken(String userId){
+
+        Date refreshExpires = JwtTokenUtil.getTokenExpiration(refreshExpirationTime); // 만료 15일
+        return JWT.create()
+                .withSubject(userId)
+                .withExpiresAt(refreshExpires)
+                .withIssuer(ISSUER)
+                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
+                .sign(Algorithm.HMAC512(refreshSecretKey.getBytes()));
+    }
+
     public static Date getTokenExpiration(int expirationTime) {
     		Date now = new Date();
     		return new Date(now.getTime() + expirationTime);
     }
 
-    public static void handleError(String token) {
+    public static void accessHandleError(String token) {
         JWTVerifier verifier = JWT
-                .require(Algorithm.HMAC512(secretKey.getBytes()))
+                .require(Algorithm.HMAC512(accessSecretKey.getBytes()))
+                .withIssuer(ISSUER)
+                .build();
+
+        try {
+            verifier.verify(token.replace(TOKEN_PREFIX, ""));
+        } catch (AlgorithmMismatchException ex) {
+            throw ex;
+        } catch (InvalidClaimException ex) {
+            throw ex;
+        } catch (SignatureGenerationException ex) {
+            throw ex;
+        } catch (SignatureVerificationException ex) {
+            throw ex;
+        } catch (TokenExpiredException ex) {
+            throw ex;
+        } catch (JWTCreationException ex) {
+            throw ex;
+        } catch (JWTDecodeException ex) {
+            throw ex;
+        } catch (JWTVerificationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    public static void refreshHandleError(String token) {
+        JWTVerifier verifier = JWT
+                .require(Algorithm.HMAC512(refreshSecretKey.getBytes()))
                 .withIssuer(ISSUER)
                 .build();
 
