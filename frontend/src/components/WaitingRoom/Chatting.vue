@@ -1,21 +1,32 @@
 <template>
   <div id="chatting">
-    <div class="chattingSpace d-flex flex-column">
-      <div id="divChatData">{{ text }}</div>
-      <input
-        v-model="message"
-        type="text"
-        id="message"
-        v-on:keyup.enter="sendMessage"
-      />
-      <button v-on:click="sendMessage">Send</button>
-    </div>
+    <content-box>
+      <div class="chattingSpace d-flex flex-column">
+        <div id="divChatData">{{ text }}</div>
+        <input
+          v-model="message"
+          type="text"
+          id="message"
+          v-on:keyup.enter="sendMessage"
+        />
+          <v-btn v-on:click="sendMessage"
+          color="primary" elevation="0" class="black--text" style="font-weight"
+          >
+          Send
+          </v-btn>
+      </div>
+    </content-box>
   </div>
 </template>
 
 <script>
+import ContentBox from "@/components/common/ContentBox.vue"
+
 export default {
   name: 'ChattingStage',
+  components: {
+    ContentBox
+  },
   data: function() {
     return {
       message: "",
@@ -47,7 +58,6 @@ export default {
 </script>
 
 <style scoped>
-
 #chatting .background{
   display: flex;
   justify-content: center;

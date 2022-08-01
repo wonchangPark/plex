@@ -1,7 +1,7 @@
 <template>
 	<div id="main-container" class="container">
 		<div id="join" v-if="!session">
-			<div id="img-div"><img src="../../public/resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+			<!-- <div id="img-div"><img  src="../../public/resources/images/openvidu_grey_bg_transp_cropped.png" /></div> -->
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1>Join a video session</h1>
 				<div class="form-group">
@@ -33,7 +33,7 @@
 				<h2>team1 {{ score1 }}</h2>
 				<h2>team2 {{ score2 }}</h2>
 			</div>
-			<div id="main-video" class="col-md-6">
+			<div id="main-video" class="col-md-2">
 				<user-video :stream-manager="mainStreamManager"/>
 				<canvas id="main-video-canvas" style="display:none;"/>
 			</div>
@@ -343,3 +343,6 @@ export default {
 	}
 }
 </script>
+<style scoped>
+
+</style>
