@@ -1,7 +1,7 @@
 <template>
   <ContentBox :height="90" :width="90">
     <div class="d-flex flex-column pt-1" style="height: 100%; width: 100%">
-      <div class="d-flex flex-column" style="height: 90%; width: 100%">
+      <div class="d-flex flex-column" style="height: 87%; width: 100%">
         <div class="d-flex flex-column chatting-list-box">
           <ChattingItem></ChattingItem>
           <ChattingItem></ChattingItem>
@@ -27,7 +27,11 @@ export default {
 .chatting-list-box {
   height: 100%;
   width: 100%;
-  flex: 0 0;
   overflow-y: scroll;
+}
+
+
+.chatting-list-box::-webkit-scrollbar{
+  display: none;
 }
 </style>
