@@ -1,10 +1,13 @@
 <template>
-  <v-toolbar dense height="10vh" elevation="0" color="transparent">
-    <v-toolbar-title>
-        <router-link to="/">LOGO</router-link>
-    </v-toolbar-title>
+  <v-toolbar class="navbar" dense height="10vh" elevation="0" color="transparent">
+    <div class="d-flex align-end">
+      <v-toolbar-title>
+          <router-link to="/">LOGO</router-link>
+      </v-toolbar-title>
+    </div>
     <v-spacer></v-spacer>
 
+    <div class="d-flex align-end">
     <v-menu bottom rounded offset-y>
       <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
@@ -30,6 +33,7 @@
           </v-list-item-content>
       </v-card>
     </v-menu>
+    </div>
   </v-toolbar>
 </template>
 
@@ -48,7 +52,7 @@ export default {
     },
 };
 </script>
-<style scoped>
+<style>
 .page-btn {
     margin-top: 2%;
     margin-bottom: 2%;

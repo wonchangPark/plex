@@ -45,7 +45,7 @@ export default {
 }
 .signup-logo{
     font-weight: bold;
-    font-size: 3vw;
+    font-size: 5vw;
     margin-bottom: 2rem;
 }
 </style>

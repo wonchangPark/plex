@@ -1,7 +1,6 @@
 <template>
 	<div id="main-container" class="container">
 		<div id="join" v-if="!session">
-			<!-- <div id="img-div"><img  src="../../public/resources/images/openvidu_grey_bg_transp_cropped.png" /></div> -->
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1>Join a video session</h1>
 				<div class="form-group">
@@ -20,11 +19,15 @@
 			</div>
 		</div>
 
+
+
 		<div id="session" v-if="session">
 			<div id="session-header">
 				<h1 id="session-title">{{ mySessionId }}</h1>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
-				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="!videoMute" value="비디오 중지">
+				<v-btn>
+					<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="!videoMute" value="비디오 중지">
+				</v-btn>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="videoMute" value="비디오 시작">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
@@ -51,6 +54,19 @@
 		</div>
 	</div>
 </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script>
 import axios from 'axios';
