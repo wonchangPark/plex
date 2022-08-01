@@ -23,19 +23,14 @@ import javax.servlet.http.HttpSession;
 @CrossOrigin("*")
 public class RoomController {
 	
-	private OpenVidu openVidu;
+	private final OpenVidu openVidu;
 
-	private Map<String, Session> mapSessions = new ConcurrentHashMap<>();
+	private final Map<String, Session> mapSessions = new ConcurrentHashMap<>();
 
-	private Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
-	
-	private String OPENVIDU_URL;
-	private String SECRET;
+	private final Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
 	public RoomController(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl) {
-		this.SECRET = secret;
-		this.OPENVIDU_URL = openviduUrl;
-		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
+		this.openVidu = new OpenVidu(openviduUrl, secret);
 	}
 
 	@PostMapping("/get-token")
