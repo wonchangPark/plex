@@ -1,6 +1,7 @@
 package com.ssafy.common.auth;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Objects;
@@ -53,12 +54,28 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+        // filterChain.doFilter 라는 것은 다음 필터가 있으면 다음 필터를 호출하고, 없으면 서블릿을 호출한다.
+        System.out.println("doFilterInternal");
 		// Read the Authorization header, where the JWT Token should be
         String header = request.getHeader(JwtTokenUtil.HEADER_STRING);
+        System.out.println(header);
 
         // If header does not contain BEARER or is null delegate to Spring impl and exit
         if (header == null || !header.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
-            filterChain.doFilter(request, response);
+            // token이 없으므로 로그인과 회원가입의 경우는 그냥 진행하고
+            // 나머지의 경우에 대해서는 response에 값을 넣어서 로그인하라고 명령
+            String path = request.getRequestURI();
+            if(path.contains("/login")) {
+                // 로그인
+                filterChain.doFilter(request, response);
+            } else if(request.getMethod().equals("POST") && path.contains("/users")){
+                // 회원가입
+                filterChain.doFilter(request, response);
+            } else{
+                response.sendError(401, "accessToken needed");
+            }
+            // 이렇게 하면 이상하게 swagger-ui에서 에러남
+            // 그 이유가 spring-security랑 겹쳐서 충돌나서 그런 것이다.
             return;
         }
         
