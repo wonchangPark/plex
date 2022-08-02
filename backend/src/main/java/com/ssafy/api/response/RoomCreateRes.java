@@ -28,7 +28,7 @@ public class RoomCreateRes extends BaseResponseBody {
 
     private Integer gameNo;
     private Boolean isPrivate;
-    @ApiModelProperty(name="OpenVidu 방 token", example="ses_sdlkfjaioeaf")
+    @ApiModelProperty(name="OpenVidu 방 token", example="wss://i7a307.p.ssafy.io:4443?sessionId=ses_Bi0w0NqnE6&token=tok_J1bXOMzqtcrKgqNC")
     String token;
 
 
@@ -37,10 +37,13 @@ public class RoomCreateRes extends BaseResponseBody {
         RoomCreateRes res = new RoomCreateRes();
         res.setStatusCode(statusCode);
         res.setMessage(message);
+        res.setNo(room.getNo());
         res.setName(room.getName());
         res.setCode(room.getCode());
         res.setHost(room.getHost());
         res.setRoomSize(room.getRoomSize());
+        res.setGameNo(room.getGameNo());
+        res.setIsPrivate(room.getIsPrivate());
         res.setToken(token);
         return res;
     }

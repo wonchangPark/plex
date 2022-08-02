@@ -38,8 +38,8 @@ export default {
         ...mapActions(['setRoomJoin']),
         join() {
             const joinInfo = {
-                roomCode: 'U1O0Tqf5qA',
-                userName: 'test1'
+                roomCode: '2B0dXodsPj',
+                userName: 'test'
             }
             this.setRoomJoin(joinInfo)
             this.$router.push('/room')

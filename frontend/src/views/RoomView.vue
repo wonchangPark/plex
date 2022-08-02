@@ -177,11 +177,41 @@ export default {
 			// 'getToken' method is simulating what your server-side should do.
 			// 'token' parameter should be retrieved and returned by your own backend
 			
-			this.getToken(this.mySessionId, this.myUserName)
+			// this.getToken(this.mySessionId, this.myUserName)
 
 			this.init()
 
 			window.addEventListener('beforeunload', this.leaveSession)
+		},
+
+		connectSession (token) {
+			this.session.connect(token, { clientData: this.myUserName })
+			.then(() => {
+
+				// --- Get your own camera stream with the desired properties ---
+
+				let publisher = this.OV.initPublisher(undefined, {
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: true       	// Whether to mirror your local video or not
+				});
+
+				this.mainStreamManager = publisher;
+				console.log(this.mainStreamManager)
+				this.publisher = publisher;
+
+				// --- Publish your stream ---
+
+				this.session.publish(this.publisher);
+			})
+			.catch(error => {
+				console.log('There was an error connecting to the session:', error.code, error.message);
+			});
 		},
 
 		leaveSession () {
@@ -225,10 +255,10 @@ export default {
 
 		getToken (mySessionId, myUserName) {
 			axios
-				.post("https://localhost:8080/api/v1/rooms/get-token", {"sessionName" : mySessionId, "id" : myUserName})
+				.post("https://localhost:8080/api/v1/rooms/get-token", {"code" : mySessionId, "id" : myUserName})
 				.then((res) => {
-					console.log(res.data[0])
-					const token = res.data[0]
+					console.log(res)
+					const token = res.data.token
 					this.session.connect(token, { clientData: this.myUserName })
 					.then(() => {
 
@@ -354,11 +384,13 @@ export default {
 					this.mySessionId = res.data.code
 					this.myUserName = res.data.host
 					this.joinSession()
+					this.connectSession(res.data.token)
 				})
 		} else if (this.roomJoin) {
 				this.mySessionId = this.joinInfo.roomCode
 				this.myUserName = this.joinInfo.username
 				this.joinSession()
+				this.getToken(this.mySessionId, this.myUserName)
 		}
 	},
 
