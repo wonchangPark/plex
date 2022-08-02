@@ -1,30 +1,12 @@
 <template>
   <div id="login-form">
-    <form @submit.prevent="handleLogin">
+    <form @submit.prevent="login(credentials)">
       <div class="d-flex flex-column">
         <div style="visibility: hidden;">temp</div>
         <div class="d-flex flex-row">
           <div class="d-flex flex-column">
-            <div id="primary-input">
-              <v-row>
-                  <v-col cols="2">
-                    <label class="primary--text" for="ID">ID</label>
-                  </v-col>
-                  <v-col cols="10">
-                    <input id="ID" v-model="user.id" type="text" v-validate="'required'"/>
-                  </v-col>
-              </v-row>
-            </div>
-            <div id="primary-input">
-              <v-row>
-                <v-col cols="2">
-                  <label class="primary--text" for="PW">PW</label>
-                </v-col>
-                <v-col cols="10">
-                  <input id="PW" v-model="user.password" type="password" v-validate="'required'"/>
-                </v-col>
-              </v-row>
-            </div>
+            <PrimaryInput label="ID" labelText="ID" inputType="text" @input="IdListened"></PrimaryInput>
+            <PrimaryInput label="PW" labelText="PW" inputType="password" @input="PWListened"></PrimaryInput>
           </div>
           <div class="d-flex justify-center align-center">
             <button class="submit primary">확인</button>
@@ -37,49 +19,43 @@
 </template>
 
 <script>
+import PrimaryInput from '@/components/common/PrimaryInput.vue'
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: "LoginForm",
-  components: {},
+  components: { PrimaryInput },
   data() {
     return {
-      user: {
+      credentials: {
         id: "",
         password: ""
       },
-      loading: false
+
     }
   },
+
   computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn
+    ...mapGetters(['authError']),
+    IsLoggedIn(){
+      return this.$store.getters.IsLoggedIn
     }
   },
+
   created() {
-    if (this.loggedIn) {
+    if (this.IsLoggedIn) {
       this.$router.push('/waiting');
     }
   },
   methods: {
-    handleLogin() {
-      this.loading = true;
-      this.$validator.validateAll().then(isValid => {
-        if (!isValid) {
-          this.loading = false;
-          return;
-        }
-        if (this.user.id && this.user.password) {
-          this.$store.dispatch('auth/login', this.user)
-          .then(
-            () => {
-              this.$router.push('/waiting');
-            },
-            error => {
-              this.loading = false;
-              console.log(error)
-            }
-          )}
-      });
-    }
+    IdListened(id){
+      this.credentials.id = id 
+    },
+    PWListened(PW){
+      this.credentials.password = PW
+    },
+
+    ...mapActions(['login'])
   }
 };
 </script>
