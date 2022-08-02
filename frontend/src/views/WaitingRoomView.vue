@@ -66,7 +66,9 @@ export default {
         const roomInfo = {
             name: 'testRoom',
             host: 'test1',
-            roomSize: 6
+            roomSize: 6,
+            isPrivate: false,
+            gameNo: 1
             }
         this.setRoomCreate(roomInfo)
         this.$router.push('/room')

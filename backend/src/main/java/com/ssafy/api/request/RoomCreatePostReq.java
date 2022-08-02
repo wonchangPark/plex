@@ -17,6 +17,9 @@ public class RoomCreatePostReq {
     @ApiModelProperty(name="방 Host", example="ssafy")
     String host;
     @ApiModelProperty(name="방 인원", example="6")
-    int roomSize;
-
+    Integer roomSize;
+    @ApiModelProperty(name="게임 종류", example="1")
+    Integer gameNo;
+    @ApiModelProperty(name="비공개 여부", example="true")
+    Boolean isPrivate;
 }

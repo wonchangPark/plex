@@ -8,7 +8,9 @@ export default {
     roomInfo : {
       name: '',
       host: '',
-      roomSize: ''
+      roomSize: '',
+      isPrivate: false,
+      gameNo: 1
     },
     roomJoin : false,
     joinInfo : {

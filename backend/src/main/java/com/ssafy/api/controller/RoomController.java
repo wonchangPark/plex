@@ -7,9 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.response.RoomCreateRes;
 import com.ssafy.api.response.UserLoginPostRes;
+import com.ssafy.api.service.RoomUserService;
+import com.ssafy.api.service.UserService;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.RandomRoomCode;
 import com.ssafy.db.entity.Room;
+import com.ssafy.db.entity.User;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -41,18 +44,27 @@ public class RoomController {
 	@Autowired
 	private RoomService roomService;
 
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private RoomUserService roomUserService;
+
 	public RoomController(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl) {
 		this.openVidu = new OpenVidu(openviduUrl, secret);
 	}
 
 	@PostMapping("/create-room")
 	@Transactional
-	public ResponseEntity<?> createRoom(@RequestBody RoomCreatePostReq roomInfo) throws ParseException {
-		String privateCode = RandomRoomCode.generateRandomCode();
-		System.out.println(privateCode);
-		Room room = roomService.createRoom(roomInfo, privateCode);
+	public ResponseEntity<?> createRoom(@RequestBody RoomCreatePostReq roomInfo) {
+		String code = RandomRoomCode.generateRandomCode();
+		System.out.println(code);
+		Room room = roomService.createRoom(roomInfo, code);
+		User user = userService.getUserByUserId(roomInfo.getHost());
+		roomUserService.createRoomUser(user, room);
+
 		// The video-call to connect
-		String sessionName = privateCode;
+		String sessionName = code;
 
 		// Role associated to this user
 		OpenViduRole role = OpenViduRole.PUBLISHER;
@@ -64,8 +76,6 @@ public class RoomController {
 
 		// Build connectionProperties object with the serverData and the role
 		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).data(serverData).role(role).build();
-
-		JSONObject responseJson = new JSONObject();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists
@@ -119,6 +129,8 @@ public class RoomController {
 	@PostMapping("/get-token")
 	public ResponseEntity<JSONObject> getToken(@RequestBody String sessionNameParam, String id)
 			throws ParseException {
+//		User user = userService.getUserByUserId(id);
+//		roomUserService.createRoomUser(user, room);
 
 		System.out.println("Getting a token from OpenVidu Server | {sessionName}=" + sessionNameParam);
 

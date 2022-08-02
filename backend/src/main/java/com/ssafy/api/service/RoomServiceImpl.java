@@ -15,8 +15,8 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public Room createRoom(RoomCreatePostReq roomInfo, String privateCode) throws NullPointerException {
-        Room room = Room.createRoom(roomInfo.getName(), privateCode, roomInfo.getHost(), roomInfo.getRoomSize());
+    public Room createRoom(RoomCreatePostReq roomInfo, String code) throws NullPointerException {
+        Room room = Room.createRoom(roomInfo.getName(), code, roomInfo.getHost(), roomInfo.getRoomSize(), roomInfo.getGameNo(), roomInfo.getIsPrivate());
         System.out.println("service");
         roomRepository.save(room);
         return room;

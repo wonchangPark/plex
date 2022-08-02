@@ -38,7 +38,7 @@ export default {
         ...mapActions(['setRoomJoin']),
         join() {
             const joinInfo = {
-                roomCode: 'Q5ALk6m7Vj',
+                roomCode: 'U1O0Tqf5qA',
                 userName: 'test1'
             }
             this.setRoomJoin(joinInfo)

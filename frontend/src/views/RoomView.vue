@@ -351,7 +351,7 @@ export default {
 				.post("https://localhost:8080/api/v1/rooms/create-room", this.roomInfo )
 				.then((res) => {
 					console.log(res.data)
-					this.mySessionId = res.data.privateCode
+					this.mySessionId = res.data.code
 					this.myUserName = res.data.host
 					this.joinSession()
 				})
