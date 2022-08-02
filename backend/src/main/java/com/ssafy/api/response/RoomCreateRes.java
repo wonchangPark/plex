@@ -15,7 +15,7 @@ public class RoomCreateRes extends BaseResponseBody {
     @ApiModelProperty(name="방 이름", example="ssafy_web")
     String name;
     @ApiModelProperty(name="방 Code", example="slkjdejioa")
-    String privateCode;
+    String code;
     @ApiModelProperty(name="방 Host", example="ssafy")
     String host;
     @ApiModelProperty(name="방 인원", example="6")
@@ -28,7 +28,7 @@ public class RoomCreateRes extends BaseResponseBody {
         res.setStatusCode(statusCode);
         res.setMessage(message);
         res.setName(room.getName());
-        res.setPrivateCode(room.getPrivateCode());
+        res.setCode(room.getCode());
         res.setHost(room.getHost());
         res.setRoomSize(room.getRoomSize());
         res.setToken(token);
