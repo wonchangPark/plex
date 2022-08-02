@@ -2,7 +2,7 @@
     <ContentBox :height="90" :width="90">
         <div class="d-flex flex-column align-center" style="width: 100%; height: 100%">
             <div class="room-list d-flex flex-column align-center justify-space-around">
-                <RoomItem></RoomItem>
+                <RoomItem @join="join"></RoomItem>
                 <RoomItem></RoomItem>
                 <RoomItem></RoomItem>
             </div>
@@ -26,11 +26,24 @@
 <script>
 import RoomItem from "./Item/RoomItem.vue";
 import ContentBox from "../common/ContentBox.vue";
+import { mapActions } from "vuex"
+
 export default {
     name: "RoomList",
     components: {
         RoomItem,
         ContentBox,
+    },
+    methods: {
+        ...mapActions(['setRoomJoin']),
+        join() {
+            const joinInfo = {
+                roomCode: 'Q5ALk6m7Vj',
+                userName: 'test1'
+            }
+            this.setRoomJoin(joinInfo)
+            this.$router.push('/room')
+        }
     },
 };
 </script>

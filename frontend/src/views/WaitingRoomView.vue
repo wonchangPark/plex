@@ -61,7 +61,7 @@ export default {
   name: "WaitingRoomView",
   components: { UserList, RoomList, ChattingList },
   methods: {
-    ...mapActions(['setRoomCreate',]),
+    ...mapActions(['setRoomCreate']),
     createRoom() {
         const roomInfo = {
             name: 'testRoom',

@@ -59,7 +59,7 @@
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -193,6 +193,7 @@ export default {
 			this.publisher = undefined;
 			this.subscribers = [];
 			this.OV = undefined;
+			this.setRoomClose()
 
 			window.removeEventListener('beforeunload', this.leaveSession);
 		},
@@ -338,10 +339,11 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
+		...mapActions(['setRoomClose'])
 	},
 
 	computed : {
-		...mapGetters(['roomCreate', 'roomInfo']),
+		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo']),
 	},
 	created () {
 		if (this.roomCreate) {
@@ -353,6 +355,10 @@ export default {
 					this.myUserName = res.data.host
 					this.joinSession()
 				})
+		} else if (this.roomJoin) {
+				this.mySessionId = this.joinInfo.roomCode
+				this.myUserName = this.joinInfo.username
+				this.joinSession()
 		}
 	},
 
