@@ -34,14 +34,18 @@ export default {
 
     }
   },
+
+  computed: {
+    ...mapGetters(['authError']),
+    IsLoggedIn(){
+      return this.$store.getters.IsLoggedIn
+    }
+  },
+
   created() {
     if (this.IsLoggedIn) {
       this.$router.push('/waiting');
     }
-  },
-
-  computed: {
-    ...mapGetters(['authError'])
   },
   methods: {
     IdListened(id){

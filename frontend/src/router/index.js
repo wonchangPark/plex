@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import store from '../store'
+import store from '../store'
 
 import Home from '@/views/HomeView.vue'
 import Login from '@/views/LoginView.vue'
@@ -57,26 +57,25 @@ const router = new VueRouter({
 });
 
 
-// router.beforeEach((to, from, next) => {
-//   // 이전 페이지에서 발생한 에러메시지 삭제
-//   store.commit('SET_AUTH_ERROR', null)
+router.beforeEach((to, from, next) => {
+  // 이전 페이지에서 발생한 에러메시지 삭제
+  store.commit('SET_AUTH_ERROR', null)
   
-//   const { isLoggedIn } = store.getters
+  const { isLoggedIn } = store.getters
 
-//   const noAuthPages = ['login', 'signup']
+  const noAuthPages = ['login', 'signup']
   
-//   const isAuthRequired = !noAuthPages.includes(to.name)
+  const isAuthRequired = !noAuthPages.includes(to.name)
   
-//   if (isAuthRequired && !isLoggedIn) {
-//     alert('Require Login. Redirecting..')
-//     next({ name: 'login' })
-//   } else {
-//     next()
-//   }
+  if (isAuthRequired && !isLoggedIn) {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
   
-//   if (!isAuthRequired && isLoggedIn) {
-//     next({ name: 'waiting' })
-//   }
-// })
+  if (!isAuthRequired && isLoggedIn) {
+    next({ name: 'waiting' })
+  }
+})
 
 export default router;
