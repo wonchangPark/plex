@@ -1,6 +1,6 @@
 <template>
-  <ContentBox :height="90" :width="90">
-    <div class="d-flex flex-column pt-1" style="height: 100%; width: 100%">
+  <ContentBox class="chatting-list" :height="90" :width="90">
+    <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
       <div class="d-flex flex-column" style="height: 87%; width: 100%">
         <div class="d-flex flex-column chatting-list-box">
           <ChattingItem></ChattingItem>
@@ -9,6 +9,10 @@
           <ChattingItem></ChattingItem>
           <ChattingItem></ChattingItem>
         </div>
+      </div>
+      <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
+          <input class="ml-4 chatting-input white" type="text"/>
+          <button class="mx-2 chatting-submit primary">전송</button>
       </div>
     </div>
   </ContentBox>
@@ -30,8 +34,20 @@ export default {
   overflow-y: scroll;
 }
 
-
-.chatting-list-box::-webkit-scrollbar{
+.chatting-list-box::-webkit-scrollbar {
   display: none;
+}
+
+.chatting-list .chatting-input{
+  height: 80%;
+  width: 95%;
+  border-radius: 5px;
+}
+
+.chatting-list .chatting-submit{
+  height: 80%;
+  width:5%;
+  border-radius: 5px;
+  font-weight: bold;
 }
 </style>

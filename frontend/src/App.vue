@@ -27,7 +27,7 @@ export default {
 </script>
 <style scoped>
 #v-app {
-    background-image: url(./assets/landscape.jpg);
+    background-image: url(./assets/background.jpg);
     margin: 0;
     height: 100vh;
     width: 100vw;
