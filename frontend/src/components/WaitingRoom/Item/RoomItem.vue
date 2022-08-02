@@ -6,13 +6,20 @@
         </div>
         <div class="d-flex flex-row mr-3 align-center">
             <div class="white--text room-status mr-4">1/6</div>
-            <button class="blue deepblue--text room-submit pr-5 pl-5">입장하기</button>
+            <button class="blue deepblue--text room-submit pr-5 pl-5" @click="join">입장하기</button>
         </div>
     </div>
 </template>
 
 <script>
-export default {};
+export default {
+    name: "RoomItem",
+    methods: {
+        join() {
+            this.$emit("join")
+        },
+    }
+};
 </script>
 
 <style scoped>

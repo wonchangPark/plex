@@ -15,10 +15,16 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public Room createRoom(RoomCreatePostReq roomInfo, String privateCode) throws NullPointerException {
-        Room room = Room.createRoom(roomInfo.getName(), privateCode, roomInfo.getHost(), roomInfo.getRoomSize());
+    public Room createRoom(RoomCreatePostReq roomInfo, String code) throws NullPointerException {
+        Room room = Room.createRoom(roomInfo.getName(), code, roomInfo.getHost(), roomInfo.getRoomSize(), roomInfo.getGameNo(), roomInfo.getIsPrivate());
         System.out.println("service");
         roomRepository.save(room);
         return room;
+    }
+
+    @Override
+    public Room getRoomByCode(String code){
+        // 디비에서 방 정보를 방코드를 이용하여 조회
+        return roomRepository.findByCode(code);// 없다면 null이 들어감
     }
 }
