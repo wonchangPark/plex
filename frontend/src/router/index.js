@@ -1,38 +1,43 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
-
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Home from '@/views/HomeView.vue'
+import Login from '@/views/LoginView.vue'
+import WaitingRoom from '@/views/WaitingRoomView.vue'
+import GameRoom from '@/views/RoomView.vue'
+import Mypage from '@/views/MypageView.vue'
+import SignUp from '@/views/SignupView.vue'
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: Home,
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: '/login',
+    name: 'login',
+    component: Login,
   },
   {
-    path: "/login",
-    name:"login",
-    component: ()=> import("../views/LoginView.vue")
+    path: '/waiting',
+    name: 'waiting',
+    component: WaitingRoom
   },
   {
-    path: "/room",
-    name:"room",
-    component: ()=> import("../views/RoomView.vue")
+    path: '/room',
+    name: 'gameroom',
+    component: GameRoom
   },
   {
-    path:"/game",
-    name:"game",
-    component:()=>import("../views/GameView.vue")
+    path: '/mypage',
+    name: 'mypage',
+    component: Mypage
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: SignUp
   }
 ];
 

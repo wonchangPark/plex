@@ -1,6 +1,7 @@
 <template>
 	<div id="main-container" class="container">
 		<div id="join" v-if="!session">
+			<div id="game-container" ></div>
 			<div id="img-div"><img src="../../public/resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1>Join a video session</h1>
@@ -17,6 +18,9 @@
 						<button class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
 					</p>
 				</div>
+				<!--<div id='game-container'>
+					<canvas id='game-canvas'></canvas>
+				</div>-->
 			</div>
 		</div>
 
@@ -33,6 +37,7 @@
 				<h2>team1 {{ score1 }}</h2>
 				<h2>team2 {{ score2 }}</h2>
 			</div>
+			
 			<div id="main-video" class="col-md-6">
 				<user-video :stream-manager="mainStreamManager"/>
 				<canvas id="main-video-canvas" style="display:none;"/>
@@ -49,7 +54,6 @@
 			<h1>개인 점수</h1>
 			<p v-for="(user, index) in personalScore" :key="index">{{ user }}</p>
 		</div>
-		<Game />
 	</div>
 </template>
 
@@ -57,11 +61,15 @@
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
-
+//import Phaser from 'phaser';
+import Game from '../game/game.js';
+//import BootScene from '../game/BootScene.js';
+//import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plugin.js';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
 const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
+//const URL = 'https://teachablemachine.withgoogle.com/models/EFD5NSZU4/';
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 // const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -72,7 +80,6 @@ export default {
 
 	components: {
 		UserVideo,
-		Game
 	},
 
 	data () {
@@ -89,7 +96,31 @@ export default {
 			audioMute: false,		// 음소거
 			msg: "",		// 채팅 메시지 송신
 			chat: [],		// 채팅 메시지 수신
-
+			/*config: {
+				type: Phaser.AUTO,
+				width: 800,
+				height: 400,
+				parent: 'game-container',
+				transparent: true,
+				canvas: document.getElementById('game-canvas'),
+				plugins: {
+					global: [
+						{
+							key: 'rexImageURILoader',
+							plugin: ImageURILoaderPlugin,
+							start: true
+						},
+					]
+				},
+        /*scene: {
+            		preload: this.preload,
+            		create: this.create,
+            		update: this.update
+        		},
+				scene: [
+					BootScene, RopeFightScene,
+				]
+			},*/
 			status: 0,		// 동작 인식 상태
 			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
 			team2: ['d', 'e', 'f'],
@@ -130,12 +161,14 @@ export default {
 			this.session = this.OV.initSession();
 
 			// --- Specify the actions when events take place in the session ---
-
+			console.log("Join Session!");
 			// On every new Stream received...
 			this.session.on('streamCreated', ({ stream }) => {
 				// console.log(this.session)
 				const subscriber = this.session.subscribe(stream);
+				this.game.scene.getScene("ropeFightScene").inHandler(this.subscribers.length);
 				this.subscribers.push(subscriber);
+				console.log(this.subscribers.indexOf(stream.streamManager, 0));
 			});
 
 			// On every Stream destroyed...
@@ -143,6 +176,7 @@ export default {
 				const index = this.subscribers.indexOf(stream.streamManager, 0);
 				if (index >= 0) {
 					this.subscribers.splice(index, 1);
+					this.game.scene.getScene("ropeFightScene").outHandler(index);
 				}
 			});
 
@@ -162,8 +196,26 @@ export default {
 				console.log(event.data); // Message
 				if (this.team1.includes(event.data)) {
 					this.score1 += 1
+					//this.game.scene.getScene('ropeFightScene').goLeftHandler();
+
+					if (this.score1 - this.score2 >= 10){
+						this.game.scene.getScene('ropeFightScene').LeftWin();
+					}
+					else{
+						this.game.scene.getScene('ropeFightScene').goLeftHandler();
+					}
+
 				} else {
 					this.score2 += 1
+					//this.game.scene.getScene('ropeFightScene').goRightHandler();
+					if (this.score2 - this.score1 >= 10){
+						this.game.scene.getScene('ropeFightScene').RightWin();
+					}
+					else{
+						this.game.scene.getScene('ropeFightScene').goRightHandler();
+					}
+
+
 				}
 				this.personalScore[`${event.data}`] += 1
 				console.log(event.from); // Connection object of the sender
@@ -208,6 +260,7 @@ export default {
 
 			this.init()
 			window.addEventListener('beforeunload', this.leaveSession)
+			this.game = Game();			//generate phaser game when entering session
 		},
 
 		leaveSession () {
@@ -221,6 +274,7 @@ export default {
 			this.OV = undefined;
 
 			window.removeEventListener('beforeunload', this.leaveSession);
+			this.game.destroy(true);	// remove phaser game canvas from page when leaving session
 		},
 
 		updateMainVideoStreamManager (stream) {
@@ -252,36 +306,36 @@ export default {
 
 		async init () {
 			const modelURL = URL + 'model.json';
-        	const metadataURL = URL + 'metadata.json';
+			const metadataURL = URL + 'metadata.json';
 
         // load the model and metadata
         // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-        	model = await tmPose.load(modelURL, metadataURL);
-        	maxPredictions = model.getTotalClasses();
+			model = await tmPose.load(modelURL, metadataURL);
+			maxPredictions = model.getTotalClasses();
 
         // Convenience function to setup a webcam
-        	const flip = true; // whether to flip the webcam
-        	webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-        	await webcam.setup(); // request access to the webcam
-        	webcam.play();
-    		window.requestAnimationFrame(this.loop);
+			const flip = true; // whether to flip the webcam
+			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+			await webcam.setup(); // request access to the webcam
+			webcam.play();
+			window.requestAnimationFrame(this.loop);
 
         // append/get elements to the DOM
-        	// append/get elements to the DOM
-        	const canvas = document.getElementById('main-video-canvas');
-        	canvas.width = 200; canvas.height = 200;
-        	ctx = canvas.getContext('2d');
-        	labelContainer = document.getElementById('label-container');
-        	for (let i = 0; i < maxPredictions; i++) { // and class labels
-            	labelContainer.appendChild(document.createElement('div'));
-        	}
+			// append/get elements to the DOM
+			const canvas = document.getElementById('main-video-canvas');
+			canvas.width = 200; canvas.height = 200;
+			ctx = canvas.getContext('2d');
+			labelContainer = document.getElementById('label-container');
+			for (let i = 0; i < maxPredictions; i++) { // and class labels
+				labelContainer.appendChild(document.createElement('div'));
+			}
 		},
 
 		async loop(timestamp) {
-        	webcam.update(); // update the webcam frame
-        	await this.predict();
-        	window.requestAnimationFrame(this.loop);
-    	},
+			webcam.update(); // update the webcam frame
+			await this.predict();
+			window.requestAnimationFrame(this.loop);
+		},
 		async predict() {
 				// Prediction #1: run input through posenet
 				// estimatePose can take in an image, video or canvas html element
@@ -314,17 +368,17 @@ export default {
 
 			// finally draw the poses
 			//this.drawPose(pose);
-    	},
+			},
 
-    	drawPose(pose) {
-        	ctx.drawImage(webcam.canvas, 0, 0);
-        	// draw the keypoints and skeleton
-        	if (pose) {
-            	const minPartConfidence = 0.5;
-            	tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-            	tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-        	}
-    	},
+			drawPose(pose) {
+				ctx.drawImage(webcam.canvas, 0, 0);
+				// draw the keypoints and skeleton
+				if (pose) {
+					const minPartConfidence = 0.5;
+					tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+					tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+				}
+			},
 		
 		//END OF TEACHABLE MACHINE METHODS
 
@@ -422,13 +476,3 @@ export default {
 	}
 }
 </script>
-
-<style lang="scss">
-body {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-}
-</style>
