@@ -22,29 +22,13 @@ export default {
   name: "LoginPage",
   data: function () {
     return {
-      memberId: "",
-      memberPassword: "",
-      errorMessage: "",
     };
   },
   methods: {
-    doLogin() {
-      if (this.memberId == "") {
-        alert("아이디를 입력하세요.");
-        this.$refs.memberIdInput.focus();
-        return;
-      } else if (this.memberPassword == "") {
-        alert("패스워드를 입력하세요.");
-        this.$refs.memberPasswordInput.focus();
-        return;
-      }
-    },
+
     doCancel() {
       this.$router.push("/");
     },
-  },
-  mounted() {
-    this.$refs.memberIdInput.focus();
   },
   components: { ContentBox, LoginForm },
 };

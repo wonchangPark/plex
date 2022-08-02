@@ -22,8 +22,9 @@ public class Room {
     @NotNull
     private String name;
 
-    @Column(name = "room_privatecode", unique = true)
-    private String privateCode;
+    @Column(name = "room_code", unique = true)
+    @NotNull
+    private String code;
 
     @Column(name = "room_host")
     @NotNull
@@ -31,7 +32,7 @@ public class Room {
 
     @Column(name = "room_roomsize")
     @NotNull
-    private int roomSize; // 방 최대인원
+    private Integer roomSize; // 방 최대인원
 
     @Column(name = "room_starttime")
     @NotNull
@@ -40,18 +41,27 @@ public class Room {
     @Column(name = "room_endtime")
     private LocalDateTime endTime;
 
+    @Column(name = "room_gameno")
+    private Integer gameNo;
+
+    @Column(name = "room_isprivate")
+    @NotNull
+    private Boolean isPrivate;
+
     protected Room(){}
 
-    protected Room(String name, String privateCode, String host, int roomSize) {
+    protected Room(String name, String code, String host, int roomSize, int gameNo, boolean isPrivate) {
         // setter에 대한 것은 추후에
         this.name = name;
-        this.privateCode = privateCode;
+        this.code= code;
         this.host = host;
         this.roomSize = roomSize;
         this.startTime = LocalDateTime.now();
+        this.gameNo = gameNo;
+        this.isPrivate = isPrivate;
     }
 
-    public static Room createRoom(String name, String privateCode, String host, int roomSize){
-        return new Room(name, privateCode, host, roomSize);
+    public static Room createRoom(String name, String code, String host, int roomSize, int gameNo, boolean isPrivate){
+        return new Room(name, code, host, roomSize, gameNo, isPrivate);
     }
 }

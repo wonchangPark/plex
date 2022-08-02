@@ -1,6 +1,7 @@
 package com.ssafy.common.auth;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Objects;
@@ -53,12 +54,28 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+        // filterChain.doFilter 라는 것은 다음 필터가 있으면 다음 필터를 호출하고, 없으면 서블릿을 호출한다.
+        System.out.println("doFilterInternal");
 		// Read the Authorization header, where the JWT Token should be
         String header = request.getHeader(JwtTokenUtil.HEADER_STRING);
+        System.out.println(header);
 
         // If header does not contain BEARER or is null delegate to Spring impl and exit
         if (header == null || !header.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
-            filterChain.doFilter(request, response);
+            // token이 없으므로 로그인과 회원가입의 경우는 그냥 진행하고
+            // 나머지의 경우에 대해서는 response에 값을 넣어서 로그인하라고 명령
+            String path = request.getRequestURI();
+            if(path.contains("/login")) {
+                // 로그인
+                filterChain.doFilter(request, response);
+            } else if(request.getMethod().equals("POST") && path.contains("/users")){
+                // 회원가입
+                filterChain.doFilter(request, response);
+            } else{
+                response.sendError(401, "accessToken needed");
+            }
+            // 이렇게 하면 이상하게 swagger-ui에서 에러남
+            // 그 이유가 spring-security랑 겹쳐서 충돌나서 그런 것이다.
             return;
         }
         
@@ -82,13 +99,19 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(JwtTokenUtil.HEADER_STRING);
         OAuth oAuth = null;
         boolean newAccessToken = false;
+        System.out.println("test1");
         // 요청 헤더에 Authorization 키값에 jwt 토큰이 포함된 경우에만, 토큰 검증 및 인증 처리 로직 실행.
         if (token != null) {
             // parse the token and validate it (decode)
             JWTVerifier verifier = JwtTokenUtil.getAccessTokenVerifier();
+            System.out.println("test2");
+
             try {
                 JwtTokenUtil.accessHandleError(token); // 이곳에서 토큰 만료 여부가 체크됨
+                System.out.println("test2");
+
             } catch (TokenExpiredException e){ // accessToken time expired
+                System.out.println("expired");
                 // refresh token도 만료되었는지 확인
                 // redis에는 accessToken과 refreshToken이 키:밸류로 저장됨
                 // 따라서 redis에서 accessToken을 키로 가지고 가서 refreshToken을 가지고 온다.
@@ -102,6 +125,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             }
             DecodedJWT decodedJWT = verifier.verify(token.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
             String userId = decodedJWT.getSubject();
+            System.out.println("test3");
+
 
             // Search in the DB if we find the user by token subject (username)
             // If so, then grab user details and create spring auth token using username, pass, authorities/roles
