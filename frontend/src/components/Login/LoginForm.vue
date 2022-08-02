@@ -1,6 +1,6 @@
 <template>
   <div id="login-form">
-    <form @submit.prevent="handleLogin">
+    <form @submit.prevent="login(credentials)">
       <div class="d-flex flex-column">
         <div style="visibility: hidden;">temp</div>
         <div class="d-flex flex-row">
@@ -20,55 +20,38 @@
 
 <script>
 import PrimaryInput from '@/components/common/PrimaryInput.vue'
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: "LoginForm",
   components: { PrimaryInput },
   data() {
     return {
-      user: {
+      credentials: {
         id: "",
         password: ""
       },
-      loading: false
-    }
-  },
-  computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn
+
     }
   },
   created() {
-    if (this.loggedIn) {
+    if (this.IsLoggedIn) {
       this.$router.push('/waiting');
     }
   },
+
+  computed: {
+    ...mapGetters(['authError'])
+  },
   methods: {
     IdListened(id){
-      this.user.id = id 
+      this.credentials.id = id 
     },
     PWListened(PW){
-      this.user.password = PW
+      this.credentials.password = PW
     },
-    handleLogin() {
-      this.loading = true;
-      this.$validator.validateAll().then(isValid => {
-        if (!isValid) {
-          this.loading = false;
-          return;
-        }
-        if (this.user.id && this.user.password) {
-          this.$store.dispatch('auth/login', this.user)
-          .then(
-            () => {
-              this.$router.push('/waiting');
-            },
-            error => {
-              this.loading = false;
-              console.log(error)
-            }
-          )}
-      });
-    }
+
+    ...mapActions(['login'])
   }
 };
 </script>

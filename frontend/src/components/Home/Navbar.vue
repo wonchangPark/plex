@@ -1,17 +1,14 @@
 <template>
-  <v-toolbar class="navbar" dense height="10vh" elevation="0" color="transparent">
-    <div class="d-flex align-end">
-      <v-toolbar-title>
-          <router-link to="/">LOGO</router-link>
-      </v-toolbar-title>
+  <div class="navbar d-flex flex-row justify-space-between align-end">
+    <div class="router-logo d-flex">
+      <router-link to="/">PLEX</router-link>
     </div>
-    <v-spacer></v-spacer>
 
-    <div class="d-flex align-end">
+    <div class="d-flex">
     <v-menu bottom rounded offset-y>
       <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
-              <v-avatar color="brown" size="40"> </v-avatar>
+              <v-avatar color="brown" size="35"> </v-avatar>
           </v-btn>
       </template>
 
@@ -19,13 +16,15 @@
           <v-list-item-content class="justify-center">
               <div class="mx-auto text-center">
                   <v-avatar color="white" size="62"> </v-avatar>
-                  <v-divider class="my-3"></v-divider>
-                  <h4>{{ user.nickname }}</h4>
-                  <v-divider class="my-3"></v-divider>
+                  <br>
+                  <div class="menu-name">
+                    <h5 class="white--text">{{ user.nickname }}</h5>
+                  </div>
+                  <br>
                   <router-link to="/mypage">
                       <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 마이페이지 </v-btn>
                   </router-link>
-                  <a href @click.prevent="logOut">
+                  <a href @click.prevent="logout">
                     <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 로그아웃 </v-btn>
                   </a>
               </div>
@@ -33,10 +32,11 @@
       </v-card>
     </v-menu>
     </div>
-  </v-toolbar>
+  </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'NavBar',
   components: {
@@ -50,20 +50,26 @@ export default {
       }
     },
   methods: {
-    logOut() {
-      this.$store.dispatch('auth/logout');
-      this.$router.push('/login');
-    }
+    ...mapActions(['logout'])
+  },
+  computed: {
+    ...mapGetters(['isLoggedIn'])
   }
 };
 </script>
 <style>
+.navbar {
+  width: 100%;
+  height: 100%;
+}
 .page-btn {
     margin-top: 2%;
     margin-bottom: 2%;
 }
-
-#router-logo {
-  width: 200%;
+.menu-name{
+  margin-top: 10%;
+}
+.router-logo {
+  text-decoration: none;
 }
 </style>
