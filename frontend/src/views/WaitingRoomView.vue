@@ -10,6 +10,7 @@
             class="d-flex flex-column justify-space-around align-center"
             style="width: 100%; height: 100%"
           >
+          <v-btn @click="fetchWaitingRoomPage">test</v-btn>
             <button
               class="primary"
               style="width: 70%; height: 40px; font-weight: bold"
@@ -55,7 +56,7 @@
 import UserList from "@/components/WaitingRoom/UserList.vue";
 import RoomList from "@/components/WaitingRoom/RoomList.vue";
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "WaitingRoomView",
@@ -73,7 +74,11 @@ export default {
         this.setRoomCreate(roomInfo)
         this.$router.push('/room')
     },
-  }
+    ...mapActions(['fetchWaitingRoomPage'])
+  },
+  computed: {
+        ...mapGetters(['roompage'])
+    }
 };
 </script>
 <style scoped>
