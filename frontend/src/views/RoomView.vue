@@ -123,6 +123,7 @@ export default {
 			status: 0,		// 동작 인식 상태
 			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
 			team2: ['d', 'e', 'f'],
+			onlineSub: [undefined, undefined, undefined, undefined, undefined, undefined],
 			personalScore: {		// 개인별 점수
 				'a': 0,
 				'b': 0,
@@ -161,13 +162,28 @@ export default {
 
 			// --- Specify the actions when events take place in the session ---
 			console.log("Join Session!");
+
 			// On every new Stream received...
 			this.session.on('streamCreated', ({ stream }) => {
 				// console.log(this.session)
 				const subscriber = this.session.subscribe(stream);
-				this.game.scene.getScene("ropeFightScene").inHandler(this.subscribers.length);
+				//this.game.scene.getScene("ropeFightScene").inHandler(this.subscribers.length);
 				this.subscribers.push(subscriber);
-				console.log(this.subscribers.indexOf(stream.streamManager, 0));
+				this.subscribers.sort();
+
+				for (let i = 0 ; i < this.onlineSub.length ; i++) {
+					if (this.onlineSub[i] == undefined) {
+						this.game.scene.getScene("ropeFightScene").inHandler(i);
+						this.onlineSub[i] = subscriber;
+						console.log(i);
+						break;
+					}
+				}
+				console.log(this.subscribers);
+				//this.game.scene.getScene("ropeFightScene").inHandler(this.subscribers.length);
+				//this.isOnline[idx] = true;
+				//console.log(idx);
+				//console.log(this.subscribers.indexOf(stream.streamManager, 0));
 			});
 
 			// On every Stream destroyed...
@@ -175,7 +191,16 @@ export default {
 				const index = this.subscribers.indexOf(stream.streamManager, 0);
 				if (index >= 0) {
 					this.subscribers.splice(index, 1);
-					this.game.scene.getScene("ropeFightScene").outHandler(index);
+					//this.game.scene.getScene("ropeFightScene").outHandler(index);
+					//this.onlineSub[index] = undefined;
+					for (let i = 0 ; i < this.onlineSub.length ; i++) {
+						if (this.onlineSub[i] == stream.streamManager) {
+							this.game.scene.getScene("ropeFightScene").outHandler(i);
+							this.onlineSub[i] = undefined;
+							console.log(i);
+							break;
+						}
+					}
 				}
 			});
 
