@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Api(value = "대기방 API", tags = {"WaitingRooms"})
@@ -29,9 +30,15 @@ public class WaitingRoomController {
             @ApiResponse(code = 401, message = "인증 실패"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<List<RoomInfoRes>> getAvailableRoomList(@PathVariable @ApiParam(value = "현재 방페이지", required = true) int page){
+    public ResponseEntity<HashMap<String, Object>> getAvailableRoomList(@PathVariable @ApiParam(value = "현재 방페이지", required = true) int page){
         System.out.println("controller on");
-        return ResponseEntity.ok(waitingRoomService.getAvailableRoomList(page));
+        int lastPage = (int) Math.ceil(waitingRoomService.getAvailableRoomCount()/3.0);
+        if(page > lastPage)
+            page = lastPage;
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("rooms", waitingRoomService.getAvailableRoomList(page));
+        map.put("lastPage", lastPage);
+        return ResponseEntity.ok(map);
     }
 
 //    @GetMapping("/my")

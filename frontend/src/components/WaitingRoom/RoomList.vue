@@ -12,11 +12,11 @@
                     <button class="primary pl-6 pr-6 room-list-btn">코드입력</button>
                 </div>
                 <div class="d-flex flex-row align-center">
-                    <v-icon class="primary--text" size="60px"> mdi-chevron-left </v-icon>
+                    <v-icon class="direction-button primary--text" size="60px" @mouseup="prevPageEvent"> mdi-chevron-left </v-icon>
                     <div class="primary--text" style="font-weight: bold; font-size:1.7vw">
-                      1/4
+                      {{curPage}}/{{this.lastPage}}
                     </div>
-                    <v-icon class="primary--text" size="60px"> mdi-chevron-right </v-icon>
+                    <v-icon class="direction-button primary--text" size="60px" @mouseup="nextPageEvent"> mdi-chevron-right </v-icon>
                 </div>
             </div>
         </div>
@@ -26,13 +26,20 @@
 <script>
 import RoomItem from "./Item/RoomItem.vue";
 import ContentBox from "../common/ContentBox.vue";
-import { mapActions } from "vuex"
+import { mapActions, mapState } from "vuex"
+
+let RoomStore = 'roomStore';
 
 export default {
     name: "RoomList",
     components: {
         RoomItem,
         ContentBox,
+    },
+    data(){
+        return{
+            curPage:1
+        }
     },
     methods: {
         ...mapActions(['setRoomJoin']),
@@ -43,8 +50,20 @@ export default {
             }
             this.setRoomJoin(joinInfo)
             this.$router.push('/room')
+        },
+        nextPageEvent(){
+            if(this.curPage < this.lastPage)
+            this.curPage += 1;
+        },
+        prevPageEvent(){
+            if(this.curPage > 1)
+                this.curPage -= 1;
         }
     },
+    computed:{
+        ...mapState(RoomStore, ["lastPage", "rooms"]),
+
+    }
 };
 </script>
 
@@ -61,5 +80,8 @@ export default {
     font-weight: bold;
     font-size: 1.3vw;
     height: 50px;
+}
+.direction-button{
+    cursor: pointer;
 }
 </style>

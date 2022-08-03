@@ -1,15 +1,24 @@
-
 const roomStore = {
-    namespace: true,
-    state: {
-        rooms:[[],[],[]],
-        currentPage: 1,
-        lastPage:3,        
+  namespaced: true,
+  state: {
+    rooms: [],
+    lastPage: 6,
+  },
+  getters: {
+
+  },
+  mutations: {
+    SET_ROOMS: (state, { rooms, lastPage }) => {
+      state.rooms = rooms;
+      state.lastPage = lastPage;
     },
-    getters:{},
-    mutations:{
-        
-    }
-}
+    SET_CUR_PAGE: (state, payload) => {
+      state.currentPage = payload;
+    },
+  },
+  actions: {
+    
+  },
+};
 
 export default roomStore;
