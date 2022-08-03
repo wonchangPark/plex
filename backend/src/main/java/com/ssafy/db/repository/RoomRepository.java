@@ -1,5 +1,6 @@
 package com.ssafy.db.repository;
 
+import com.ssafy.db.entity.Room;
 import com.ssafy.db.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,10 @@ public class RoomRepository {
 
     @PersistenceContext
     EntityManager em;
+
+    public void save(Room room){
+        em.persist(room);
+    }
 
     public List<User> getCurrentUserList(int from, int to) {
         // 캐시 서버에서 salt 값이 있는 user들을 가지고 와야 한다.

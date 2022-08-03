@@ -25,7 +25,7 @@ export default {
     }),
 };
 </script>
-<style>
+<style scoped>
 #v-app {
     background-image: url(./assets/back.png);
     margin: 0;
