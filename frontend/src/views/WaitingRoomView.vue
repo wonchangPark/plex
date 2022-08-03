@@ -7,17 +7,13 @@
           style="flex: 0 0 20%; height: 20%; width: 100%"
         >
           <div
-            class="d-flex flex-column justify-space-around align-center"
-            style="width: 100%; height: 100%"
+            class="d-flex flex-column justify-space-between align-center"
+            style="width: 100%; height: 100%;"
           >
-          <v-btn @click="fetchWaitingRoomPage">test</v-btn>
-            <button
-              class="primary"
-              style="width: 70%; height: 40px; font-weight: bold"
-              @click="createRoom"
-            >
-              방 만들기
-            </button>
+            <button @click="fetchWaitingRoomPage" >test</button>
+            <CreateRoomDialog class="primary"
+            style="width: 70%; height: 40px; font-weight: bold">
+            </CreateRoomDialog>
 
             <button
               class="primary"
@@ -53,27 +49,18 @@
 </template>
 
 <script>
-import UserList from "@/components/WaitingRoom/UserList.vue";
-import RoomList from "@/components/WaitingRoom/RoomList.vue";
-import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
+import UserList from "@/components/WaitingRoom/UserList.vue"
+import RoomList from "@/components/WaitingRoom/RoomList.vue"
+import ChattingList from "@/components/WaitingRoom/ChattingList.vue"
+import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue"
+
 import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "WaitingRoomView",
-  components: { UserList, RoomList, ChattingList },
+  components: { UserList, RoomList, ChattingList, CreateRoomDialog },
   methods: {
     ...mapActions(['setRoomCreate']),
-    createRoom() {
-        const roomInfo = {
-            name: 'testRoom',
-            host: 'test1',
-            roomSize: 6,
-            isPrivate: false,
-            gameNo: 1
-            }
-        this.setRoomCreate(roomInfo)
-        this.$router.push('/room')
-    },
     ...mapActions(['fetchWaitingRoomPage'])
   },
   computed: {
