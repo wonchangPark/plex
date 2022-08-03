@@ -1,9 +1,19 @@
 <template>
-  <div class="rank-item d-flex flex-row justify-space-between align-center deepblue">
-    <v-avatar class="ml-5" color="white" size="50"></v-avatar>
-    <div class="white--text ranker-info">병아리 뿅뿅</div>
-    <div class="white--text ranker-info">1340</div>
-    <div class="mr-5 white--text ranker-info">#1</div>
+  <div class="rank-item d-flex flex-row justify-center align-center deepblue">
+    <v-row justify="center" align="center">
+      <v-col cols="4">
+        <v-avatar class="ml-5" color="white" size="50"></v-avatar>
+      </v-col>
+      <v-col cols="4">
+        <div class="white--text ranker-info">병아리 뿅뿅</div>
+      </v-col>
+      <v-col cols="2">
+        <div class="white--text ranker-info">1340</div>
+      </v-col>
+      <v-col cols="2">
+        <div class="mr-5 white--text ranker-info">#1</div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -35,8 +45,8 @@ export default {
 .rank-item{
   width: 90%;
   height: 95px;
-  margin-top: 2vh;
-  margin-bottom: 2vh;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
 }
 .ranker-info{
   font-weight: bold;

@@ -12,7 +12,7 @@ export default {
     isLoggedIn: state => !!state.token,
     profile: state => state.profile,
     authError: state => state.authError,
-    authHeader: state => ({ Authorization: `Token ${state.token}`})
+    authHeader: state => ({ Authorization: 'Bearer ' + state.token })
   },
   actions: {
     saveToken({ commit }, token) {

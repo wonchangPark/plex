@@ -16,12 +16,17 @@
               <div class="white--text rank-label">순위</div>
             </v-col>
           </v-row>
+          <div class="d-flex justify-center align-center">
+            <RankItem></RankItem>
+          </div>
+          <div class="d-flex justify-center align-center">
+            <RankItem></RankItem>
+          </div>
+          <div class="d-flex justify-center align-center">
+            <RankItem></RankItem>
+          </div>
+
         </v-container>
-        <div class="rank-list d-flex flex-column align-center justify-space-around">
-            <RankItem></RankItem>
-            <RankItem></RankItem>
-            <RankItem></RankItem>
-        </div>
       </div>
     </ContentBox>
   </div>

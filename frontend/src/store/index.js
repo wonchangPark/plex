@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import auth from './modules/auth';
+import auth from './modules/auth'
 import waiting from './modules/waiting'
-import room from './room'
+import room from './modules/room'
 
 Vue.use(Vuex);
 
