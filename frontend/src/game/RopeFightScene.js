@@ -20,7 +20,14 @@ class RopeFightScene extends Scene {
         var goLeftEvent = new Phaser.Events.EventEmitter();
         var goRightEvent = new Phaser.Events.EventEmitter();
 
+        
+        var skySprite = this.add.tileSprite(0, 400, 3200, 600, 'sky');
+        var skyUpper = this.add.tileSprite(0, 0, 3200, 200, 'skyupper');
+        skySprite.alpha = 1;
+        skyUpper.alpha = 1;
+
         this.grounds = this.physics.add.staticGroup();
+
         this.grounds.create(150, 260, 'ground');
         this.grounds.create(650, 260, 'ground');
 
@@ -57,7 +64,12 @@ class RopeFightScene extends Scene {
         this.team1[1].flipX = false;
         this.team1[2].flipX = false;
 
-        this.team1[0].alpha = 1; //0 is overall transparent
+       /* this.team1[0].alpha = 0; //0 is overall transparent
+        this.team1[1].alpha = 0;
+        this.team1[2].alpha = 0;
+        this.team2[0].alpha = 0; //0 is overall transparent
+        this.team2[1].alpha = 0;
+        this.team2[2].alpha = 0;*/
         /*this.textures.once('addtexture', function () {
             this.add.sprite(300, 100, 'player');
             this.add.sprite(100, 200, 'player');
@@ -71,7 +83,7 @@ class RopeFightScene extends Scene {
 
         for (var i = 0 ; i < this.team1.length ; i++)
             this.physics.add.collider(this.team1[i], this.grounds);
-        for (var j = 0 ; j < this.team1.length ; j++)
+        for (var j = 0 ; j < this.team2.length ; j++)
             this.physics.add.collider(this.team2[j], this.grounds);
     }
 

@@ -6,10 +6,9 @@ import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plu
 function launch() {
     return new Phaser.Game({
         type: Phaser.AUTO,
-        width: 800,
+        width: 1600,
         height: 400,
         parent: 'game-container',
-        transparent: true,
         canvas: document.getElementById('game-canvas'),
         plugins: {
             global: [
