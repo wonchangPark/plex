@@ -13,6 +13,7 @@ export default new Vuetify({
         error: "#b71c1c",
         brown: "#4A3E33",
         deepblue: "#28363F",
+        blue: "#92B6D8"
       },
     },
     opthions: {
