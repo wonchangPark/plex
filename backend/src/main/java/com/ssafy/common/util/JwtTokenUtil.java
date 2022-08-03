@@ -27,6 +27,7 @@ public class JwtTokenUtil {
     private static Integer refreshExpirationTime;
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
+    public static final String HEADER_STRING_REFRESH = "Authorization2";
     public static final String ISSUER = "ssafy.com";
     
     @Autowired
@@ -78,7 +79,8 @@ public class JwtTokenUtil {
     		return new Date(now.getTime() + expirationTime);
     }
 
-    public static void accessHandleError(String token) {
+    public static void accessHandleError(String token) throws Exception {
+        System.out.println("accessHandler on");
         JWTVerifier verifier = JWT
                 .require(Algorithm.HMAC512(accessSecretKey.getBytes()))
                 .withIssuer(ISSUER)
@@ -87,27 +89,37 @@ public class JwtTokenUtil {
         try {
             verifier.verify(token.replace(TOKEN_PREFIX, ""));
         } catch (AlgorithmMismatchException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (InvalidClaimException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (SignatureGenerationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (SignatureVerificationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (TokenExpiredException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (JWTCreationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (JWTDecodeException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (JWTVerificationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw ex;
         }
     }
 
-    public static void refreshHandleError(String token) {
+    public static void refreshHandleError(String token) throws Exception{
+        System.out.println("refreshHandleError");
         JWTVerifier verifier = JWT
                 .require(Algorithm.HMAC512(refreshSecretKey.getBytes()))
                 .withIssuer(ISSUER)
@@ -116,22 +128,31 @@ public class JwtTokenUtil {
         try {
             verifier.verify(token.replace(TOKEN_PREFIX, ""));
         } catch (AlgorithmMismatchException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (InvalidClaimException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (SignatureGenerationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (SignatureVerificationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (TokenExpiredException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (JWTCreationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (JWTDecodeException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (JWTVerificationException ex) {
+            ex.printStackTrace();
             throw ex;
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw ex;
         }
     }

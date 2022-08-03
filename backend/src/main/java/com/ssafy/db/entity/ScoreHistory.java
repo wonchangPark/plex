@@ -20,11 +20,14 @@ public class ScoreHistory {
     @JoinColumn(name = "gamehistory_no")
     private GameHistory gameHistory;
 
-    @Column(name = "gamehistory_score")
+    @Column(name = "scorehistory_score")
     private Long score;
 
-    @Column(name = "gamehistory_teamno")
+    @Column(name = "scorehistory_teamno")
     private int teamNo;
+
+    @Column(name = "scorehistory_win")
+    private Boolean win;
 
     protected ScoreHistory(){}
     protected ScoreHistory(User user, GameHistory gameHistory, Long score, int teamNo){

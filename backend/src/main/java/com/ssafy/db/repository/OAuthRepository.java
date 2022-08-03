@@ -35,10 +35,11 @@ public class OAuthRepository {
         return oAuth;
     }
 
+    @Transactional
     public void update(OAuth oAuth){
-        em.createQuery("update OAuth o set o.accessToken = :accessToken where o.userId = :userId", OAuth.class)
+        em.createQuery("update OAuth o set o.accessToken = :accessToken where o.userId = :userId")
                 .setParameter("accessToken", oAuth.getAccessToken())
-                .setParameter("userId", oAuth.getUserId());
+                .setParameter("userId", oAuth.getUserId()).executeUpdate();
     }
 
     @Transactional
