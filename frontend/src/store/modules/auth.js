@@ -5,24 +5,29 @@ const API_URL = 'https://localhost:8080/api/v1';
 
 export default {
   state: {
-    token: localStorage.getItem('token') || '' ,
+    accessToken: localStorage.getItem('accessToken') || '' ,
+    refreshToken: localStorage.getItem('refreshToken') || '',
     authError: null
   },
   getters:{
-    isLoggedIn: state => !!state.token,
+    isLoggedIn: state => !!state.accesstoken,
     profile: state => state.profile,
     authError: state => state.authError,
-    authHeader: state => ({ Authorization: `Token ${state.token}`})
-  },
+    authHeader: state => ({ Authorization: 'Bearer ' + state.accessToken, Authorization2: 'Bearer '+state.refreshToken})
+    },
   actions: {
-    saveToken({ commit }, token) {
-      commit('SET_TOKEN', token)
-      localStorage.setItem('token', token)
+    saveToken({ commit },{ accessToken, refreshToken}) {
+      commit('SET_ACCESSTOKEN', accessToken)
+      commit('SET_REFRESHTOKEN', refreshToken)
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
     },
 
     removeToken({commit}){
-      commit('SET_TOKEN', '')
-      localStorage.setItem('token', '')
+      commit('SET_ACCESSTOKEN', '')
+      commit('SET_REFRESHTOKEN', '')
+      localStorage.setItem('accessToken', '')
+      localStorage.setItem('refreshToken', '')
     },
     
     login({ commit, dispatch }, credentials) {
@@ -33,8 +38,10 @@ export default {
         data: credentials
       })
         .then(res => {
-          const token = res.data.accessToken
-          dispatch('saveToken', token)
+          console.log(res)
+          const accessToken = res.data.accessToken
+          const refreshToken = res.data.refreshToken
+          dispatch('saveToken', {accessToken, refreshToken})
           router.push({ name: 'waiting' })
         })
         .catch(err => {
@@ -69,7 +76,8 @@ export default {
 
   },
   mutations: {
-    SET_TOKEN: (state, token) => state.token = token,
+    SET_ACCESSTOKEN: (state, accessToken) => state.accessToken = accessToken,
+    SET_REFRESHTOKEN: (state, refreshToken) => state.refreshToken = refreshToken,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   }
 };
