@@ -254,8 +254,12 @@ export default {
 		},
 
 		getToken (mySessionId, myUserName) {
-			axios
-				.post("https://localhost:8080/api/v1/rooms/get-token", {"code" : mySessionId, "id" : myUserName})
+			axios ({
+				url: "https://localhost:8080/api/v1/rooms/get-token",
+        method: 'post',
+        data: {"code" : mySessionId, "id" : myUserName},
+        headers: this.authHeader,
+			})
 				.then((res) => {
 					console.log(res)
 					const token = res.data.token
@@ -373,12 +377,16 @@ export default {
 	},
 
 	computed : {
-		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo']),
+		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo', 'authHeader']),
 	},
 	created () {
 		if (this.roomCreate) {
-			axios
-				.post("https://localhost:8080/api/v1/rooms/create-room", this.roomInfo )
+			axios ({
+				url: "https://localhost:8080/api/v1/rooms/create-room",
+        method: 'post',
+        data: this.roomInfo,
+        headers: this.authHeader,
+			})
 				.then((res) => {
 					console.log(res.data)
 					this.mySessionId = res.data.code
