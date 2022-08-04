@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name : 'CreateRoomDialog',
@@ -57,7 +57,7 @@ export default {
       dialog: false,
       roomInfo: {
         name: '',
-        host: '병아리뿅뿅',
+        host: '',
         roomSize: 6,
         isPrivate: false,
         gameNo: 1
@@ -66,10 +66,14 @@ export default {
   methods: {
     ...mapActions(['setRoomCreate']),
     createRoom() {
+      this.roomInfo.host = this.getUser.userId
       this.setRoomCreate(this.roomInfo)
       this.$router.push('/room')
     },
-  }
+  },
+  computed: {
+    ...mapGetters(['getUser',]),
+  },
 }
 </script>
 
