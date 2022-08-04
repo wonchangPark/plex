@@ -18,13 +18,10 @@
         </v-row>
         <v-row justify="center" align="center">
           <v-col cols="11">
-            <label class="primary--text" for="introducing">자기소개</label>
+            <label class="primary--text" for="introducing">게임정보</label>
           </v-col>
-          <v-col cols="9">
-            <v-textarea/>
-          </v-col>
-          <v-col cols="2">
-            <v-btn color="primary" elevation="0" class="submit black--text">저장</v-btn>
+          <v-col cols="11">
+            <GameInfoBox></GameInfoBox>
           </v-col>
         </v-row>
         <v-row justify="center" align="center">
@@ -49,13 +46,14 @@
 
 <script>
 import ContentBox from "@/components/common/ContentBox.vue"
-
+import GameInfoBox from "@/components/Mypage/GameInfoBox.vue"
 export default {
   name: "InformationBox",
   component: {
   },
   components: {
-    ContentBox
+    ContentBox,
+    GameInfoBox
   },
   data () {
     return {

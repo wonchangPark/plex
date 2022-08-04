@@ -7,16 +7,19 @@ export default {
   state: {
     user: {},
     token: localStorage.getItem('token') || '' ,
-    authError: null
+    authError: null,
+    userNav: {}
   },
   getters:{
     isLoggedIn: state => !!state.token,
     getUser: state => state.user,
+    userNav: state => state.userNav,
     authError: state => state.authError,
     authHeader: state => ({ Authorization: 'Bearer ' + state.token })
   },
   mutations: {
     SET_USER: (state, user) => state.user = user,
+    SET_USERNAV: (state, userNav) => state.userNav = userNav,
     SET_TOKEN: (state, token) => state.token = token,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   },
@@ -30,7 +33,25 @@ export default {
       commit('SET_TOKEN', '')
       localStorage.setItem('token', '')
     },
-    
+
+    fetchNav({ commit, getters }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + '/users/me',
+          method: 'get',
+          headers: getters.authHeader,
+        })
+          .then(res => {
+            console.log(res.data)
+            commit('SET_USERNAV', res.data)
+          }
+            )
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    },
+
     login({ commit, dispatch }, credentials) {
 
       axios({
@@ -69,7 +90,7 @@ export default {
           router.push({ name: 'login' })
         })
         .catch(err => {
-          console.error(err.response.data)
+          console.log(err.response.data)
           commit('SET_AUTH_ERROR', err.response.data)
         })
     },
