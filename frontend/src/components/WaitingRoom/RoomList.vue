@@ -13,9 +13,7 @@
                 </div>
                 <div class="d-flex flex-row align-center">
                     <v-icon class="direction-button primary--text" size="60px" @mouseup="prevPageEvent"> mdi-chevron-left </v-icon>
-                    <div class="primary--text" style="font-weight: bold; font-size:1.7vw">
-                      {{curPage}}/{{this.lastPage}}
-                    </div>
+                    <div class="primary--text" style="font-weight: bold; font-size: 1.7vw">{{ curPage }}/{{ this.lastPage }}</div>
                     <v-icon class="direction-button primary--text" size="60px" @mouseup="nextPageEvent"> mdi-chevron-right </v-icon>
                 </div>
             </div>
@@ -26,9 +24,9 @@
 <script>
 import RoomItem from "./Item/RoomItem.vue";
 import ContentBox from "../common/ContentBox.vue";
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapMutations, mapState } from "vuex";
 
-let RoomStore = 'roomStore';
+let RoomStore = "roomStore";
 
 export default {
     name: "RoomList",
@@ -36,34 +34,33 @@ export default {
         RoomItem,
         ContentBox,
     },
-    data(){
-        return{
-            curPage:1
-        }
+    data() {
+        return {};
     },
     methods: {
-        ...mapActions(['setRoomJoin']),
+        ...mapActions(["setRoomJoin"]),
+        ...mapActions(RoomStore, ["getRooms"]),
+        ...mapMutations(RoomStore, ["NEXT_CUR_PAGE","PREV_CUR_PAGE"]),
         join() {
             const joinInfo = {
-                roomCode: '2B0dXodsPj',
-                userName: 'test'
-            }
-            this.setRoomJoin(joinInfo)
-            this.$router.push('/room')
+                roomCode: "2B0dXodsPj",
+                userName: "test",
+            };
+            this.setRoomJoin(joinInfo);
+            this.$router.push("/room");
         },
-        nextPageEvent(){
-            if(this.curPage < this.lastPage)
-            this.curPage += 1;
+        nextPageEvent() {
+            if (this.curPage < this.lastPage) this.NEXT_CUR_PAGE();
+            this.getRooms(this.curPage);
         },
-        prevPageEvent(){
-            if(this.curPage > 1)
-                this.curPage -= 1;
-        }
+        prevPageEvent() {
+            if (this.curPage > 1) this.PREV_CUR_PAGE();
+            this.getRooms(this.curPage);
+        },
     },
-    computed:{
-        ...mapState(RoomStore, ["lastPage", "rooms"]),
-
-    }
+    computed: {
+        ...mapState(RoomStore, ["lastPage", "rooms", "curPage"]),
+    },
 };
 </script>
 
@@ -81,7 +78,7 @@ export default {
     font-size: 1.3vw;
     height: 50px;
 }
-.direction-button{
+.direction-button {
     cursor: pointer;
 }
 </style>

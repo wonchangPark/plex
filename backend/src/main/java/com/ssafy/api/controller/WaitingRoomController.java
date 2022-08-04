@@ -38,6 +38,7 @@ public class WaitingRoomController {
         HashMap<String, Object> map = new HashMap<>();
         map.put("rooms", waitingRoomService.getAvailableRoomList(page));
         map.put("lastPage", lastPage);
+        map.put("curPage", page);
         return ResponseEntity.ok(map);
     }
 

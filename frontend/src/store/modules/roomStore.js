@@ -1,24 +1,42 @@
-const roomStore = {
-  namespaced: true,
-  state: {
-    rooms: [],
-    lastPage: 6,
-  },
-  getters: {
+import { rooms } from "@/api/room.js";
 
-  },
-  mutations: {
-    SET_ROOMS: (state, { rooms, lastPage }) => {
-      state.rooms = rooms;
-      state.lastPage = lastPage;
+const roomStore = {
+    namespaced: true,
+    state: {
+        rooms: [],
+        lastPage: 6,
+        curPage: 3,
     },
-    SET_CUR_PAGE: (state, payload) => {
-      state.currentPage = payload;
+    getters: {},
+    mutations: {
+        SET_ROOMS: (state, { rooms, lastPage }) => {
+            state.rooms = rooms;
+            state.lastPage = lastPage;
+        },
+        SET_CUR_PAGE: (state, payload) => {
+            state.curPage = payload;
+        },
+        NEXT_CUR_PAGE: (state) => {
+            state.curPage += 1;
+        },
+        PREV_CUR_PAGE: (state) => {
+            state.curPage -= 1;
+        },
     },
-  },
-  actions: {
-    
-  },
+    actions: {
+        getRooms: ({ commit }, page) => {
+            rooms(
+                page,
+                ({ data }) => {
+                    commit("SET_ROOMS", data);
+                    console.log(data);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        },
+    },
 };
 
 export default roomStore;
