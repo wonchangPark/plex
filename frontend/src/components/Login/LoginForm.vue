@@ -36,14 +36,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['authError']),
-    IsLoggedIn(){
-      return this.$store.getters.IsLoggedIn
-    }
+    ...mapGetters(['authError', 'isLoggedIn']),
   },
 
   created() {
-    if (this.IsLoggedIn) {
+    if (this.isLoggedIn) {
       this.$router.push('/waiting');
     }
   },
