@@ -14,13 +14,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @ApiModel("UserResponse")
-public class UserRes{
+public class UserRes extends BaseResponseBody{
 	@ApiModelProperty(name="User ID")
-	String userId;
+	private String userId;
+	private String userNick;
 	
 	public static UserRes of(User user) {
 		UserRes res = new UserRes();
 		res.setUserId(user.getUserId());
+		res.setUserNick(user.getNick());
 		return res;
 	}
 }

@@ -1,20 +1,43 @@
 <template>
-  <div>
-    <v-btn class="primary" elevation="0">확인하기</v-btn>
-    <ContentBox :width="40" :height="30"> 
-    
-     </ContentBox>
+  <div class="home">
+    <div class="d-flex flex-column justify-center align-center align-self-center">
+      <div class="d-flex justify-center align-self-center">
+        <img src="@/assets/logo.png" alt="logo">
+      </div>
+
+      <div class="d-flex flex-column">
+        <div class="d-flex justify-center">
+          <router-link to="/login">
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="10vw">로그인</v-btn>
+          </router-link>
+        </div>
+        <div class="d-flex justify-center">
+          <router-link to="/waiting">
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="10vw">대기방</v-btn>
+          </router-link>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import ContentBox from "@/components/common/ContentBox.vue";
-
 export default {
   name: "HomeView",
 
   components: {
-    ContentBox,
   },
 };
 </script>
+
+<style scoped>
+.home img {
+  width: 45%
+}
+.routing-btn{
+  margin-bottom: 5%;
+}
+.wrap {
+  padding-top: 5%;
+}
+</style>

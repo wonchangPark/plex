@@ -1,15 +1,50 @@
 <template>
-  <div class="user-list">
-		
-  </div>
+    <ContentBox :height="90" :width="70">
+        <div class="d-flex flex-column align-center" style="height: 100%; width: 100%">
+            <div class="primary--text d-flex justify-center align-center" style="font-size: 1.8vw; font-weight: bold; margin: 5px 0px; height: 10%">
+                접속 인원
+            </div>
+            <div class="d-flex flex-column" style="flex: 0 0 90%; width: 100%; height: 90%">
+                <div class="d-flex flex-column align-center user-info-list-box">
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                    <UserInfo></UserInfo>
+                </div>
+            </div>
+        </div>
+    </ContentBox>
 </template>
 
 <script>
+import ContentBox from "../common/ContentBox.vue";
+import UserInfo from "./Item/UserInfo.vue";
 export default {
-  name : 'UserList',
-}
+    name: "UserList",
+    components: { ContentBox, UserInfo },
+};
 </script>
 
-<style>
-
+<style scoped>
+.user-info-list-box {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+}
+.user-info-list-box::-webkit-scrollbar{
+  display: none;
+}
 </style>

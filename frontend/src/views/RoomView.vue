@@ -1,7 +1,7 @@
 <template>
 	<div id="main-container" class="container">
 		<div id="join" v-if="!session">
-			<div id="img-div"><img src="../../public/resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+			<div id="game-container"></div>
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1>Join a video session</h1>
 				<div class="form-group">
@@ -17,14 +17,22 @@
 						<button class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
 					</p>
 				</div>
+				<!--<div id='game-container'>
+					<canvas id='game-canvas'></canvas>
+				</div>-->
 			</div>
 		</div>
 
 		<div id="session" v-if="session">
 			<div id="session-header">
+				<button class="btn btn-lg btn-success" @click="sendplus()">plus1</button>
+				<button class="btn btn-lg btn-success" @click="sendplus2()">plus2</button>
+
 				<h1 id="session-title">{{ mySessionId }}</h1>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
-				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="!videoMute" value="비디오 중지">
+				<v-btn>
+					<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="!videoMute" value="비디오 중지">
+				</v-btn>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="videoMute" value="비디오 시작">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
@@ -33,7 +41,7 @@
 				<h2>team1 {{ score1 }}</h2>
 				<h2>team2 {{ score2 }}</h2>
 			</div>
-			<div id="main-video" class="col-md-6">
+			<div id="main-video" class="col-md-2">
 				<user-video :stream-manager="mainStreamManager"/>
 				<canvas id="main-video-canvas" style="display:none;"/>
 			</div>
@@ -49,7 +57,6 @@
 			<h1>개인 점수</h1>
 			<p v-for="(user, index) in personalScore" :key="index">{{ user }}</p>
 		</div>
-		<Game />
 	</div>
 </template>
 
@@ -57,11 +64,18 @@
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
+//import Phaser from 'phaser';
+import Game from '../game/game.js';
+//import BootScene from '../game/BootScene.js';
+//import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plugin.js';
+import { mapGetters, mapActions } from 'vuex'
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
-const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
+//const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
+//const URL = 'https://teachablemachine.withgoogle.com/models/EFD5NSZU4/';
+const URL = 'https://teachablemachine.withgoogle.com/models/4afz2QVdu/'
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 // const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -72,7 +86,6 @@ export default {
 
 	components: {
 		UserVideo,
-		Game
 	},
 
 	data () {
@@ -121,6 +134,32 @@ export default {
 			});
 			this.msg = ''
 		},
+		sendplus () {
+			if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+				this.score1 += 1
+
+				if (this.score1 - this.score2 >= 10){
+				this.game.scene.getScene('ropeFightScene').LeftWin();
+				}
+				else{
+					this.game.scene.getScene('ropeFightScene').goLeftHandler();
+				}
+			}
+			console.log('key pressed')
+		},
+		sendplus2 () {
+			if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+				this.score2 += 1
+
+				if (this.score2 - this.score1 >= 10){
+					this.game.scene.getScene('ropeFightScene').RightWin();
+				}
+				else{
+					this.game.scene.getScene('ropeFightScene').goRightHandler();
+				}
+			}
+			console.log('key pressed')
+		},
 
 		joinSession () {
 			// --- Get an OpenVidu object ---
@@ -161,9 +200,34 @@ export default {
 			this.session.on('signal:score', (event) => {
 				console.log(event.data); // Message
 				if (this.team1.includes(event.data)) {
-					this.score1 += 1
+
+					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score1 += 1
+
+						if (this.score1 - this.score2 >= 10){
+							this.game.scene.getScene('ropeFightScene').LeftWin();
+						}
+						else{
+							this.game.scene.getScene('ropeFightScene').goLeftHandler();
+						}						
+					}
+					//this.game.scene.getScene('ropeFightScene').goLeftHandler();
+
+
 				} else {
-					this.score2 += 1
+					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score2 += 1
+						if (this.score2 - this.score1 >= 10){
+							this.game.scene.getScene('ropeFightScene').RightWin();
+						}
+						else{
+							this.game.scene.getScene('ropeFightScene').goRightHandler();
+						}
+
+					}
+					//this.game.scene.getScene('ropeFightScene').goRightHandler();
+
+
 				}
 				this.personalScore[`${event.data}`] += 1
 				console.log(event.from); // Connection object of the sender
@@ -175,40 +239,43 @@ export default {
 			// 'getToken' method is simulating what your server-side should do.
 			// 'token' parameter should be retrieved and returned by your own backend
 			
-			this.getToken(this.mySessionId, this.myUserName)
-			// this.getToken(this.mySessionId).then(token => {
-			// 	console.log(token)
-			// 	this.session.connect(token, { clientData: this.myUserName })
-			// 		.then(() => {
-
-			// 			// --- Get your own camera stream with the desired properties ---
-
-			// 			let publisher = this.OV.initPublisher(undefined, {
-			// 				audioSource: undefined, // The source of audio. If undefined default microphone
-			// 				videoSource: undefined, // The source of video. If undefined default webcam
-			// 				publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-			// 				publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-			// 				resolution: '640x480',  // The resolution of your video
-			// 				frameRate: 30,			// The frame rate of your video
-			// 				insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-			// 				mirror: false       	// Whether to mirror your local video or not
-			// 			});
-
-			// 			this.mainStreamManager = publisher;
-			// 			this.publisher = publisher;
-
-			// 			// --- Publish your stream ---
-
-			// 			this.session.publish(this.publisher);
-			// 		})
-			// 		.catch(error => {
-			// 			console.log('There was an error connecting to the session:', error.code, error.message);
-			// 		});
-			// });
+			//this.getToken(this.mySessionId, this.myUserName)
 
 			this.init()
 			window.addEventListener('beforeunload', this.leaveSession)
+			this.game = Game();			//generate phaser game when entering session
 		},
+
+		connectSession (token) {
+			this.session.connect(token, { clientData: this.myUserName })
+			.then(() => {
+
+				// --- Get your own camera stream with the desired properties ---
+
+				let publisher = this.OV.initPublisher(undefined, {
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: true       	// Whether to mirror your local video or not
+				});
+
+				this.mainStreamManager = publisher;
+				console.log(this.mainStreamManager)
+				this.publisher = publisher;
+
+				// --- Publish your stream ---
+
+				this.session.publish(this.publisher);
+			})
+			.catch(error => {
+				console.log('There was an error connecting to the session:', error.code, error.message);
+			});
+		},
+
 
 		leaveSession () {
 			// --- Leave the session by calling 'disconnect' method over the Session object ---
@@ -219,6 +286,7 @@ export default {
 			this.publisher = undefined;
 			this.subscribers = [];
 			this.OV = undefined;
+			this.setRoomClose()
 
 			window.removeEventListener('beforeunload', this.leaveSession);
 		},
@@ -252,43 +320,43 @@ export default {
 
 		async init () {
 			const modelURL = URL + 'model.json';
-        	const metadataURL = URL + 'metadata.json';
+			const metadataURL = URL + 'metadata.json';
 
         // load the model and metadata
         // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-        	model = await tmPose.load(modelURL, metadataURL);
-        	maxPredictions = model.getTotalClasses();
+			model = await tmPose.load(modelURL, metadataURL);
+			maxPredictions = model.getTotalClasses();
 
         // Convenience function to setup a webcam
-        	const flip = true; // whether to flip the webcam
-        	webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-        	await webcam.setup(); // request access to the webcam
-        	webcam.play();
-    		window.requestAnimationFrame(this.loop);
+			const flip = true; // whether to flip the webcam
+			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+			await webcam.setup(); // request access to the webcam
+			webcam.play();
+			window.requestAnimationFrame(this.loop);
 
         // append/get elements to the DOM
-        	// append/get elements to the DOM
-        	const canvas = document.getElementById('main-video-canvas');
-        	canvas.width = 200; canvas.height = 200;
-        	ctx = canvas.getContext('2d');
-        	labelContainer = document.getElementById('label-container');
-        	for (let i = 0; i < maxPredictions; i++) { // and class labels
-            	labelContainer.appendChild(document.createElement('div'));
-        	}
+			// append/get elements to the DOM
+			const canvas = document.getElementById('main-video-canvas');
+			canvas.width = 200; canvas.height = 200;
+			ctx = canvas.getContext('2d');
+			labelContainer = document.getElementById('label-container');
+			for (let i = 0; i < maxPredictions; i++) { // and class labels
+				labelContainer.appendChild(document.createElement('div'));
+			}
 		},
 
 		async loop(timestamp) {
-        	webcam.update(); // update the webcam frame
-        	await this.predict();
-        	window.requestAnimationFrame(this.loop);
-    	},
+			webcam.update(); // update the webcam frame
+			await this.predict();
+			window.requestAnimationFrame(this.loop);
+		},
 		async predict() {
 				// Prediction #1: run input through posenet
 				// estimatePose can take in an image, video or canvas html element
 				const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
 				// Prediction 2: run input through teachable machine classification model
 				const prediction = await model.predict(posenetOutput);
-				if (prediction[0].probability.toFixed(2) >= 0.99) {
+				if (prediction[0].probability.toFixed(2) == 1) {
 					if (this.status == 1) {
 						this.session.signal({		// 운동 점수 송신
 							data: this.myUserName,  // Any string (optional)
@@ -303,8 +371,12 @@ export default {
 						});
 					}
 					this.status = 0
-				} else if (prediction[1].probability.toFixed(2) >= 0.99) {
-					this.status = 1
+				} else if (prediction[1].probability.toFixed(2) == 1) {
+					if (this.status == 0){
+						this.status = 1
+					}
+				} else if (prediction[2].probability.toFixed(2) == 1) {
+					this.status = 3
 				}
 				for (let i = 0; i < maxPredictions; i++) {
 						const classPrediction =
@@ -314,17 +386,17 @@ export default {
 
 			// finally draw the poses
 			//this.drawPose(pose);
-    	},
+			},
 
-    	drawPose(pose) {
-        	ctx.drawImage(webcam.canvas, 0, 0);
-        	// draw the keypoints and skeleton
-        	if (pose) {
-            	const minPartConfidence = 0.5;
-            	tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-            	tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-        	}
-    	},
+			drawPose(pose) {
+				ctx.drawImage(webcam.canvas, 0, 0);
+				// draw the keypoints and skeleton
+				if (pose) {
+					const minPartConfidence = 0.5;
+					tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+					tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+				}
+			},
 		
 		//END OF TEACHABLE MACHINE METHODS
 
@@ -341,11 +413,15 @@ export default {
 		 */
 
 		getToken (mySessionId, myUserName) {
-			axios
-				.post("https://localhost:8080/api/v1/rooms/get-token", {"sessionName" : mySessionId, "id" : myUserName})
+			axios ({
+				url: "https://localhost:8080/api/v1/rooms/get-token",
+				method: 'post',
+				data: {"code" : mySessionId, "id" : myUserName},
+				headers: this.authHeader,
+			})
 				.then((res) => {
-					console.log(res.data[0])
-					const token = res.data[0]
+					console.log(res)
+					const token = res.data.token
 					this.session.connect(token, { clientData: this.myUserName })
 					.then(() => {
 
@@ -419,16 +495,44 @@ export default {
 		// 			.catch(error => reject(error.response));
 		// 	});
 		// },
+
+		
+		...mapActions(['setRoomClose'])
+	},
+	computed : {
+		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo', 'authHeader']),
+	},
+	created () {
+		if (this.roomCreate) {
+			axios ({
+				url: "https://localhost:8080/api/v1/rooms/create-room",
+        method: 'post',
+        data: this.roomInfo,
+        headers: this.authHeader,
+			})
+				.then((res) => {
+					console.log(res.data)
+					this.mySessionId = res.data.code
+					this.myUserName = res.data.host
+					this.joinSession()
+					this.connectSession(res.data.token)
+				})
+		} else if (this.roomJoin) {
+				this.mySessionId = this.joinInfo.roomCode
+				this.myUserName = this.joinInfo.username
+				this.joinSession()
+				this.getToken(this.mySessionId, this.myUserName)
+		}
+	},
+
+	beforeRouteLeave(to, from, next) {
+		console.log('leave')
+		this.leaveSession()
+		next()
 	}
 }
 </script>
 
-<style lang="scss">
-body {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-}
+<style scoped>
+
 </style>

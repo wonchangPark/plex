@@ -1,6 +1,10 @@
 package com.ssafy.api.controller;
 
+import com.ssafy.db.entity.OAuth;
+import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +35,12 @@ import io.swagger.annotations.ApiResponse;
 public class AuthController {
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	private RedisTemplate<String, String> redisTemplate;
+
+	@Autowired
+	OAuthRepository oAuthRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -46,12 +56,30 @@ public class AuthController {
 	public ResponseEntity<UserLoginPostRes> login(@RequestBody @ApiParam(value="로그인 정보", required = true) UserLoginPostReq loginInfo) {
 		String userId = loginInfo.getId();
 		String password = loginInfo.getPassword();
+		System.out.println("login start");
 		
 		User user = userService.getUserByUserId(userId);
+		System.out.println("User : "+user);
+		if(user == null) {
+			System.out.println("user == null == 401 error");
+			return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Not Registered", null));
+		}
 		// 로그인 요청한 유저로부터 입력된 패스워드 와 디비에 저장된 유저의 암호화된 패스워드가 같은지 확인.(유효한 패스워드인지 여부 확인)
 		if(passwordEncoder.matches(password, user.getPassword())) {
+			System.out.println("password in");
 			// 유효한 패스워드가 맞는 경우, 로그인 성공으로 응답.(액세스 토큰을 포함하여 응답값 전달)
-			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", JwtTokenUtil.getToken(userId)));
+			String accessToken = JwtTokenUtil.getAccessToken(userId);
+			String refreshToken = JwtTokenUtil.getRefreshToken(userId); // 이 정보는 userId와 키밸류로 레디스에 들어갈 것.
+			System.out.println(accessToken+ " "+refreshToken);
+			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
+			System.out.println("oAuth : "+oAuth);
+			oAuthRepository.save(oAuth);
+
+			// redis 로 바꿀 때 사용
+//			ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+//			valueOperations.set(userId, refreshToken);
+
+			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", accessToken));
 		}
 		// 유효하지 않는 패스워드인 경우, 로그인 실패로 응답.
 		return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Invalid Password", null));

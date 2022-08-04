@@ -11,6 +11,9 @@ export default new Vuetify({
         secondary: "#92B6D8",
         accent: "#8c9eff",
         error: "#b71c1c",
+        brown: "#4A3E33",
+        deepblue: "#28363F",
+        blue: "#92B6D8"
       },
     },
     opthions: {
