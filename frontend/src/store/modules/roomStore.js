@@ -9,9 +9,12 @@ const roomStore = {
     },
     getters: {},
     mutations: {
-        SET_ROOMS: (state, { rooms, lastPage }) => {
+        SET_ROOMS: (state, { rooms, lastPage, curPage }) => {
+            while (rooms.length < 3) rooms.push({visible: false});
             state.rooms = rooms;
             state.lastPage = lastPage;
+            state.curPage = curPage;
+            console.log(rooms);
         },
         SET_CUR_PAGE: (state, payload) => {
             state.curPage = payload;
@@ -24,12 +27,12 @@ const roomStore = {
         },
     },
     actions: {
-        getRooms: ({ commit }, page) => {
+        getRooms: ({ commit, rootState }, page) => {
+            console.log({ page, token: rootState.auth.token });
             rooms(
-                page,
+                { page, token: rootState.auth.token },
                 ({ data }) => {
                     commit("SET_ROOMS", data);
-                    console.log(data);
                 },
                 (error) => {
                     console.log(error);

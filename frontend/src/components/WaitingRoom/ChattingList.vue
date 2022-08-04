@@ -24,6 +24,13 @@ import ChattingItem from "./Item/ChattingItem.vue";
 export default {
     name: "ChattingList",
     components: { ContentBox, ChattingItem },
+    data(){
+      return{
+        socket: null,
+        connection: null,
+        text: "",
+      }
+    },
     created: function () {
         console.log("Starting connection to WebSocket Server");
         this.connection = new WebSocket("wss://localhost:8080/ws/chat");
@@ -39,6 +46,11 @@ export default {
             console.log("Successfully connected to the echo websocket server...");
         };
     },
+    methods:{
+      connect(){
+
+      }
+    }
 };
 </script>
 

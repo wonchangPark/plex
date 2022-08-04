@@ -2,9 +2,7 @@
     <ContentBox :height="90" :width="90">
         <div class="d-flex flex-column align-center" style="width: 100%; height: 100%">
             <div class="room-list d-flex flex-column align-center justify-space-around">
-                <RoomItem @join="join"></RoomItem>
-                <RoomItem></RoomItem>
-                <RoomItem></RoomItem>
+                <RoomItem v-for="(item) in rooms" :key="item.gameNo" :room="item" :v-show="Object.keys(item).length !== 0"></RoomItem>
             </div>
             <div class="room-input-footer d-flex align-center flex-row justify-space-between">
                 <div class="d-flex flex-row align-center">
@@ -13,7 +11,7 @@
                 </div>
                 <div class="d-flex flex-row align-center">
                     <v-icon class="direction-button primary--text" size="60px" @mouseup="prevPageEvent"> mdi-chevron-left </v-icon>
-                    <div class="primary--text" style="font-weight: bold; font-size: 1.7vw">{{ curPage }}/{{ this.lastPage }}</div>
+                    <div class="primary--text" style="font-weight: bold; font-size: 1.7vw">{{ curPage }}/{{ lastPage }}</div>
                     <v-icon class="direction-button primary--text" size="60px" @mouseup="nextPageEvent"> mdi-chevron-right </v-icon>
                 </div>
             </div>
@@ -31,9 +29,9 @@ let RoomStore = "roomStore";
 export default {
     name: "RoomList",
     components: {
-        RoomItem,
-        ContentBox,
-    },
+    RoomItem,
+    ContentBox,
+},
     data() {
         return {};
     },
