@@ -34,7 +34,11 @@
               </v-col>
             </v-row>
             <br>
-              <v-btn color="primary" elevation="0" class="page-btn black--text align-self-center" style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"> 방 만들기 </v-btn>
+              <v-btn color="primary" elevation="0" 
+              class="page-btn black--text align-self-center" 
+              style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"
+              @click="createRoom"> 
+              방 만들기 </v-btn>
           </v-container>
         </v-list-item-content>
       </v-card>
@@ -62,14 +66,7 @@ export default {
   methods: {
     ...mapActions(['setRoomCreate']),
     createRoom() {
-      const roomInfo = {
-          name: 'testRoom',
-          host: 'test1',
-          roomSize: 6,
-          isPrivate: false,
-          gameNo: 1
-          }
-      this.setRoomCreate(roomInfo)
+      this.setRoomCreate(this.roomInfo)
       this.$router.push('/room')
     },
   }

@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container" class="container">
-		<div id="join" v-if="!session">
+		<!-- <div id="join" v-if="!session">
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1>Join a video session</h1>
 				<div class="form-group">
@@ -17,7 +17,7 @@
 					</p>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 
 
@@ -399,6 +399,7 @@ export default {
 				this.myUserName = this.joinInfo.username
 				this.joinSession()
 				this.getToken(this.mySessionId, this.myUserName)
+				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_Iq6gG6YDhJ&token=tok_C9I9oY6sPrgplzHb")
 		}
 	},
 
