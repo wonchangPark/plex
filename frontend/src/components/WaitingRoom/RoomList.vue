@@ -2,7 +2,7 @@
     <ContentBox :height="90" :width="90">
         <div class="d-flex flex-column align-center" style="width: 100%; height: 100%">
             <div class="room-list d-flex flex-column align-center justify-space-around">
-                <RoomItem v-for="(item) in rooms" :key="item.gameNo" :room="item" :v-show="Object.keys(item).length !== 0"></RoomItem>
+                <RoomItem v-for="(item) in rooms" :key="item.roomNo" :room="item" :v-show="Object.keys(item).length !== 0"></RoomItem>
             </div>
             <div class="room-input-footer d-flex align-center flex-row justify-space-between">
                 <div class="d-flex flex-row align-center">
@@ -38,17 +38,8 @@ export default {
         return {};
     },
     methods: {
-        ...mapActions(["setRoomJoin"]),
         ...mapActions(RoomStore, ["getRooms"]),
         ...mapMutations(RoomStore, ["NEXT_CUR_PAGE", "PREV_CUR_PAGE"]),
-        join() {
-            const joinInfo = {
-                roomCode: "2B0dXodsPj",
-                userName: "test",
-            };
-            this.setRoomJoin(joinInfo);
-            this.$router.push("/room");
-        },
         nextPageEvent() {
             if (this.curPage < this.lastPage) this.NEXT_CUR_PAGE();
             this.getRooms(this.curPage);

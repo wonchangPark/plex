@@ -39,8 +39,12 @@ export default {
     setRoomClose ({ commit }) {
       commit('SET_ROOMCLOSE')
     },
-    setRoomJoin ({ commit }, joinInfo) {
+    setRoomJoin ({ commit, getters }, roomCode) {
       commit('SET_ROOMJOIN')
+      const joinInfo = {
+          roomCode: roomCode,
+          userName: getters.getUser.userId,
+      }
       commit('SET_JOININFO', joinInfo)
     },
   }

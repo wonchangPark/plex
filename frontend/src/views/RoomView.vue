@@ -226,6 +226,7 @@ export default {
 			this.setRoomClose()
 
 			window.removeEventListener('beforeunload', this.leaveSession);
+			// this.$router.push('/waiting')
 		},
 
 		updateMainVideoStreamManager (stream) {
