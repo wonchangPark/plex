@@ -1,11 +1,11 @@
 <template>
-    <div class="room-info d-flex flex-row justify-space-between deepblue">
+    <div class="room-info d-flex flex-row justify-space-between deepblue" :class="[!room.visible ? 'room-info-hidden': '']">
         <div class="d-flex flex-column justify-center ml-6">
-            <div class="white--text room-host">host</div>
-            <div class="blue--text room-title">방 제목</div>
+            <div class="white--text room-host">{{room.host}}</div>
+            <div class="blue--text room-title">{{room.name}}</div>
         </div>
         <div class="d-flex flex-row mr-3 align-center">
-            <div class="white--text room-status mr-4">1/6</div>
+            <div class="white--text room-status mr-4">{{room.userCount}}/6</div>
             <button class="blue deepblue--text room-submit pr-5 pl-5" @click="join">입장하기</button>
         </div>
     </div>
@@ -14,11 +14,12 @@
 <script>
 export default {
     name: "RoomItem",
+    props: ["room"],
     methods: {
         join() {
-            this.$emit("join")
+            this.$emit("join");
         },
-    }
+    },
 };
 </script>
 
@@ -30,19 +31,23 @@ export default {
     font-weight: bold;
 }
 
-.room-info .room-host{
+.room-info-hidden{
+    visibility: hidden;
+}
+
+.room-info .room-host {
     font-size: 1vw;
 }
 
-.room-info .room-title{
+.room-info .room-title {
     font-size: 1.5vw;
 }
 
-.room-info .room-status{
+.room-info .room-status {
     font-size: 1.8vw;
 }
 
-.room-info .room-submit{
+.room-info .room-submit {
     font-size: 1.5vw;
     height: 60%;
 }

@@ -30,4 +30,13 @@ public class WaitingRoomRepository {
 //        }
         return result;
     }
+
+    public int getAvailableRoomCount(){
+        return em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
+                "from Room r, RoomUser ru " +
+                "where r = ru.room and r.endTime is null " +
+                "group by ru.room " +
+                "having COUNT(ru) <> r.roomSize " +
+                "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).getResultList().size();
+    }
 }

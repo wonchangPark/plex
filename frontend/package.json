@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --port 8088",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -13,6 +13,7 @@
     "openvidu-browser": "2.22.0",
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",
+    "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1",
     "vee-validate": "^2.2.15",
     "vue": "^2.6.14",

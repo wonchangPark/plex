@@ -38,4 +38,9 @@ public class WaitingRoomServiceImpl implements WaitingRoomService{
         int to = page * NUMPERPAGEFORROOM;
         return waitingRoomRepository.getCurrentRoomList(from, to);
     }
+
+    @Override
+    public int getAvailableRoomCount() {
+        return waitingRoomRepository.getAvailableRoomCount();
+    }
 }
