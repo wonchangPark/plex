@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -26,6 +27,12 @@ public class RoomRepository {
                     .setParameter("code", code).getSingleResult();
         } catch (NoResultException ignored){}
         return room;
+    }
+
+    public void endRoom(Room room) {
+        LocalDateTime endDate = LocalDateTime.now();
+        room.setEndTime(endDate);
+//        em.persist(room);
     }
 
     public List<User> getCurrentUserList(int from, int to) {
