@@ -1,24 +1,27 @@
 <template>
-  <div class="rank d-flex flex-column justify-center">
-    <div class="rank-logo d-flex align-self-center">Ranking</div>
-    <div class="d-flex justify-center align-start" style="flex: 1">
-      <ContentBox :height="90" :width="70">
-        <RankItem></RankItem>
-      </ContentBox>
+  <div class="rank">
+    <div class="d-flex flex-column justify-center align-center" style="flex:1 1 100%">
+      <div class="rank-logo d-flex align-self-center">Ranking</div>
+        <ContentBox :height="70" :width="70">
+          <div class="d-flex flex-column align-center" style="height: 100%; width: 100%">
+            <RankList></RankList>
+          </div>
+        </ContentBox>
     </div>
   </div>
 </template>
 
 <script>
+import RankList from "@/components/Rank/RankList.vue"
 import ContentBox from "@/components/common/ContentBox.vue"
 
-import RankItem from '@/components/Rank/RankItem.vue'
 export default {
   name: 'RankView',
   components: { 
-    RankItem,
+    RankList,
     ContentBox
   },
+ 
 }
 </script>
 

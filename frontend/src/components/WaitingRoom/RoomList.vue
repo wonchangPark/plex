@@ -40,7 +40,7 @@ export default {
     methods: {
         ...mapActions(["setRoomJoin"]),
         ...mapActions(RoomStore, ["getRooms"]),
-        ...mapMutations(RoomStore, ["NEXT_CUR_PAGE","PREV_CUR_PAGE"]),
+        ...mapMutations(RoomStore, ["NEXT_CUR_PAGE", "PREV_CUR_PAGE"]),
         join() {
             const joinInfo = {
                 roomCode: "2B0dXodsPj",

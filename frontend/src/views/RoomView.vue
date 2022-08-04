@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container" class="container">
-		<div id="join" v-if="!session">
+		<!-- <div id="join" v-if="!session">
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1>Join a video session</h1>
 				<div class="form-group">
@@ -17,7 +17,7 @@
 					</p>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 
 
@@ -254,8 +254,12 @@ export default {
 		},
 
 		getToken (mySessionId, myUserName) {
-			axios
-				.post("https://localhost:8080/api/v1/rooms/get-token", {"code" : mySessionId, "id" : myUserName})
+			axios ({
+				url: "https://localhost:8080/api/v1/rooms/get-token",
+        method: 'post',
+        data: {"code" : mySessionId, "id" : myUserName},
+        headers: this.authHeader,
+			})
 				.then((res) => {
 					console.log(res)
 					const token = res.data.token
@@ -373,12 +377,16 @@ export default {
 	},
 
 	computed : {
-		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo']),
+		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo', 'authHeader']),
 	},
 	created () {
 		if (this.roomCreate) {
-			axios
-				.post("https://localhost:8080/api/v1/rooms/create-room", this.roomInfo )
+			axios ({
+				url: "https://localhost:8080/api/v1/rooms/create-room",
+        method: 'post',
+        data: this.roomInfo,
+        headers: this.authHeader,
+			})
 				.then((res) => {
 					console.log(res.data)
 					this.mySessionId = res.data.code
@@ -391,6 +399,7 @@ export default {
 				this.myUserName = this.joinInfo.username
 				this.joinSession()
 				this.getToken(this.mySessionId, this.myUserName)
+				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_Iq6gG6YDhJ&token=tok_C9I9oY6sPrgplzHb")
 		}
 	},
 
