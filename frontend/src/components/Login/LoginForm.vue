@@ -36,10 +36,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['authError']),
-    IsLoggedIn(){
-      return this.$store.getters.IsLoggedIn
-    }
+    ...mapGetters(['authError','getUser', 'isLoggedIn']),
   },
 
   created() {

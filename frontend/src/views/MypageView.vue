@@ -10,10 +10,11 @@
         </div>
     
         <div class="d-flex justify-center" style="flex: 1 1 70%">
-          <div class="d-flex" style="flex: 1 1 80%">
+          <div class="d-flex justify-center" style="flex: 1 1 80%">
             <InformationBox></InformationBox>
           </div>
         </div>
+
       </div>
     </div>
   </div>
