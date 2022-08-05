@@ -1,16 +1,16 @@
 <template>
   <v-container class="d-flex flex-column justify-center" style="flex: 1 1 100%; height:100%">
-      <v-row class="d-flex align-self-center" justify="center" align="center" style="width:90%;">
+      <v-row class="rank-content d-flex align-self-center" justify="center" align="center" style="width:90%;">
         <v-col cols="4">
         </v-col>
         <v-col cols="4">
-          <div class="white--text rank-label">닉네임</div>
+          <div class="primary--text rank-label">닉네임</div>
         </v-col>
         <v-col cols="2">
-          <div class="white--text rank-label">점수</div>
+          <div class="primary--text rank-label">점수</div>
         </v-col>
         <v-col cols="2">
-          <div class="white--text rank-label">순위</div>
+          <div class="primary--text rank-label">순위</div>
         </v-col>
       </v-row>
 

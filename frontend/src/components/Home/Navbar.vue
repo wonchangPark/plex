@@ -22,7 +22,7 @@
                   </div>
                   <br>
                   <router-link to="/mypage">
-                      <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 마이페이지 </v-btn>
+                      <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw" @click="fetchProfile"> 마이페이지 </v-btn>
                   </router-link>
                   <a href @click.prevent="logout">
                     <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 로그아웃 </v-btn>
@@ -49,13 +49,15 @@ export default {
   methods: {
     ...mapActions([
       'logout',
-      'fetchNav'
+      'fetchNav',
+      'fetchprofile'
       ])
   },
   computed: {
     ...mapGetters([
       'isLoggedIn',
-      'userNav'])
+      'userNav',
+      'profile'])
   },
   created() {
     this.fetchNav()

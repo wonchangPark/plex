@@ -7,7 +7,7 @@
             <label class="primary--text" for="ID">아이디</label>
           </v-col>
           <v-col cols="4">
-            <input id="ID" type="text" v-model="credentials.id" required />
+            <input id="ID" type="text" v-model="credentials.id" required/>
           </v-col>
           <v-col cols="4">
             <div class="overlap d-flex align-center secondary--text"> 중복이 아닙니다 </div>
@@ -35,12 +35,12 @@
             <label class="primary--text" for="checkPW">PW 확인</label>
           </v-col>
           <v-col cols="3">
-            <input id="checkPW" type="password" v-model="credentials.password2"/>
+            <input id="checkPW" type="password" v-model="credentials.password2" required/>
           </v-col>
         </v-row>
       </v-container>
       <div class="d-flex justify-center align-center">
-        <v-btn color="primary" elevation="0" class="submit black--text" type="submit">가입</v-btn>
+        <v-btn color="primary" elevation="0" class="submit black--text" type="submit ">가입</v-btn>
       </div>    
     </form>
   </div>
@@ -69,6 +69,7 @@ export default {
   },
   methods: {
     ...mapActions(['signup'])
+    
   }
   };
 </script>
