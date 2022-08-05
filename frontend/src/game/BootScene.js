@@ -9,6 +9,7 @@ import T2 from '../assets/Test2.png'
 import T3 from '../assets/Test3.png'
 
 import BackGround from '../assets/Room1600.png'
+import RunningRoom from '../assets/RunningRoom.png'
 import DeskRight from '../assets/DeskRight.png'
 import DeskLeft from '../assets/DeskLeft.png'
 
@@ -114,6 +115,7 @@ class BootScene extends Scene {
 
 
         this.load.rexImageURI('background', BackGround)
+        this.load.rexImageURI('RunningRoom', RunningRoom)
         this.load.rexImageURI('DeskRight', DeskRight)
         this.load.rexImageURI('DeskLeft', DeskLeft)
 
@@ -278,7 +280,7 @@ class BootScene extends Scene {
                 { key: 'Slime3_15' },
                 { key: 'Slime3_16', duration: 50 }
             ],
-            frameRate: 16,
+            frameRate: 20,
             repeat: -1
         });
 
@@ -302,7 +304,7 @@ class BootScene extends Scene {
                 { key: 'Sushi_15' },
                 { key: 'Sushi_16', duration: 50 }
             ],
-            frameRate: 16,
+            frameRate: 20,
             repeat: -1
         });
 
@@ -326,7 +328,7 @@ class BootScene extends Scene {
                 { key: 'gummybear_15' },
                 { key: 'gummybear_16', duration: 50 }
             ],
-            frameRate: 16,
+            frameRate: 20,
             repeat: -1
         });
 
@@ -350,12 +352,13 @@ class BootScene extends Scene {
                 { key: 'pudding_15' },
                 { key: 'pudding_16', duration: 50 }
             ],
-            frameRate: 50,
+            frameRate: 20,
             repeat: -1
         });
         
 
-        this.scene.start("ropeFightScene");
+        //this.scene.start("ropeFightScene");
+        this.scene.start("RunningScene");
     }
 }
 

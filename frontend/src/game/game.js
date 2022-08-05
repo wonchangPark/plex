@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import BootScene from './BootScene'
 import RopeFightScene from './RopeFightScene'
+import RunningScene from './RunningScene'
 import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plugin.js';
 
 function launch() {
@@ -33,7 +34,7 @@ function launch() {
         update: this.update
     },*/
     scene: [
-        BootScene, RopeFightScene,
+        BootScene, RopeFightScene, RunningScene
     ]
     })
 }

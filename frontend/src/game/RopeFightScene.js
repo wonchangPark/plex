@@ -62,21 +62,22 @@ class RopeFightScene extends Scene {
         this.rope[2] = this.add.sprite(656, 200, 'rope');*/
 
 
+        this.rope = this.add.sprite(800, 200, 'rope');
 
 
-        this.team1[0] = this.physics.add.sprite(150, 200, 'slime1_1').play('slime1Move');
+        this.team1[0] = this.physics.add.sprite(150, 100, 'slime1_1').play('slime1Move');
 
         //this.team1[0] = this.physics.add.sprite(100, 200, 'player');    //adding sprites with physics
-        this.team1[1] = this.physics.add.sprite(300, 200, 'Slime3_1').play('Slime3Move');
-        this.team1[2] = this.physics.add.sprite(450, 200, 'Sushi_1').play('SushiMove');
+        this.team1[1] = this.physics.add.sprite(300, 100, 'Slime3_1').setScale(2).play('Slime3Move');
+        this.team1[2] = this.physics.add.sprite(450, 100, 'Sushi_1').play('SushiMove');
         //this.team2[0] = this.physics.add.sprite(500, 200, 'player3');
 
-        this.team2[0] = this.physics.add.sprite(1050, 200, 'gummybear_1').play('gummybearMove');
-        this.team2[1] = this.physics.add.sprite(1200, 200, 'pudding_1').play('puddingMove');
+        this.team2[0] = this.physics.add.sprite(1050, 100, 'gummybear_1').play('gummybearMove');
+        this.team2[1] = this.physics.add.sprite(1200, 100, 'pudding_1').play('puddingMove');
         this.team2[2] = this.physics.add.sprite(1350, 200, 'test1').play('move');
 
 
-        this.rope = this.add.sprite(800, 200, 'rope');
+
 
         this.team2[0].flipX = true;
         this.team2[1].flipX = true;

@@ -145,6 +145,10 @@ export default {
 					this.game.scene.getScene('ropeFightScene').goLeftHandler();
 				}
 			}
+
+
+			this.game.scene.getScene('RunningScene').GoRight(1);
+
 			console.log('key pressed')
 		},
 		sendplus2 () {
@@ -158,6 +162,8 @@ export default {
 					this.game.scene.getScene('ropeFightScene').goRightHandler();
 				}
 			}
+
+			this.game.scene.getScene('RunningScene').GoRight(2);
 			console.log('key pressed')
 		},
 
