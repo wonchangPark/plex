@@ -43,6 +43,14 @@ export default {
         })
           .then(res => {
             console.log(res.data)
+            const user = {
+              no: res.data.no,
+              userId: res.data.userId,
+              nick: res.data.nick,
+              email: res.data.email,
+              totalScore: res.data.totalScore
+            }
+            commit('SET_USER', user)
             commit('SET_USERNAV', res.data)
           }
             )

@@ -82,6 +82,6 @@ public class UserController {
 			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "noUserInfo"));
 		}
 		
-		return ResponseEntity.status(200).body(UserRes.of(user));
+		return ResponseEntity.status(200).body(UserRes.of(200, "Success", user));
 	}
 }

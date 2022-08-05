@@ -1,3 +1,7 @@
+import axios from 'axios'
+
+const API_URL = 'https://localhost:8080/api/v1';
+
 export default {
   namespaced: false,
   state: {
@@ -46,6 +50,17 @@ export default {
           userName: getters.getUser.userId,
       }
       commit('SET_JOININFO', joinInfo)
+    },
+    leaveRoom ({ getters }, joinInfo) {
+      axios({
+        url: API_URL + '/rooms/leave-room',
+        method: 'post',
+        data: joinInfo,
+        headers: getters.authHeader
+      })
+      .then( (res) => {
+        console.log(res)
+      })
     },
   }
 }

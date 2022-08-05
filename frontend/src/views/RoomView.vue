@@ -217,6 +217,11 @@ export default {
 		leaveSession () {
 			// --- Leave the session by calling 'disconnect' method over the Session object ---
 			if (this.session) this.session.disconnect();
+			const joinInfo = {
+				code : this.mySessionId,
+				id : this.myUserName
+			}
+			this.leaveRoom(joinInfo)
 
 			this.session = undefined;
 			this.mainStreamManager = undefined;
@@ -226,7 +231,7 @@ export default {
 			this.setRoomClose()
 
 			window.removeEventListener('beforeunload', this.leaveSession);
-			// this.$router.push('/waiting')
+			this.$router.push('/waiting')
 		},
 
 		updateMainVideoStreamManager (stream) {
@@ -374,7 +379,7 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-		...mapActions(['setRoomClose'])
+		...mapActions(['setRoomClose', 'leaveRoom'])
 	},
 
 	computed : {
@@ -402,14 +407,23 @@ export default {
 				this.joinSession()
 				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_BjMvFY12vK&token=tok_WfIoBmdus23jFzoX")
 				this.getToken(this.mySessionId, this.myUserName)
+		} else {
+				this.$router.push('/waiting')
 		}
 	},
+	beforeDestroy() {
+		console.log("destroy")
+		if (this.session) {
+			this.leaveSession()
+		}
+		// this.$router.push('/waiting')
+  },
 
-	beforeRouteLeave(to, from, next) {
-		console.log('leave')
-		this.leaveSession()
-		next()
-	}
+	// beforeRouteLeave(to, from, next) {
+	// 	console.log('leave')
+	// 	this.leaveSession()
+	// 	next()
+	// }
 }
 </script>
 <style scoped>
