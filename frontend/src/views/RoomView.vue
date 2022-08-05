@@ -85,8 +85,8 @@ export default {
 			publisher: undefined,
 			subscribers: [],
 
-			mySessionId: 'SessionA',
-			myUserName: 'Participant' + Math.floor(Math.random() * 100),
+			mySessionId: '',
+			myUserName: '',
 			videoMute: false,		// 영상 중지
 			audioMute: false,		// 음소거
 			msg: "",		// 채팅 메시지 송신

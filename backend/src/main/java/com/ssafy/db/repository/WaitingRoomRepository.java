@@ -23,7 +23,7 @@ public class WaitingRoomRepository {
                 "where r = ru.room and r.endTime is null " +
                 "group by ru.room " +
                 "having COUNT(ru) <> r.roomSize " +
-                "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).setFirstResult(from).setMaxResults(to).getResultList();
+                "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).setFirstResult(from).setMaxResults(3).getResultList();
 
 //        for (RoomInfoRes room : result){
 //            System.out.println(room);
