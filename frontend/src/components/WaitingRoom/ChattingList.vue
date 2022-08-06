@@ -3,16 +3,12 @@
         <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
             <div class="d-flex flex-column" style="height: 87%; width: 100%">
                 <div class="d-flex flex-column chatting-list-box">
-                    <ChattingItem></ChattingItem>
-                    <ChattingItem></ChattingItem>
-                    <ChattingItem></ChattingItem>
-                    <ChattingItem></ChattingItem>
-                    <ChattingItem></ChattingItem>
+                    <ChattingItem v-for="(item, index) in recvList" :key="index" :name="item.userName" :content="item.content"></ChattingItem>
                 </div>
             </div>
             <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
-                <input class="ml-4 chatting-input white" type="text" />
-                <button class="mx-2 chatting-submit primary">전송</button>
+                <input class="ml-4 chatting-input white" v-model="message" type="text" />
+                <button class="mx-2 chatting-submit primary" @click="sendEvent">전송</button>
             </div>
         </div>
     </ContentBox>
@@ -21,36 +17,82 @@
 <script>
 import ContentBox from "../common/ContentBox.vue";
 import ChattingItem from "./Item/ChattingItem.vue";
+import { mapState } from "vuex";
+import SockJS from "sockjs-client";
+import Stomp from "webstomp-client";
+import API_BASE_URL from '@/config';
+
 export default {
     name: "ChattingList",
     components: { ContentBox, ChattingItem },
-    data(){
-      return{
-        socket: null,
-        connection: null,
-        text: "",
-      }
+    data() {
+        return {
+            stompClient: null,
+            userName: "aaa",
+            message: "",
+            recvList: [],
+            connected: false,
+        };
     },
     created: function () {
-        console.log("Starting connection to WebSocket Server");
-        this.connection = new WebSocket("wss://localhost:8080/ws/chat");
-
-        this.connection.onmessage = (event) => {
-            console.log(event);
-            this.text += event.data;
-            this.text += "\n";
-        };
-
-        this.connection.onopen = function (event) {
-            console.log(event);
-            console.log("Successfully connected to the echo websocket server...");
-        };
+        this.connect();
+        
     },
-    methods:{
-      connect(){
-
-      }
-    }
+    destroyed: function(){
+        this.send("exit", this.userName, "");
+    },
+    methods: {
+        connect() {
+            const serverURL = API_BASE_URL;
+            let socket = new SockJS(serverURL);
+            this.stompClient = Stomp.over(socket);
+            console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+            this.stompClient.connect(
+                {},
+                (frame) => {
+                    // 소켓 연결 성공
+                    this.connected = true;
+                    console.log("소켓 연결 성공", frame);
+                    // 서버의 메시지 전송 endpoint를 구독합니다.
+                    // 이런형태를 pub sub 구조라고 합니다.
+                    this.stompClient.subscribe("/send", (res) => {
+                        console.log("구독으로 받은 메시지 입니다.", res.body);
+                        // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+                        this.receive(JSON.parse(res.body));
+                    });
+                    this.send("enter", this.userName,"");
+                },
+                (error) => {
+                    // 소켓 연결 실패
+                    console.log("소켓 연결 실패", error);
+                    this.connected = false;
+                }
+            );
+        },
+        send(type, userName, content) {
+            console.log("Send Message:" + content);
+            if (this.stompClient && this.stompClient.connected) {
+                const msg = {
+                    type,
+                    userName,
+                    content,
+                };
+                this.stompClient.send("/receive", JSON.stringify(msg), {});
+            }
+        },
+        receive({type, content, userName}){
+            console.log(type, content, userName);
+            if(type == "message")
+                this.recvList.push({userName, content});
+            
+        },
+        sendEvent(){
+            this.send("message", this.userName, this.message);
+        }
+    },
+    computed: {
+        ...mapState(["token"]),
+    },
 };
 </script>
 

@@ -14,7 +14,6 @@ const roomStore = {
             state.rooms = rooms;
             state.lastPage = lastPage;
             state.curPage = curPage;
-            console.log(rooms);
         },
         SET_CUR_PAGE: (state, payload) => {
             state.curPage = payload;
@@ -32,6 +31,7 @@ const roomStore = {
             rooms(
                 { page, token: rootState.auth.token },
                 ({ data }) => {
+                    console.log(data);
                     commit("SET_ROOMS", data);
                 },
                 (error) => {

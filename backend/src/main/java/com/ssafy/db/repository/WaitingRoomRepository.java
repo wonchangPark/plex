@@ -14,8 +14,8 @@ public class WaitingRoomRepository {
     EntityManager em;
 
     // from 부터 to 까지의 대기방을 뽑아온다.
-    public List<RoomInfoRes> getCurrentRoomList(int from, int to){
-        System.out.println("repository on "+ from + " "+to);
+    public List<RoomInfoRes> getCurrentRoomList(int from){
+        System.out.println("repository on "+ from);
 
         // N+1 문제 안일어남
         List<RoomInfoRes> result = em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +

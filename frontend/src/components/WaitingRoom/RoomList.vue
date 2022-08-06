@@ -2,7 +2,7 @@
     <ContentBox :height="90" :width="90">
         <div class="d-flex flex-column align-center" style="width: 100%; height: 100%">
             <div class="room-list d-flex flex-column align-center justify-space-around">
-                <RoomItem v-for="(item) in rooms" :key="item.roomNo" :room="item" :v-show="Object.keys(item).length !== 0"></RoomItem>
+                <RoomItem v-for="(item, index) in rooms" :key="index" :room="item" :v-show="Object.keys(item).length !== 0"></RoomItem>
             </div>
             <div class="room-input-footer d-flex align-center flex-row justify-space-between">
                 <div class="d-flex flex-row align-center">
@@ -22,9 +22,8 @@
 <script>
 import RoomItem from "./Item/RoomItem.vue";
 import ContentBox from "../common/ContentBox.vue";
-import PrivateRoomDialog from "@/components/WaitingRoom/PrivateRoomDialog.vue"
 import { mapActions, mapMutations, mapState } from "vuex";
-
+import PrivateRoomDialog from "@/components/WaitingRoom/PrivateRoomDialog.vue";
 let RoomStore = "roomStore";
 
 export default {
@@ -32,7 +31,7 @@ export default {
     components: {
         RoomItem,
         ContentBox,
-        PrivateRoomDialog
+        PrivateRoomDialog,
     },
     data() {
         return {};

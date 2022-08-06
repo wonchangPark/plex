@@ -5,11 +5,11 @@
                 <v-avatar size="25" color="white"></v-avatar>
             </div>
             <div class="white--text">
-                name
+                {{name}}
             </div>
         </div>
         <div class="white--text" style="font-weight: bold; font-size: 1.5vw;">
-            chatting
+            {{content}}
         </div>
     </div>
 </template>
@@ -17,6 +17,7 @@
 <script>
 export default {
     name: "ChattingItem",
+    props:["name", "content"]
 };
 </script>
 
