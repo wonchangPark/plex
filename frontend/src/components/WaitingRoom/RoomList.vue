@@ -7,7 +7,7 @@
             <div class="room-input-footer d-flex align-center flex-row justify-space-between">
                 <div class="d-flex flex-row align-center">
                     <button class="primary pl-4 pr-4 room-list-btn mr-6">새로고침</button>
-                    <button class="primary pl-6 pr-6 room-list-btn">코드입력</button>
+                    <PrivateRoomDialog class="primary pl-4 pr-4 room-list-btn"></PrivateRoomDialog>
                 </div>
                 <div class="d-flex flex-row align-center">
                     <v-icon class="direction-button primary--text" size="60px" @mouseup="prevPageEvent"> mdi-chevron-left </v-icon>
@@ -23,15 +23,16 @@
 import RoomItem from "./Item/RoomItem.vue";
 import ContentBox from "../common/ContentBox.vue";
 import { mapActions, mapMutations, mapState } from "vuex";
-
+import PrivateRoomDialog from "@/components/WaitingRoom/PrivateRoomDialog.vue";
 let RoomStore = "roomStore";
 
 export default {
     name: "RoomList",
     components: {
-    RoomItem,
-    ContentBox,
-},
+        RoomItem,
+        ContentBox,
+        PrivateRoomDialog,
+    },
     data() {
         return {};
     },

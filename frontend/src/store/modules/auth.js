@@ -5,14 +5,23 @@ const API_URL = 'https://localhost:8080/api/v1';
 
 export default {
   state: {
+    user: {},
     token: localStorage.getItem('token') || '' ,
-    authError: null
+    authError: null,
+    userNav: {}
   },
   getters:{
     isLoggedIn: state => !!state.token,
-    profile: state => state.profile,
+    getUser: state => state.user,
+    userNav: state => state.userNav,
     authError: state => state.authError,
     authHeader: state => ({ Authorization: 'Bearer ' + state.token })
+  },
+  mutations: {
+    SET_USER: (state, user) => state.user = user,
+    SET_USERNAV: (state, userNav) => state.userNav = userNav,
+    SET_TOKEN: (state, token) => state.token = token,
+    SET_AUTH_ERROR: (state, error) => state.authError = error
   },
   actions: {
     saveToken({ commit }, token) {
@@ -24,7 +33,25 @@ export default {
       commit('SET_TOKEN', '')
       localStorage.setItem('token', '')
     },
-    
+
+    fetchNav({ commit, getters }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + '/users/me',
+          method: 'get',
+          headers: getters.authHeader,
+        })
+          .then(res => {
+            console.log(res.data)
+            commit('SET_USERNAV', res.data)
+          }
+            )
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    },
+
     login({ commit, dispatch }, credentials) {
 
       axios({
@@ -33,8 +60,17 @@ export default {
         data: credentials
       })
         .then(res => {
+          console.log(res.data)
+          const user = {
+            no: res.data.no,
+            userId: res.data.userId,
+            nick: res.data.nick,
+            email: res.data.email,
+            totalScore: res.data.totalScore
+          }
           const token = res.data.accessToken
           dispatch('saveToken', token)
+          commit('SET_USER', user)
           router.push({ name: 'waiting' })
         })
         .catch(err => {
@@ -54,22 +90,18 @@ export default {
           router.push({ name: 'login' })
         })
         .catch(err => {
-          console.error(err.response.data)
+          console.log(err.response.data)
           commit('SET_AUTH_ERROR', err.response.data)
         })
     },
 
-    logout({dispatch}) {
+    logout({ commit, dispatch }) {
       dispatch('removeToken')
+      commit('SET_USER', {})
       router.push({ name: 'home' })
       .error(err => {
         console.log(err)
       })
     },
-
-  },
-  mutations: {
-    SET_TOKEN: (state, token) => state.token = token,
-    SET_AUTH_ERROR: (state, error) => state.authError = error
   }
 };

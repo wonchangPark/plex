@@ -396,10 +396,11 @@ export default {
 				})
 		} else if (this.roomJoin) {
 				this.mySessionId = this.joinInfo.roomCode
-				this.myUserName = this.joinInfo.username
+				// this.mySessionId = "5YeWZztlx2"
+				this.myUserName = this.joinInfo.userName
 				this.joinSession()
+				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_BjMvFY12vK&token=tok_WfIoBmdus23jFzoX")
 				this.getToken(this.mySessionId, this.myUserName)
-				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_Iq6gG6YDhJ&token=tok_C9I9oY6sPrgplzHb")
 		}
 	},
 
