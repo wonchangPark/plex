@@ -20,6 +20,7 @@ import ChattingItem from "./Item/ChattingItem.vue";
 import { mapState } from "vuex";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
+import API_BASE_URL from '@/config';
 
 export default {
     name: "ChattingList",
@@ -42,7 +43,7 @@ export default {
     },
     methods: {
         connect() {
-            const serverURL = "https://localhost:8080/ws";
+            const serverURL = API_BASE_URL;
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
