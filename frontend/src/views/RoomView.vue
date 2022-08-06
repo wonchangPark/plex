@@ -37,6 +37,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
 import { mapGetters, mapActions } from 'vuex'
+import { API_BASE_URL } from '@/config';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -278,7 +279,7 @@ export default {
 
 		getToken (mySessionId, myUserName) {
 			axios ({
-				url: "https://localhost:8080/api/v1/rooms/get-token",
+				url: API_BASE_URL + "/api/v1/rooms/get-token",
         method: 'post',
         data: {"code" : mySessionId, "id" : myUserName},
         headers: this.authHeader,
@@ -417,7 +418,7 @@ export default {
 	created () {
 		if (this.roomCreate) {
 			axios ({
-				url: "https://localhost:8080/api/v1/rooms/create-room",
+				url: API_BASE_URL + "/api/v1/rooms/create-room",
         method: 'post',
         data: this.roomInfo,
         headers: this.authHeader,
