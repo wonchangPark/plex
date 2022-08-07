@@ -9,7 +9,7 @@ function rooms({ page, token }, success, fail) {
 }
 
 function connectUsers({ token }, success, fail) {
-    api.get(`/ws/users`, { headers: { Authorization: "Bearer " + token } })
+    api.get(`/api/v1/ws/users`, { headers: { Authorization: "Bearer " + token } })
         .then(success)
         .catch(fail);
 }

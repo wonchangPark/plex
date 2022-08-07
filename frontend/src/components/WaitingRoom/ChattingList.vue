@@ -46,14 +46,12 @@ export default {
         });
     },
     beforeUnmount: function () {
-        window.removeEventListener("beforeunload", () => {
-            this.send("exit", this.getUser.nick, "");
-        });
+        this.send("exit", this.getUser.nick, "");
     },
     methods: {
         ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
         connect() {
-            const serverURL = API_BASE_URL + "/ws";
+            const serverURL = API_BASE_URL + "/api/v1/ws";
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/ws")
+@RequestMapping("/api/v1/ws")
 public class ChatController {
     List<String> userList = new ArrayList<>();
 
