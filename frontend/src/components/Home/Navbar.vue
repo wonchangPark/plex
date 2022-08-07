@@ -7,7 +7,7 @@
     <div class="d-flex">
     <v-menu bottom rounded offset-y>
       <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
+          <v-btn icon v-on="on" @click="fetchNav">
               <v-avatar color="brown" size="35"> </v-avatar>
           </v-btn>
       </template>
@@ -58,9 +58,6 @@ export default {
       'isLoggedIn',
       'userNav',
       'profile'])
-  },
-  created() {
-    this.fetchNav()
   },
 };
 </script>

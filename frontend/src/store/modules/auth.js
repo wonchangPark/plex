@@ -10,19 +10,18 @@ export default {
     authError: null,
     userNav: {},
     profile: {},
-    passswords: {
-      password: '',
-      password2: ''
-    },
-    PWCheck: false,
+    passwordFlag: false,
+    nicknameFlag: false,
+    idFlag: false
   },
   getters:{
     isLoggedIn: state => !!state.token,
     getUser: state => state.user,
     userNav: state => state.userNav,
     profile: state => state.profile,
-    passwords: state => state.passswords,
-    PWCheck: state => state.PWCheck,
+    passwordFlag: state => state.passwordFlag,
+    nicknameFlag: state => state.nicknameFlag,
+    idFlag: state => state.idFlag,
     authError: state => state.authError,
     authHeader: state => ({ Authorization: 'Bearer ' + state.token })
   },
@@ -30,9 +29,9 @@ export default {
     SET_USER: (state, user) => state.user = user,
     SET_USERNAV: (state, userNav) => state.userNav = userNav,
     SET_PROFILE: (state, profile) => state.profile = profile,
-    SET_PASSWORDS: (state, passwords) => state.passswords = passwords,
-    SET_PWCHECKED: (state) => {state.PWCheck = true},
-    SET_PWNOCECKED: (state) => {state.PWCheck = false},
+    SET_PASSWORDFLAG: (state, passwordFlag) => state.passwordFlag = passwordFlag,
+    SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
+    SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
     SET_TOKEN: (state, token) => state.token = token,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   },
@@ -108,27 +107,50 @@ export default {
         })
         .catch(err => {
           console.error(err.response.data)
+          alert('아이디 또는 비밀번호를 확인해주세요')
           commit('SET_AUTH_ERROR', err.response.data)
         })
     },
-    passwordConfirm({commit}, passwords) {
-      var p1 = passwords.password
-      var p2 = passwords.password2
-      if(p1.length < 6) {
-        alert("입력한 글자가 6글자 이상이어야 합니다.")
-        commit('SET_PWNOCECKED')
-      }
-      if( p1 != p2 ) {
-        alert("비밀번호가 일치 하지 않습니다");
-        commit('SET_PWNOCECKED')
-      } else{
-        alert("비밀번호가 일치합니다");
-        commit('SET_PWCECKED')
-      }
 
+    passwordCheck({commit,dispatch}, credentials){
+      commit('SET_PASSWORDFLAG')
+      dispatch('signup', credentials)
     },
 
-    signup({ commit, dispatch}, credentials) {
+    nicknameCheck({ commit }, credentials) {
+      axios({
+        url: API_URL + '/users/nickname/check',
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log(res)
+          commit('SET_NICKNAMEFLAG', true)
+        })
+        .catch(err => {
+          console.error(err.response.data)
+          commit('SET_NICKNAMEFLAG', false)
+
+        })
+    },
+
+    idCheck({ commit }, credentials) {
+      axios({
+        url: API_URL + '/users/id/check',
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log(res)
+          commit('SET_IDFLAG', true)
+        })
+        .catch(err => {
+          console.log(err.response.data)
+          commit('SET_IDFLAG', false)
+        })
+    },
+
+    signup({ commit }, credentials) {
       axios({
         url: API_URL + '/users',
         method: 'post',
@@ -136,12 +158,7 @@ export default {
       })
         .then(res => {
           console.log(res)
-          dispatch('passwordConfirm', (res.config.data.password, res.config.data.password2))
-          if (this.PWCheck == true) {
-            router.push({ name: 'login' })
-          } else {
-            commit('SET_AUTH_ERROR', res.response.data)
-          }
+          router.push({ name: 'login' })
         })
         .catch(err => {
           console.log(err.response.data)
