@@ -8,4 +8,10 @@ function rooms({ page, token }, success, fail) {
         .catch(fail);
 }
 
-export { rooms };
+function connectUsers({ token }, success, fail) {
+    api.get(`/ws/users`, { headers: { Authorization: "Bearer " + token } })
+        .then(success)
+        .catch(fail);
+}
+
+export { rooms, connectUsers };

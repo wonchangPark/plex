@@ -17,11 +17,12 @@
 <script>
 import ContentBox from "../common/ContentBox.vue";
 import ChattingItem from "./Item/ChattingItem.vue";
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
-import API_BASE_URL from '@/config';
+import { API_BASE_URL } from "@/config";
 
+const RoomStore = "roomStore";
 export default {
     name: "ChattingList",
     components: { ContentBox, ChattingItem },
@@ -36,14 +37,24 @@ export default {
     },
     created: function () {
         this.connect();
-        
     },
-    destroyed: function(){
+    destroyed: function () {
         this.send("exit", this.userName, "");
     },
+    mounted: function () {
+        window.addEventListener("beforeunload", () => {
+            this.send("exit", this.userName, "");
+        });
+    },
+    beforeUnmount: function () {
+        window.removeEventListener("beforeunload", () => {
+            this.send("exit", this.userName, "");
+        });
+    },
     methods: {
+        ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
         connect() {
-            const serverURL = API_BASE_URL;
+            const serverURL = API_BASE_URL + "/ws";
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
@@ -60,7 +71,7 @@ export default {
                         // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
                         this.receive(JSON.parse(res.body));
                     });
-                    this.send("enter", this.userName,"");
+                    this.send("enter", this.userName, "");
                 },
                 (error) => {
                     // 소켓 연결 실패
@@ -80,15 +91,18 @@ export default {
                 this.stompClient.send("/receive", JSON.stringify(msg), {});
             }
         },
-        receive({type, content, userName}){
+        receive({ type, content, userName }) {
             console.log(type, content, userName);
-            if(type == "message")
-                this.recvList.push({userName, content});
-            
+            if (type === "message") this.recvList.push({ userName, content });
+            else if (type === "enter") {
+                this.ADD_CONNECT_USER(userName);
+            } else if (type === "exit") {
+                this.REMOVE_CONNECT_USER(userName);
+            }
         },
-        sendEvent(){
+        sendEvent() {
             this.send("message", this.userName, this.message);
-        }
+        },
     },
     computed: {
         ...mapState(["token"]),

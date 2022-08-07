@@ -6,20 +6,7 @@
             </div>
             <div class="d-flex flex-column" style="flex: 0 0 90%; width: 100%; height: 90%">
                 <div class="d-flex flex-column align-center user-info-list-box">
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
-                    <UserInfo></UserInfo>
+                    <UserInfo v-for="(item, index) in connectUsers" :key="index"></UserInfo>
                 </div>
             </div>
         </div>
@@ -27,11 +14,22 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 import ContentBox from "../common/ContentBox.vue";
 import UserInfo from "./Item/UserInfo.vue";
+const RoomStore = "roomStore";
 export default {
     name: "UserList",
     components: { ContentBox, UserInfo },
+    created: function(){
+        this.getConnectUsers();
+    },
+    computed:{
+        ...mapState(RoomStore, ["connectUsers"])
+    },
+    methods:{
+        ...mapActions(RoomStore, ["getConnectUsers"])
+    }
 };
 </script>
 

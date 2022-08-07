@@ -84,4 +84,6 @@ public class UserController {
 		
 		return ResponseEntity.status(200).body(UserRes.of(user));
 	}
+
+
 }

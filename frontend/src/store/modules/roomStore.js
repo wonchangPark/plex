@@ -1,4 +1,4 @@
-import { rooms } from "@/api/room.js";
+import { connectUsers, rooms } from "@/api/room.js";
 
 const roomStore = {
     namespaced: true,
@@ -6,11 +6,12 @@ const roomStore = {
         rooms: [],
         lastPage: 6,
         curPage: 3,
+        connectUsers: [],
     },
     getters: {},
     mutations: {
         SET_ROOMS: (state, { rooms, lastPage, curPage }) => {
-            while (rooms.length < 3) rooms.push({visible: false});
+            while (rooms.length < 3) rooms.push({ visible: false });
             state.rooms = rooms;
             state.lastPage = lastPage;
             state.curPage = curPage;
@@ -24,6 +25,15 @@ const roomStore = {
         PREV_CUR_PAGE: (state) => {
             state.curPage -= 1;
         },
+        ADD_CONNECT_USER: (state, payload) => {
+            state.connectUsers.push(payload);
+        },
+        REMOVE_CONNECT_USER: (state, payload) => {
+            state.connectUsers = state.connectUsers.filter((item) => item !== payload);
+        },
+        SET_CONNECT_USER: (state, payload) => {
+            state.connectUsers = payload;
+        },
     },
     actions: {
         getRooms: ({ commit, rootState }, page) => {
@@ -33,6 +43,18 @@ const roomStore = {
                 ({ data }) => {
                     console.log(data);
                     commit("SET_ROOMS", data);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        },
+        getConnectUsers: ({ commit, rootState }) => {
+            connectUsers(
+                { token: rootState.auth.token },
+                ({ data }) => {
+                    console.log(data);
+                    commit("SET_CONNECT_USER", data);
                 },
                 (error) => {
                     console.log(error);
