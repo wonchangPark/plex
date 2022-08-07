@@ -17,11 +17,10 @@
 <script>
 import ContentBox from "../common/ContentBox.vue";
 import ChattingItem from "./Item/ChattingItem.vue";
-import { mapMutations, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState } from "vuex";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { API_BASE_URL } from "@/config";
-
 const RoomStore = "roomStore";
 export default {
     name: "ChattingList",
@@ -39,16 +38,16 @@ export default {
         this.connect();
     },
     destroyed: function () {
-        this.send("exit", this.userName, "");
+        this.send("exit", this.getUser.nick, "");
     },
     mounted: function () {
         window.addEventListener("beforeunload", () => {
-            this.send("exit", this.userName, "");
+            this.send("exit", this.getUser.nick, "");
         });
     },
     beforeUnmount: function () {
         window.removeEventListener("beforeunload", () => {
-            this.send("exit", this.userName, "");
+            this.send("exit", this.getUser.nick, "");
         });
     },
     methods: {
@@ -71,7 +70,7 @@ export default {
                         // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
                         this.receive(JSON.parse(res.body));
                     });
-                    this.send("enter", this.userName, "");
+                    this.send("enter", this.getUser.nick, "");
                 },
                 (error) => {
                     // 소켓 연결 실패
@@ -101,15 +100,15 @@ export default {
             }
         },
         sendEvent() {
-            this.send("message", this.userName, this.message);
+            this.send("message", this.getUser.nick, this.message);
         },
     },
     computed: {
-        ...mapState(["token"]),
+        ...mapState(["token","auth"]),
+        ...mapGetters(["getUser"]),
     },
 };
 </script>
-
 <style scoped>
 .chatting-list-box {
     height: 100%;
