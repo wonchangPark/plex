@@ -15,6 +15,10 @@
       </v-row>
 
     <div class="rank-list-box d-flex flex-column" style="flex: 0 0 90%; width:100%; height: 90%;">
+      <div v-for="ranker in rankingList"
+      :key="ranker.no"
+      :ranker = ranker
+      >{{ranker.totalScore}}</div>
       <div class="d-flex justify-center align-center">
         <RankItem></RankItem>
       </div>
@@ -39,11 +43,21 @@
 
 <script>
 import RankItem from "@/components/Rank/RankItem.vue"
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'RankList',
   components: {
     RankItem
+  },
+  methods: {
+    ...mapActions(['fetchRankingList'])
+  },
+  computed: {
+    ...mapGetters(['isLoggedIn', 'rankingList'])
+  },
+  created(){
+    this.fetchRankingList()
   }
 }
 </script>

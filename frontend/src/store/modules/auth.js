@@ -12,7 +12,8 @@ export default {
     profile: {},
     passwordFlag: false,
     nicknameFlag: false,
-    idFlag: false
+    idFlag: false,
+    rankingList: {}
   },
   getters:{
     isLoggedIn: state => !!state.token,
@@ -22,6 +23,7 @@ export default {
     passwordFlag: state => state.passwordFlag,
     nicknameFlag: state => state.nicknameFlag,
     idFlag: state => state.idFlag,
+    rankingList: state => state.rankingList,
     authError: state => state.authError,
     authHeader: state => ({ Authorization: 'Bearer ' + state.token })
   },
@@ -32,6 +34,7 @@ export default {
     SET_PASSWORDFLAG: (state, passwordFlag) => state.passwordFlag = passwordFlag,
     SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
     SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
+    SET_RANKINGLIST: (state, rankingList) => state.rankingList = rankingList,
     SET_TOKEN: (state, token) => state.token = token,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   },
@@ -82,7 +85,23 @@ export default {
       }
     },
 
-    
+    fetchRankingList({ commit, getters }){
+      if (getters.isLoggedIn){
+        axios({
+          url: API_URL + '/users/ranking',
+          method: 'get',
+          headers: getters.authHeader,
+        })
+        .then(res => {
+          console.log(res)
+          const rankingList = res.data
+          commit('SET_RANKINGLIST', rankingList)
+        })
+        .catch(err => {
+          console.error(err.response.data)
+        })
+      }
+    },
     
     login({ commit, dispatch }, credentials) {
 

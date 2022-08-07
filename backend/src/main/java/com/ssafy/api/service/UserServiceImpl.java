@@ -10,6 +10,8 @@ import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.db.entity.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  *	유저 관련 비즈니스 로직 처리를 위한 서비스 구현 정의.
  */
@@ -43,4 +45,9 @@ public class UserServiceImpl implements UserService {
 		// 디비에 유저 정보 조회 (userId 를 통한 조회).
 		return userRepository.findByUserId(userId); // 없다면 null이 들어감
 	}
+
+	public List<User> getRankingList(){
+		return userRepository.getRankingList();
+	}
+
 }
