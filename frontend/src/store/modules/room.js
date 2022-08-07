@@ -1,3 +1,8 @@
+import axios from 'axios'
+import { API_BASE_URL } from '@/config';
+
+const API_URL = API_BASE_URL + '/api/v1';
+
 export default {
   namespaced: false,
   state: {
@@ -6,8 +11,8 @@ export default {
       name: '',
       host: '',
       roomSize: '',
+      gameNo: 1,
       isPrivate: false,
-      gameNo: 1
     },
     roomJoin : false,
     joinInfo : {
@@ -39,9 +44,27 @@ export default {
     setRoomClose ({ commit }) {
       commit('SET_ROOMCLOSE')
     },
-    setRoomJoin ({ commit }, joinInfo) {
+    setRoomJoin ({ commit, getters }, roomCode) {
       commit('SET_ROOMJOIN')
+      const joinInfo = {
+          roomCode: roomCode,
+          userName: getters.getUser.userId,
+      }
       commit('SET_JOININFO', joinInfo)
+    },
+    leaveRoom ({ getters }, joinInfo) {
+      axios({
+        url: API_URL + '/rooms/leave-room',
+        method: 'post',
+        data: joinInfo,
+        headers: getters.authHeader
+      })
+      .then( (res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
     },
   }
 }

@@ -12,12 +12,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
     name: "RoomItem",
     props: ["room"],
     methods: {
+        ...mapActions(["setRoomJoin"]),
         join() {
-            this.$emit("join");
+            this.setRoomJoin(this.room.code);
+            this.$router.push("/room");
         },
     },
 };

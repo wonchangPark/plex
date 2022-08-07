@@ -37,17 +37,8 @@ export default {
         return {};
     },
     methods: {
-        ...mapActions(["setRoomJoin"]),
         ...mapActions(RoomStore, ["getRooms"]),
         ...mapMutations(RoomStore, ["NEXT_CUR_PAGE", "PREV_CUR_PAGE"]),
-        join() {
-            const joinInfo = {
-                roomCode: "2B0dXodsPj",
-                userName: "test",
-            };
-            this.setRoomJoin(joinInfo);
-            this.$router.push("/room");
-        },
         nextPageEvent() {
             if (this.curPage < this.lastPage) this.NEXT_CUR_PAGE();
             this.getRooms(this.curPage);
