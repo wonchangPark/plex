@@ -1,16 +1,45 @@
 <template>
   <div id="signup-form" class="d-flex flex-column" style="flex: 1">
-    <form @submit.prevent="signup(credentials)">
+    <form @submit.prevent="signupSubmit()">
       <v-container >
         <v-row align="center" justify="center">
           <v-col cols="2">
             <label class="primary--text" for="ID">아이디</label>
           </v-col>
           <v-col cols="4">
-            <input id="ID" type="text" v-model="credentials.id" required />
+            <input id="ID" type="text" @blur="idCheck(credentials)" v-model="credentials.id" required
+            maxlength="20"/>
+          </v-col>
+          <v-col cols="5">
+            <span class="check error--text" v-if="!idFlag">사용 불가능한 아이디 입니다.</span>
+            <span class="check secondary--text" v-if="idFlag">사용 가능 아이디 입니다.</span>
+          </v-col>
+        </v-row>
+        <v-row align="center" justify="center">
+          <v-col cols="2">
+            <label class="primary--text" for="PW">PW</label>
+          </v-col>
+          <v-col cols="9">
+            <input id="PW" type="password" 
+            v-model="credentials.password" 
+            required
+            minlength="6"/>
+          </v-col>
+        </v-row>
+        <v-row align="center" justify="center">
+          <v-col cols="2">
+            <label class="primary--text" for="checkPW">PW 확인</label>
           </v-col>
           <v-col cols="4">
-            <div class="overlap d-flex align-center secondary--text"> 중복이 아닙니다 </div>
+            <input id="checkPW" type="password" 
+            v-model="credentials.password2" 
+            required
+            @blur="passwordCheckValid"/>
+          </v-col>
+          <v-col cols="5">
+            <span class="check error--text"
+              v-if="!passwordCheckFlag">비밀번호를 확인해 주세요</span>
+            <span class="check secondary--text" v-if="passwordCheckFlag">비밀번호가 확인되었습니다.</span>
           </v-col>
         </v-row>
         <v-row align="center" justify="center">
@@ -18,24 +47,11 @@
             <label class="primary--text" for="nickname">닉네임</label>
           </v-col>
           <v-col cols="4">
-            <input id="nickname" v-model="credentials.nick" type="text" required />
+            <input id="nickname" @blur="nicknameCheck(credentials)" v-model="credentials.nick" type="text" required />
           </v-col>
-          <v-col cols="4">
-            <div class="overlap d-flex align-center secondary--text"> 중복이 아닙니다 </div>
-          </v-col>
-        </v-row>
-        <v-row align="center" justify="center">
-          <v-col cols="2">
-            <label class="primary--text" for="PW">PW</label>
-          </v-col>
-          <v-col cols="3">
-            <input id="PW" type="password" v-model="credentials.password" required/>
-          </v-col>
-          <v-col cols="2">
-            <label class="primary--text" for="checkPW">PW 확인</label>
-          </v-col>
-          <v-col cols="3">
-            <input id="checkPW" type="password" v-model="credentials.password2"/>
+          <v-col cols="5">
+           <span class="check error--text" v-if="!nicknameFlag">사용 불가능한 닉네임 입니다.</span>
+            <span class="check secondary--text" v-if="nicknameFlag">사용 가능한 닉네임 입니다.</span>
           </v-col>
         </v-row>
       </v-container>
@@ -48,6 +64,7 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
+
 export default {
   name: "SignupForm",
   components: {
@@ -60,20 +77,39 @@ export default {
         password: '',
         password2: '',
       },
-      submitted: false,
-      succesful: false,
+      passwordCheckFlag : false,
+      pwShow: false,
+      idCheckFlag: false,
+      nicknameCheckFlag: false,
     }
   },
   computed: {
-    ...mapGetters(['authError'])
+    ...mapGetters(['authError', 'passwordFlag', 'idFlag', 'nicknameFlag'])
   },
   methods: {
-    ...mapActions(['signup'])
+    ...mapActions(['passwordCheck', 'signup', 'nicknameCheck', 'idCheck']),
+    passwordCheckValid() {
+      if (this.credentials.password === this.credentials.password2) {
+        this.passwordCheckFlag = true
+      } else {
+        this.passwordCheckFlag = false
+      }
+    },
+    signupSubmit(){
+      if (this.passwordCheckFlag === true && this.idFlag === true && this.nicknameFlag === true) {
+        this.passwordCheck(this.credentials)
+      } else {
+        alert('회원가입 실패')
+      }
+    },
   }
   };
 </script>
 
 <style scoped>
+.check {
+  font-weight: bold;
+}
 .submit {
   width: 25rem;
   height: 2rem;

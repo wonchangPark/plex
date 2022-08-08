@@ -54,4 +54,9 @@ public class UserRepository {
         return em.createQuery("select u from User u", User.class).getResultList();
     }
 
+    public List<User> getRankingList() {
+        return em.createQuery(
+                "select u from User u order by u.totalScore", User.class
+        ).getResultList();
+    }
 }
