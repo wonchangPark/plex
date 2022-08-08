@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container" class="container">
-		<GameResultModal v-if="gameFinished" :score="personalScore" @close-modal="gameFinished=false"/>
+		<GameResultModal v-if="gameFinished" :score="personalScore" :team1="team1" :team2="team2" @close-modal="gameFinished=false"/>
 		<div id="game-container"></div>
 		<div id="session" v-if="session">
 			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
@@ -78,8 +78,7 @@ export default {
 			status: 0,		// 동작 인식 상태
 			team1: [],		// 팀 정보
 			team2: [],
-			personalScore: {		// 개인별 점수
-			},
+			personalScore: {},		// 개인별 점수,
 			score1: 0,		// 팀별 점수
 			score2: 0,
 			gameFinished: false,
@@ -124,7 +123,8 @@ export default {
 					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
 						this.score1 += 1
 						this.personalScore[`${event.data}`] += 1
-
+						console.log(this.personalScore[`${event.data}`]);
+						console.log(this.personalScore);
 						if (this.score1 - this.score2 >= 10){
 							this.game.scene.getScene('ropeFightScene').LeftWin();
 							setTimeout(() => this.gameFinished = true, 1000);
