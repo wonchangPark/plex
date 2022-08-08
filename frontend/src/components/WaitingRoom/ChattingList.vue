@@ -7,7 +7,7 @@
                 </div>
             </div>
             <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
-                <input class="ml-4 chatting-input white" v-model="message" type="text" />
+                <input class="ml-4 chatting-input white"  v-model="message" @keyup.enter="sendEvent" type="text" />
                 <button class="mx-2 chatting-submit primary" @click="sendEvent">전송</button>
             </div>
         </div>
@@ -17,7 +17,7 @@
 <script>
 import ContentBox from "../common/ContentBox.vue";
 import ChattingItem from "./Item/ChattingItem.vue";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { API_BASE_URL } from "@/config";
@@ -28,17 +28,16 @@ export default {
     data() {
         return {
             stompClient: null,
-            userName: "aaa",
+            userName: "",
             message: "",
             recvList: [],
             connected: false,
+
         };
     },
     created: function () {
         this.connect();
-    },
-    destroyed: function () {
-        this.send("exit", this.getUser.nick, "");
+        this.userName = this.getUser.nick;
     },
     mounted: function () {
         window.addEventListener("beforeunload", () => {
@@ -49,12 +48,13 @@ export default {
         window.removeEventListener("beforeunload", () => {
             this.send("exit", this.getUser.nick, "");
         });
-        this.send("exit", this.getUser.nick, "");
+         this.send("exit", this.userName, "");
     },
     methods: {
         ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
+        ...mapActions(RoomStore, ["getConnectUsers"]),
         connect() {
-            const serverURL = API_BASE_URL + "/ws";
+            const serverURL = API_BASE_URL + "/api/v1/ws";
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
@@ -92,16 +92,17 @@ export default {
             }
         },
         receive({ type, content, userName }) {
-            console.log(type, content, userName);
             if (type === "message") this.recvList.push({ userName, content });
             else if (type === "enter") {
-                this.ADD_CONNECT_USER(userName);
+                this.getConnectUsers();
             } else if (type === "exit") {
-                this.REMOVE_CONNECT_USER(userName);
+                this.getConnectUsers();
             }
         },
         sendEvent() {
             this.send("message", this.getUser.nick, this.message);
+            this.message="";
+            this.getConnectUsers();
         },
     },
     computed: {
