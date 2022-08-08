@@ -11,7 +11,7 @@ function launch() {
         height: 512,
         parent: 'game-container',
         transparent: true,
-        canvas: document.getElementById('game-canvas'),
+        //canvas: document.getElementById('game-canvas'),
         plugins: {
             global: [
             {

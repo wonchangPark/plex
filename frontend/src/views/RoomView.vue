@@ -1,33 +1,11 @@
 <template>
 	<div id="main-container" class="container">
-		<div id="join" v-if="!session">
-			<div id="game-container"></div>
-			<div id="join-dialog" class="jumbotron vertical-center">
-				<h1>Join a video session</h1>
-				<div class="form-group">
-					<p>
-						<label>Participant</label>
-						<input v-model="myUserName" class="form-control" type="text" required>
-					</p>
-					<p>
-						<label>Session</label>
-						<input v-model="mySessionId" class="form-control" type="text" required>
-					</p>
-					<p class="text-center">
-						<button class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
-					</p>
-				</div>
-				<!--<div id='game-container'>
-					<canvas id='game-canvas'></canvas>
-				</div>-->
-			</div>
-		</div>
 
+		<div id="game-container"></div>
 		<div id="session" v-if="session">
+			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
+	
 			<div id="session-header">
-				<button class="btn btn-lg btn-success" @click="sendplus()">plus1</button>
-				<button class="btn btn-lg btn-success" @click="sendplus2()">plus2</button>
-
 				<h1 id="session-title">{{ mySessionId }}</h1>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
 				<v-btn>
@@ -36,7 +14,6 @@
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="videoMute" value="비디오 시작">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
-				<input type="text" v-model="msg" @keypress.enter="sendMSG">
 				<h1>팀 점수</h1>
 				<h2>team1 {{ score1 }}</h2>
 				<h2>team2 {{ score2 }}</h2>
@@ -52,8 +29,6 @@
 			</div>
 		</div>
 		<div v-if="session">
-			<h2>채팅</h2>
-			<p v-for="message in chat" :key="message">{{ message }}</p>
 			<h1>개인 점수</h1>
 			<p v-for="(user, index) in personalScore" :key="index">{{ user }}</p>
 		</div>
@@ -64,18 +39,14 @@
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
-//import Phaser from 'phaser';
-import Game from '../game/game.js';
-//import BootScene from '../game/BootScene.js';
-//import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plugin.js';
 import { mapGetters, mapActions } from 'vuex'
+import { API_BASE_URL } from '@/config';
+import Game from '../game/game.js';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
-//const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
-//const URL = 'https://teachablemachine.withgoogle.com/models/EFD5NSZU4/';
-const URL = 'https://teachablemachine.withgoogle.com/models/4afz2QVdu/'
+const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 // const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -96,23 +67,16 @@ export default {
 			publisher: undefined,
 			subscribers: [],
 
-			mySessionId: 'SessionA',
-			myUserName: 'Participant' + Math.floor(Math.random() * 100),
+			mySessionId: '',
+			myUserName: '',
 			videoMute: false,		// 영상 중지
 			audioMute: false,		// 음소거
-			msg: "",		// 채팅 메시지 송신
-			chat: [],		// 채팅 메시지 수신
 
+			isHost: false,
 			status: 0,		// 동작 인식 상태
-			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
-			team2: ['d', 'e', 'f'],
+			team1: [],		// 팀 정보
+			team2: [],
 			personalScore: {		// 개인별 점수
-				'a': 0,
-				'b': 0,
-				'c': 0,
-				'd': 0,
-				'e': 0,
-				'f': 0
 			},
 			score1: 0,		// 팀별 점수
 			score2: 0,
@@ -120,52 +84,6 @@ export default {
 	},
 
 	methods: {
-		sendMSG () {
-			this.session.signal({
-				data: `${this.myUserName} : ${this.msg}`,  // Any string (optional)
-				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-				type: 'my-chat'             // The type of message (optional)
-			})
-			.then(() => {
-					console.log('Message successfully sent');
-			})
-			.catch(error => {
-					console.error(error);
-			});
-			this.msg = ''
-		},
-		sendplus () {
-			if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
-				this.score1 += 1
-
-				if (this.score1 - this.score2 >= 10){
-				this.game.scene.getScene('ropeFightScene').LeftWin();
-				}
-				else{
-					this.game.scene.getScene('ropeFightScene').goLeftHandler();
-				}
-			}
-
-
-			this.game.scene.getScene('RunningScene').GoRight(1);
-
-			console.log('key pressed')
-		},
-		sendplus2 () {
-			if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
-				this.score2 += 1
-
-				if (this.score2 - this.score1 >= 10){
-					this.game.scene.getScene('ropeFightScene').RightWin();
-				}
-				else{
-					this.game.scene.getScene('ropeFightScene').goRightHandler();
-				}
-			}
-
-			this.game.scene.getScene('RunningScene').GoRight(2);
-			console.log('key pressed')
-		},
 
 		joinSession () {
 			// --- Get an OpenVidu object ---
@@ -195,20 +113,14 @@ export default {
 			this.session.on('exception', ({ exception }) => {
 				console.warn(exception);
 			});
-			// 채팅 수신
-			this.session.on('signal:my-chat', (event) => {
-				console.log(`메시지 수신: ${event.data}`); // Message
-				this.chat.push(event.data)
-				console.log(event.from); // Connection object of the sender
-				console.log(event.type); // The type of message
-			});
+
 			// 운동 점수 수신
 			this.session.on('signal:score', (event) => {
 				console.log(event.data); // Message
 				if (this.team1.includes(event.data)) {
-
 					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
 						this.score1 += 1
+						this.personalScore[`${event.data}`] += 1
 
 						if (this.score1 - this.score2 >= 10){
 							this.game.scene.getScene('ropeFightScene').LeftWin();
@@ -223,6 +135,7 @@ export default {
 				} else {
 					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
 						this.score2 += 1
+						this.personalScore[`${event.data}`] += 1
 						if (this.score2 - this.score1 >= 10){
 							this.game.scene.getScene('ropeFightScene').RightWin();
 						}
@@ -235,7 +148,49 @@ export default {
 
 
 				}
-				this.personalScore[`${event.data}`] += 1
+				//this.personalScore[`${event.data}`] += 1
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+			});
+			// 참가자 입장 수신
+			this.session.on('signal:memberJoin', (event) => {
+				console.log(event.data); // Message
+				console.log("참가자 입장")
+				if (this.isHost) {
+					if (this.team1.length < 3) {
+						this.team1.push(event.data)
+					} else {
+						this.team2.push(event.data)
+					}
+					this.personalScore[`${event.data}`] = 0
+					this.sendTeamInfo()
+				}
+			});
+			// 참가자 퇴장 수신
+			this.session.on('signal:memberLeave', (event) => {
+				console.log(event.data); // Message
+				console.log("참가자 퇴장")
+				if (this.isHost) {
+					const id1 = this.team1.indexOf(`${event.data}`) 
+					const id2 = this.team2.indexOf(`${event.data}`) 
+					if (id1 !== -1){
+						this.team1.splice(id1, 1)
+					} else {
+						this.team2.splice(id2, 1)
+					}
+					delete this.personalScore[`${event.data}`]
+					this.sendTeamInfo()
+				}
+			});
+			// 호스트 수신
+			this.session.on('signal:host', (event) => {
+				console.log('호스트 수신'); // Message
+				if (!this.isHost) {
+					const data = JSON.parse(event.data)
+					this.team1 = data.team1
+					this.team2 = data.team2
+					this.personalScore = data.personalScore
+				}
 				console.log(event.from); // Connection object of the sender
 				console.log(event.type); // The type of message
 			});
@@ -245,11 +200,18 @@ export default {
 			// 'getToken' method is simulating what your server-side should do.
 			// 'token' parameter should be retrieved and returned by your own backend
 			
-			//this.getToken(this.mySessionId, this.myUserName)
+			// this.getToken(this.mySessionId, this.myUserName)
 
 			this.init()
+
 			window.addEventListener('beforeunload', this.leaveSession)
-			this.game = Game();			//generate phaser game when entering session
+			//this.game = Game();			//generate phaser game when entering session
+		
+		},
+
+		sendStart () {
+			console.log("왔음")
+			this.game.scene.getScene('bootScene').StartScene(1);
 		},
 
 		connectSession (token) {
@@ -282,10 +244,26 @@ export default {
 			});
 		},
 
-
 		leaveSession () {
+			this.game.destroy(true)
 			// --- Leave the session by calling 'disconnect' method over the Session object ---
+			this.session.signal({		// 참가자 퇴장 송신
+				data: this.myUserName,  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'memberLeave'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
 			if (this.session) this.session.disconnect();
+			const joinInfo = {
+				code : this.mySessionId,
+				id : this.myUserName
+			}
+			this.leaveRoom(joinInfo)
 
 			this.session = undefined;
 			this.mainStreamManager = undefined;
@@ -295,6 +273,21 @@ export default {
 			this.setRoomClose()
 
 			window.removeEventListener('beforeunload', this.leaveSession);
+			this.$router.push('/waiting')
+		},
+
+		sendTeamInfo() {
+			this.session.signal({		// 호스트 송신
+				data: JSON.stringify({team1: this.team1, team2: this.team2, personalScore: this.personalScore}),  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'host'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
 		},
 
 		updateMainVideoStreamManager (stream) {
@@ -322,108 +315,12 @@ export default {
 			}
 		},
 
-		//Methods related to Teachable Machine
-
-		async init () {
-			const modelURL = URL + 'model.json';
-			const metadataURL = URL + 'metadata.json';
-
-        // load the model and metadata
-        // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-			model = await tmPose.load(modelURL, metadataURL);
-			maxPredictions = model.getTotalClasses();
-
-        // Convenience function to setup a webcam
-			const flip = true; // whether to flip the webcam
-			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-			await webcam.setup(); // request access to the webcam
-			webcam.play();
-			window.requestAnimationFrame(this.loop);
-
-        // append/get elements to the DOM
-			// append/get elements to the DOM
-			const canvas = document.getElementById('main-video-canvas');
-			canvas.width = 200; canvas.height = 200;
-			ctx = canvas.getContext('2d');
-			labelContainer = document.getElementById('label-container');
-			for (let i = 0; i < maxPredictions; i++) { // and class labels
-				labelContainer.appendChild(document.createElement('div'));
-			}
-		},
-
-		async loop(timestamp) {
-			webcam.update(); // update the webcam frame
-			await this.predict();
-			window.requestAnimationFrame(this.loop);
-		},
-		async predict() {
-				// Prediction #1: run input through posenet
-				// estimatePose can take in an image, video or canvas html element
-				const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-				// Prediction 2: run input through teachable machine classification model
-				const prediction = await model.predict(posenetOutput);
-				if (prediction[0].probability.toFixed(2) == 1) {
-					if (this.status == 1) {
-						this.session.signal({		// 운동 점수 송신
-							data: this.myUserName,  // Any string (optional)
-							to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-							type: 'score'             // The type of message (optional)
-						})
-						.then(() => {
-								console.log('Message successfully sent');
-						})
-						.catch(error => {
-								console.error(error);
-						});
-					}
-					this.status = 0
-				} else if (prediction[1].probability.toFixed(2) == 1) {
-					if (this.status == 0){
-						this.status = 1
-					}
-				} else if (prediction[2].probability.toFixed(2) == 1) {
-					this.status = 3
-				}
-				for (let i = 0; i < maxPredictions; i++) {
-						const classPrediction =
-								prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
-						labelContainer.childNodes[i].innerHTML = classPrediction;
-				}
-
-			// finally draw the poses
-			//this.drawPose(pose);
-			},
-
-			drawPose(pose) {
-				ctx.drawImage(webcam.canvas, 0, 0);
-				// draw the keypoints and skeleton
-				if (pose) {
-					const minPartConfidence = 0.5;
-					tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-					tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-				}
-			},
-		
-		//END OF TEACHABLE MACHINE METHODS
-
-		/**
-		 * --------------------------
-		 * SERVER-SIDE RESPONSIBILITY
-		 * --------------------------
-		 * These methods retrieve the mandatory user token from OpenVidu Server.
-		 * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-		 * the API REST, openvidu-java-client or openvidu-node-client):
-		 *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-		 *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-		 *   3) The Connection.token must be consumed in Session.connect() method
-		 */
-
 		getToken (mySessionId, myUserName) {
 			axios ({
-				url: "https://localhost:8080/api/v1/rooms/get-token",
-				method: 'post',
-				data: {"code" : mySessionId, "id" : myUserName},
-				headers: this.authHeader,
+				url: API_BASE_URL + "/api/v1/rooms/get-token",
+        method: 'post',
+        data: {"code" : mySessionId, "id" : myUserName},
+        headers: this.authHeader,
 			})
 				.then((res) => {
 					console.log(res)
@@ -451,67 +348,118 @@ export default {
 						// --- Publish your stream ---
 
 						this.session.publish(this.publisher);
-					})
-					.catch(error => {
-						console.log('There was an error connecting to the session:', error.code, error.message);
-					});
+
+						this.session.signal({		// 참가자 입장 송신
+							data: this.myUserName,  // Any string (optional)
+							to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+							type: 'memberJoin'             // The type of message (optional)
+						})
+						.then(() => {
+								console.log('Message successfully sent');
+						})
+						.catch(error => {
+								console.error(error);
+						})
+						})
+						.catch(error => {
+							console.log('There was an error connecting to the session:', error.code, error.message);
+						});
 				})
 		},
 
-		// // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
-		// createSession (sessionId) {
-		// 	return new Promise((resolve, reject) => {
-		// 		axios
-		// 			.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`, JSON.stringify({
-		// 				customSessionId: sessionId,
-		// 			}), {
-		// 				auth: {
-		// 					username: 'OPENVIDUAPP',
-		// 					password: OPENVIDU_SERVER_SECRET,
-		// 				},
-		// 			})
-		// 			.then(response => response.data)
-		// 			.then(data => resolve(data.id))
-		// 			.catch(error => {
-		// 				if (error.response.status === 409) {
-		// 					resolve(sessionId);
-		// 				} else {
-		// 					console.warn(`No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`);
-		// 					if (window.confirm(`No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`)) {
-		// 						location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
-		// 					}
-		// 					reject(error.response);
-		// 				}
-		// 			});
-		// 	});
-		// },
+		//Methods related to Teachable Machine
 
-		// // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
-		// createToken (sessionId) {
-		// 	return new Promise((resolve, reject) => {
-		// 		axios
-		// 			.post(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`, {}, {
-		// 				auth: {
-		// 					username: 'OPENVIDUAPP',
-		// 					password: OPENVIDU_SERVER_SECRET,
-		// 				},
-		// 			})
-		// 			.then(response => response.data)
-		// 			.then(data => resolve(data.token))
-		// 			.catch(error => reject(error.response));
-		// 	});
-		// },
+		async init () {
+			const modelURL = URL + 'model.json';
+			const metadataURL = URL + 'metadata.json';
 
+		// load the model and metadata
+		// Refer to tmPose.loadFromFiles() in the API to support files from a file picker
+			model = await tmPose.load(modelURL, metadataURL);
+			maxPredictions = model.getTotalClasses();
+
+		// Convenience function to setup a webcam
+			const flip = true; // whether to flip the webcam
+			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+			await webcam.setup(); // request access to the webcam
+			webcam.play();
+			window.requestAnimationFrame(this.loop);
+
+		// append/get elements to the DOM
+			// append/get elements to the DOM
+			const canvas = document.getElementById('main-video-canvas');
+			canvas.width = 200; canvas.height = 200;
+			ctx = canvas.getContext('2d');
+			labelContainer = document.getElementById('label-container');
+			for (let i = 0; i < maxPredictions; i++) { // and class labels
+					labelContainer.appendChild(document.createElement('div'));
+			}
+		},
+
+		async loop(timestamp) {
+			webcam.update(); // update the webcam frame
+			await this.predict();
+			window.requestAnimationFrame(this.loop);
+		},
+		async predict() {
+			// Prediction #1: run input through posenet
+			// estimatePose can take in an image, video or canvas html element
+			const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+			// Prediction 2: run input through teachable machine classification model
+			const prediction = await model.predict(posenetOutput);
+			if (prediction[0].probability.toFixed(2) >= 0.99) {
+				if (this.status == 1) {
+					this.session.signal({		// 운동 점수 송신
+						data: this.myUserName,  // Any string (optional)
+						to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+						type: 'score'             // The type of message (optional)
+					})
+					.then(() => {
+							console.log('Message successfully sent');
+					})
+					.catch(error => {
+							console.error(error);
+					});
+				}
+				this.status = 0
+			} else if (prediction[1].probability.toFixed(2) >= 0.99) {
+				this.status = 1
+			}
+			for (let i = 0; i < maxPredictions; i++) {
+					const classPrediction =
+							prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+			}
+
+			// finally draw the poses
+			//this.drawPose(pose);
+		},
+
+		drawPose(pose) {
+			ctx.drawImage(webcam.canvas, 0, 0);
+			// draw the keypoints and skeleton
+			if (pose) {
+				const minPartConfidence = 0.5;
+				tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+				tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+			}
+		},
 		
-		...mapActions(['setRoomClose'])
+		//END OF TEACHABLE MACHINE METHODS
+
+		...mapActions(['setRoomClose', 'leaveRoom'])
 	},
+
 	computed : {
 		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo', 'authHeader']),
+	},
+	mounted () {
+		this.game = Game();			//generate phaser game when entering session
 	},
 	created () {
 		if (this.roomCreate) {
 			axios ({
-				url: "https://localhost:8080/api/v1/rooms/create-room",
+				url: API_BASE_URL + "/api/v1/rooms/create-room",
         method: 'post',
         data: this.roomInfo,
         headers: this.authHeader,
@@ -522,23 +470,36 @@ export default {
 					this.myUserName = res.data.host
 					this.joinSession()
 					this.connectSession(res.data.token)
+					this.isHost = true
+					this.team1.push(res.data.host)
+					this.personalScore[`${res.data.host}`] = 0
 				})
 		} else if (this.roomJoin) {
 				this.mySessionId = this.joinInfo.roomCode
-				this.myUserName = this.joinInfo.username
+				// this.mySessionId = "5YeWZztlx2"
+				this.myUserName = this.joinInfo.userName
 				this.joinSession()
+				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_BjMvFY12vK&token=tok_WfIoBmdus23jFzoX")
 				this.getToken(this.mySessionId, this.myUserName)
+		} else {
+				this.$router.push('/waiting')
 		}
 	},
+	beforeDestroy() {
+		console.log("destroy")
+		if (this.session) {
+			this.leaveSession()
+		}
+		// this.$router.push('/waiting')
+  },
 
-	beforeRouteLeave(to, from, next) {
-		console.log('leave')
-		this.leaveSession()
-		next()
-	}
+	// beforeRouteLeave(to, from, next) {
+	// 	console.log('leave')
+	// 	this.leaveSession()
+	// 	next()
+	// }
 }
 </script>
-
 <style scoped>
 
 </style>

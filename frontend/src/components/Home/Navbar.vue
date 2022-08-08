@@ -18,7 +18,7 @@
                   <v-avatar color="white" size="62"> </v-avatar>
                   <br>
                   <div class="menu-name">
-                    <h5 class="white--text">{{ user.nickname }}</h5>
+                    <h4 class="white--text">{{ userNav.userNick }}</h4>
                   </div>
                   <br>
                   <router-link to="/mypage">
@@ -44,17 +44,22 @@ export default {
   data () {
       return {
         dialog: false,
-        user: {
-          nickname: '병아리뿅뿅'
-        }
       }
-    },
+  },
   methods: {
-    ...mapActions(['logout'])
+    ...mapActions([
+      'logout',
+      'fetchNav'
+      ])
   },
   computed: {
-    ...mapGetters(['isLoggedIn'])
-  }
+    ...mapGetters([
+      'isLoggedIn',
+      'userNav'])
+  },
+  created() {
+    this.fetchNav()
+  },
 };
 </script>
 <style>
