@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container" class="container">
-
+		<GameResultModal v-if="gameFinished" :score="personalScore" @close-modal="gameFinished=false"/>
 		<div id="game-container"></div>
 		<div id="session" v-if="session">
 			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
@@ -42,6 +42,7 @@ import UserVideo from '../components/Room/UserVideo.vue';
 import { mapGetters, mapActions } from 'vuex'
 import { API_BASE_URL } from '@/config';
 import Game from '../game/game.js';
+import GameResultModal from './GameResultModalView.vue';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -57,6 +58,7 @@ export default {
 
 	components: {
 		UserVideo,
+		GameResultModal,
 	},
 
 	data () {
@@ -80,6 +82,7 @@ export default {
 			},
 			score1: 0,		// 팀별 점수
 			score2: 0,
+			gameFinished: false,
 		}
 	},
 
@@ -124,6 +127,7 @@ export default {
 
 						if (this.score1 - this.score2 >= 10){
 							this.game.scene.getScene('ropeFightScene').LeftWin();
+							setTimeout(() => this.gameFinished = true, 1000);
 						}
 						else{
 							this.game.scene.getScene('ropeFightScene').goLeftHandler();
@@ -138,6 +142,8 @@ export default {
 						this.personalScore[`${event.data}`] += 1
 						if (this.score2 - this.score1 >= 10){
 							this.game.scene.getScene('ropeFightScene').RightWin();
+							setTimeout(() => this.gameFinished = true, 1000);
+							
 						}
 						else{
 							this.game.scene.getScene('ropeFightScene').goRightHandler();
