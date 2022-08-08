@@ -4,6 +4,8 @@
 		<div id="game-container"></div>
 		<div id="session" v-if="session">
 			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
+			<button class="btn btn-lg btn-success" @click="sendLeft()">Left</button>
+			<button class="btn btn-lg btn-success" @click="sendRight()">Right</button>
 	
 			<div id="session-header">
 				<h1 id="session-title">{{ mySessionId }}</h1>
@@ -126,7 +128,10 @@ export default {
 							this.game.scene.getScene('ropeFightScene').LeftWin();
 						}
 						else{
-							this.game.scene.getScene('ropeFightScene').goLeftHandler();
+							if (this.score1 > this.score2 + 7)
+								this.game.scene.getScene('ropeFightScene').goLeftHandler(1);
+							else
+								this.game.scene.getScene('ropeFightScene').goLeftHandler(-1);
 						}						
 					}
 					//this.game.scene.getScene('ropeFightScene').goLeftHandler();
@@ -140,7 +145,11 @@ export default {
 							this.game.scene.getScene('ropeFightScene').RightWin();
 						}
 						else{
-							this.game.scene.getScene('ropeFightScene').goRightHandler();
+							if (this.score2 > this.score1 + 7)
+								this.game.scene.getScene('ropeFightScene').goRightHandler(1);
+							else
+								this.game.scene.getScene('ropeFightScene').goRightHandler(-1);
+							//this.game.scene.getScene('ropeFightScene').goRightHandler();
 						}
 
 					}
@@ -209,6 +218,39 @@ export default {
 		
 		},
 
+		sendLeft(){
+				if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score1 += 1
+						this.personalScore[`${event.data}`] += 1
+
+						if (this.score1 - this.score2 >= 10){
+							this.game.scene.getScene('ropeFightScene').LeftWin();
+						}
+						else{
+							if (this.score1 > this.score2 + 7)
+								this.game.scene.getScene('ropeFightScene').goLeftHandler(1);
+							else
+								this.game.scene.getScene('ropeFightScene').goLeftHandler(-1);
+						}		
+				}
+		},
+		sendRight(){
+					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score2 += 1
+						this.personalScore[`${event.data}`] += 1
+						if (this.score2 - this.score1 >= 10){
+							this.game.scene.getScene('ropeFightScene').RightWin();
+						}
+						else{
+							if (this.score2 > this.score1 + 7)
+								this.game.scene.getScene('ropeFightScene').goRightHandler(1);
+							else
+								this.game.scene.getScene('ropeFightScene').goRightHandler(-1);
+							//this.game.scene.getScene('ropeFightScene').goRightHandler();
+						}
+
+					}
+		},
 		sendStart () {
 			console.log("왔음")
 			this.game.scene.getScene('bootScene').StartScene(1);
