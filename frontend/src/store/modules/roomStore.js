@@ -4,8 +4,8 @@ const roomStore = {
     namespaced: true,
     state: {
         rooms: [],
-        lastPage: 6,
-        curPage: 3,
+        lastPage: 1,
+        curPage: 1,
         connectUsers: [],
     },
     getters: {},

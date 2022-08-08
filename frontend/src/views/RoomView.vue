@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container" class="container">
-
+		<GameResultModal v-if="gameFinished" :score="personalScore" :team1="team1" :team2="team2" @close-modal="gameFinished=false"/>
 		<div id="game-container"></div>
 		<div id="session" v-if="session">
 			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
@@ -38,27 +38,29 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { OpenVidu } from 'openvidu-browser';
-import UserVideo from '../components/Room/UserVideo.vue';
-import { mapGetters, mapActions } from 'vuex'
-import { API_BASE_URL } from '@/config';
-import Game from '../game/game.js';
+import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
+import UserVideo from "../components/Room/UserVideo.vue";
+import { mapGetters, mapActions } from "vuex";
+import { API_BASE_URL } from "@/config";
+import Game from "../game/game.js";
+import GameResultModal from "./GameResultModalView.vue";
 
-axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
-const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
+const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 // const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 // const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
-	name: 'App',
+  name: "App",
 
 	components: {
 		UserVideo,
+		GameResultModal,
 	},
 
 	data () {
@@ -78,15 +80,21 @@ export default {
 			status: 0,		// 동작 인식 상태
 			team1: [],		// 팀 정보
 			team2: [],
-			personalScore: {		// 개인별 점수
-			},
+			personalScore: {},		// 개인별 점수,
 			score1: 0,		// 팀별 점수
 			score2: 0,
+			gameFinished: false,
 		}
 	},
 
 	methods: {
-
+		dataInit () {
+			this.score1 = 0
+			this.score2 = 0
+			for (let key in this.personalScore) {
+				this.personalScore[`${key}`] = 0
+			}
+		},
 		joinSession () {
 			// --- Get an OpenVidu object ---
 			this.OV = new OpenVidu();
@@ -123,9 +131,11 @@ export default {
 					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
 						this.score1 += 1
 						this.personalScore[`${event.data}`] += 1
-
+						console.log(this.personalScore[`${event.data}`]);
+						console.log(this.personalScore);
 						if (this.score1 - this.score2 >= 10){
 							this.game.scene.getScene('ropeFightScene').LeftWin();
+							setTimeout(() => this.gameFinished = true, 1000);
 						}
 						else{
 							if (this.score1 > this.score2 + 7)
@@ -143,6 +153,8 @@ export default {
 						this.personalScore[`${event.data}`] += 1
 						if (this.score2 - this.score1 >= 10){
 							this.game.scene.getScene('ropeFightScene').RightWin();
+							setTimeout(() => this.gameFinished = true, 1000);
+							
 						}
 						else{
 							if (this.score2 > this.score1 + 7)
@@ -191,7 +203,7 @@ export default {
 					this.sendTeamInfo()
 				}
 			});
-			// 호스트 수신
+			// 호스트 수신 => 팀원 정보 수신
 			this.session.on('signal:host', (event) => {
 				console.log('호스트 수신'); // Message
 				if (!this.isHost) {
@@ -200,6 +212,24 @@ export default {
 					this.team2 = data.team2
 					this.personalScore = data.personalScore
 				}
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+			});
+			// 호스트 퇴장 수신 => 호스트 퇴장시 모든 유저 퇴장
+			this.session.on('signal:hostLeave', (event) => {
+				console.log('호스트 퇴장 수신'); // Message
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+				this.leaveSession()
+			});
+			// 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
+			this.session.on('signal:gameStart', (event) => {
+				this.game.scene.getScene('bootScene').StartScene(1);
+				const data = JSON.parse(event.data)
+				this.score1 = data.score1
+				this.score2 = data.score2
+				this.personalScore = data.personalScore
+				console.log('게임 시작 수신'); // Message
 				console.log(event.from); // Connection object of the sender
 				console.log(event.type); // The type of message
 			});
@@ -254,6 +284,18 @@ export default {
 		sendStart () {
 			console.log("왔음")
 			this.game.scene.getScene('bootScene').StartScene(1);
+			this.dataInit()
+			this.session.signal({		// 게임 시작 송신
+				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'gameStart'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
 		},
 
 		connectSession (token) {
@@ -300,6 +342,19 @@ export default {
 			.catch(error => {
 					console.error(error);
 			})
+			if (this.isHost) {
+				this.session.signal({		// 호스트 퇴장 송신
+					data: this.myUserName,  // Any string (optional)
+					to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+					type: 'hostLeave'             // The type of message (optional)
+				})
+				.then(() => {
+						console.log('Message successfully sent');
+				})
+				.catch(error => {
+						console.error(error);
+				})
+			}
 			if (this.session) this.session.disconnect();
 			const joinInfo = {
 				code : this.mySessionId,
@@ -535,13 +590,6 @@ export default {
 		// this.$router.push('/waiting')
   },
 
-	// beforeRouteLeave(to, from, next) {
-	// 	console.log('leave')
-	// 	this.leaveSession()
-	// 	next()
-	// }
-}
+};
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>

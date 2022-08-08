@@ -14,10 +14,10 @@
             <CreateRoomDialog class="primary"
             style="width: 70%; height: 40px; font-weight: bold">
             </CreateRoomDialog>
-
             <button
               class="primary"
               style="width: 70%; height: 40px; font-weight: bold"
+              @click="rankBtn"
             >
               랭킹 보기
             </button>
@@ -61,7 +61,10 @@ export default {
   components: { UserList, RoomList, ChattingList, CreateRoomDialog },
   methods: {
     ...mapActions(['setRoomCreate']),
-    ...mapActions(['fetchWaitingRoomPage'])
+    ...mapActions(['fetchWaitingRoomPage']),
+    rankBtn() {
+    this.$router.push('/rank');
+    }
   },
   computed: {
         ...mapGetters(['roompage'])
