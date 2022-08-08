@@ -36,25 +36,25 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { OpenVidu } from 'openvidu-browser';
-import UserVideo from '../components/Room/UserVideo.vue';
-import { mapGetters, mapActions } from 'vuex'
-import { API_BASE_URL } from '@/config';
-import Game from '../game/game.js';
-import GameResultModal from './GameResultModalView.vue';
+import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
+import UserVideo from "../components/Room/UserVideo.vue";
+import { mapGetters, mapActions } from "vuex";
+import { API_BASE_URL } from "@/config";
+import Game from "../game/game.js";
+import GameResultModal from "./GameResultModalView.vue";
 
-axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
-const URL = 'https://teachablemachine.withgoogle.com/models/w6iITyYRf/';
+const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 // const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 // const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
-	name: 'App',
+  name: "App",
 
 	components: {
 		UserVideo,
@@ -548,13 +548,6 @@ export default {
 		// this.$router.push('/waiting')
   },
 
-	// beforeRouteLeave(to, from, next) {
-	// 	console.log('leave')
-	// 	this.leaveSession()
-	// 	next()
-	// }
-}
+};
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>
