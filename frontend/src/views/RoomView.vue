@@ -84,7 +84,13 @@ export default {
 	},
 
 	methods: {
-
+		dataInit () {
+			this.score1 = 0
+			this.score2 = 0
+			for (let key in this.personalScore) {
+				this.personalScore[`${key}`] = 0
+			}
+		},
 		joinSession () {
 			// --- Get an OpenVidu object ---
 			this.OV = new OpenVidu();
@@ -182,7 +188,7 @@ export default {
 					this.sendTeamInfo()
 				}
 			});
-			// 호스트 수신
+			// 호스트 수신 => 팀원 정보 수신
 			this.session.on('signal:host', (event) => {
 				console.log('호스트 수신'); // Message
 				if (!this.isHost) {
@@ -191,6 +197,24 @@ export default {
 					this.team2 = data.team2
 					this.personalScore = data.personalScore
 				}
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+			});
+			// 호스트 퇴장 수신 => 호스트 퇴장시 모든 유저 퇴장
+			this.session.on('signal:hostLeave', (event) => {
+				console.log('호스트 퇴장 수신'); // Message
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+				this.leaveSession()
+			});
+			// 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
+			this.session.on('signal:gameStart', (event) => {
+				this.game.scene.getScene('bootScene').StartScene(1);
+				const data = JSON.parse(event.data)
+				this.score1 = data.score1
+				this.score2 = data.score2
+				this.personalScore = data.personalScore
+				console.log('게임 시작 수신'); // Message
 				console.log(event.from); // Connection object of the sender
 				console.log(event.type); // The type of message
 			});
@@ -212,6 +236,18 @@ export default {
 		sendStart () {
 			console.log("왔음")
 			this.game.scene.getScene('bootScene').StartScene(1);
+			this.dataInit()
+			this.session.signal({		// 게임 시작 송신
+				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'gameStart'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
 		},
 
 		connectSession (token) {
@@ -258,6 +294,19 @@ export default {
 			.catch(error => {
 					console.error(error);
 			})
+			if (this.isHost) {
+				this.session.signal({		// 호스트 퇴장 송신
+					data: this.myUserName,  // Any string (optional)
+					to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+					type: 'hostLeave'             // The type of message (optional)
+				})
+				.then(() => {
+						console.log('Message successfully sent');
+				})
+				.catch(error => {
+						console.error(error);
+				})
+			}
 			if (this.session) this.session.disconnect();
 			const joinInfo = {
 				code : this.mySessionId,
