@@ -18,24 +18,10 @@
       <div v-for="ranker in rankingList"
       :key="ranker.no"
       :ranker = ranker
-      >{{ranker.totalScore}}</div>
+      >
       <div class="d-flex justify-center align-center">
-        <RankItem></RankItem>
+        <RankItem :rankerNick="ranker.nick" :rankerTotalScore="ranker.totalScore" :rankerRanking="ranker.ranking"></RankItem>
       </div>
-      <div class="d-flex justify-center align-center">
-        <RankItem></RankItem>
-      </div>
-      <div class="d-flex justify-center align-center">
-        <RankItem></RankItem>
-      </div>
-      <div class="d-flex justify-center align-center">
-        <RankItem></RankItem>
-      </div>
-      <div class="d-flex justify-center align-center">
-        <RankItem></RankItem>
-      </div>
-      <div class="d-flex justify-center align-center">
-        <RankItem></RankItem>
       </div>
     </div>
   </v-container>

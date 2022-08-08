@@ -18,11 +18,11 @@
                   <v-avatar color="white" size="62"> </v-avatar>
                   <br>
                   <div class="menu-name">
-                    <h4 class="white--text">{{ userNav.userNick }}</h4>
+                    <h4 class="white--text">{{ userNav.nick }}</h4>
                   </div>
                   <br>
                   <router-link to="/mypage">
-                      <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw" @click="fetchProfile"> 마이페이지 </v-btn>
+                      <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 마이페이지 </v-btn>
                   </router-link>
                   <a href @click.prevent="logout">
                     <v-btn color="primary" elevation="0" class="page-btn black--text" style="font-weight: bold" width="12vw"> 로그아웃 </v-btn>
@@ -49,16 +49,17 @@ export default {
   methods: {
     ...mapActions([
       'logout',
-      'fetchNav',
-      'fetchprofile'
+      'fetchNav'
       ])
   },
   computed: {
     ...mapGetters([
       'isLoggedIn',
-      'userNav',
-      'profile'])
+      'userNav'])
   },
+  created(){
+    this.fetchNav()
+  }
 };
 </script>
 <style>

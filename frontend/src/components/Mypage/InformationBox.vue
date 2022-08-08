@@ -7,7 +7,7 @@
             <label class="primary--text" for="nickname">닉네임</label>
           </v-col>
           <v-col cols="11">
-            <div class="nickname white--text">{{ profile.userNick }}</div>
+            <div class="nickname white--text">{{ profile.nick }}</div>
           </v-col>
         </v-row>
         <v-row justify="center" align="center">
