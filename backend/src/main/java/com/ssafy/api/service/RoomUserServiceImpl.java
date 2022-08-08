@@ -20,4 +20,15 @@ public class RoomUserServiceImpl implements RoomUserService {
         RoomUser roomUser = RoomUser.createRoomUser(user, room);
         roomUserRepository.save(roomUser);
     }
+
+    @Override
+    public RoomUser getRoomUser (User user, Room room) {
+        return roomUserRepository.findRoomUser(user, room);
+    }
+
+    @Override
+    @Transactional
+    public void deleteRoomUser (RoomUser roomUser) {
+        roomUserRepository.delete(roomUser);
+    }
 }

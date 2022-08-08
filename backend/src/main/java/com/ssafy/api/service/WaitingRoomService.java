@@ -12,4 +12,5 @@ public interface WaitingRoomService {
     // 새로 고침 버튼 클릭시 위의 두 메서드 둘 다 호출
 //    List<User> getCurrentUserList(int page); // 한번에 10명씩
     List<RoomInfoRes> getAvailableRoomList(int page); // 한번에 3개씩
+    int getAvailableRoomCount();
 }

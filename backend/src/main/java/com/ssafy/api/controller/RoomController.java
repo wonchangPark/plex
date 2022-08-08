@@ -13,6 +13,7 @@ import com.ssafy.api.service.UserService;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.RandomRoomCode;
 import com.ssafy.db.entity.Room;
+import com.ssafy.db.entity.RoomUser;
 import com.ssafy.db.entity.User;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONObject;
@@ -211,6 +212,23 @@ public class RoomController {
 		json.put("error", e.getMessage());
 		json.put("exception", e.getClass());
 		return new ResponseEntity<>(json, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@PostMapping("/leave-room")
+	public ResponseEntity<BaseResponseBody> leaveRoom(@RequestBody RoomJoinPostReq joinInfo) {
+		Room room = roomService.getRoomByCode(joinInfo.getCode());
+		User user = userService.getUserByUserId(joinInfo.getId());
+		String host = room.getHost();
+		String id = joinInfo.getId();
+		System.out.println(host);
+		System.out.println(id);
+		if (host.equals(id)) { // 방 나가는 사람이 호스트인 경우
+			System.out.println("inside");
+			roomService.endRoom(room);
+		}
+		RoomUser roomUser = roomUserService.getRoomUser(user, room);
+		roomUserService.deleteRoomUser(roomUser);
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 	
 }

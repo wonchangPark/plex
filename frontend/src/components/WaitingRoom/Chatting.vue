@@ -39,21 +39,6 @@ export default {
       this.message = this.connection.send(this.message);
     },
   },
-  created: function() {
-    console.log("Starting connection to WebSocket Server")
-    this.connection = new WebSocket("wss://localhost:8080/ws/chat")
-
-    this.connection.onmessage = (event)=> {
-      console.log(event);
-      this.text += event.data;
-      this.text += "\n";
-    }
-
-    this.connection.onopen = function(event) {
-      console.log(event)
-      console.log("Successfully connected to the echo websocket server...")
-    }
-  }
 }
 </script>
 

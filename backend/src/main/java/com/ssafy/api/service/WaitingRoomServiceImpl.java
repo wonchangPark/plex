@@ -35,7 +35,11 @@ public class WaitingRoomServiceImpl implements WaitingRoomService{
     public List<RoomInfoRes> getAvailableRoomList(int page) {
         System.out.println("service on");
         int from = (page-1) * NUMPERPAGEFORROOM;
-        int to = page * NUMPERPAGEFORROOM;
-        return waitingRoomRepository.getCurrentRoomList(from, to);
+        return waitingRoomRepository.getCurrentRoomList(from);
+    }
+
+    @Override
+    public int getAvailableRoomCount() {
+        return waitingRoomRepository.getAvailableRoomCount();
     }
 }

@@ -23,7 +23,7 @@
                 <div class="primary--text" style="font-size:1.2rem; font-weight: bold;">방 코드</div>
               </v-col>
               <v-col cols="7">
-                <input id="room-title" type="text" v-model="joinInfo.roomCode"/>
+                <input id="room-title" type="text" v-model="roomCode"/>
               </v-col>
             </v-row>
             <br>
@@ -36,28 +36,23 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import { mapActions} from 'vuex'
 
 export default {
   name : 'PrivateRoomDialog',
   data () {
     return {
       dialog: false,
-      joinInfo: {
-        roomCode: '',
-        userName: '병아리'
-      }
+      roomCode: '',
     }
   },
   methods: {
     ...mapActions(['setRoomJoin']),
     joinRoom(){
-      const joinInfo = this.joinInfo
-      this.setRoomJoin(joinInfo)
+      this.setRoomJoin(this.roomCode)
       this.$router.push('/room')
     }
-  }
-  
+  },
 }
 </script>
 

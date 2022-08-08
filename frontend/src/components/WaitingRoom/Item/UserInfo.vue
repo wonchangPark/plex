@@ -1,12 +1,15 @@
 <template>
   <div class="d-flex user-info flex-row justify-left align-center">
     <v-avatar class="mr-4 ml-4" color="white" size="45"></v-avatar>
-    <div class="white--text font">Name</div>
+    <div class="white--text font">{{nick}}</div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+    name: "UserInfo",
+    props:["nick"]
+};
 </script>
 
 <style scoped>

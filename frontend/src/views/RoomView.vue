@@ -1,25 +1,5 @@
 <template>
 	<div id="main-container" class="container">
-		<!-- <div id="join" v-if="!session">
-			<div id="join-dialog" class="jumbotron vertical-center">
-				<h1>Join a video session</h1>
-				<div class="form-group">
-					<p>
-						<label>Participant</label>
-						<input v-model="myUserName" class="form-control" type="text" required>
-					</p>
-					<p>
-						<label>Session</label>
-						<input v-model="mySessionId" class="form-control" type="text" required>
-					</p>
-					<p class="text-center">
-						<button class="btn btn-lg btn-success" @click="joinSession()">Join!</button>
-					</p>
-				</div>
-			</div>
-		</div> -->
-
-
 
 		<div id="session" v-if="session">
 			<div id="session-header">
@@ -31,7 +11,6 @@
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="videoControl" v-if="videoMute" value="비디오 시작">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
-				<input type="text" v-model="msg" @keypress.enter="sendMSG">
 				<h1>팀 점수</h1>
 				<h2>team1 {{ score1 }}</h2>
 				<h2>team2 {{ score2 }}</h2>
@@ -47,8 +26,6 @@
 			</div>
 		</div>
 		<div v-if="session">
-			<h2>채팅</h2>
-			<p v-for="message in chat" :key="message">{{ message }}</p>
 			<h1>개인 점수</h1>
 			<p v-for="(user, index) in personalScore" :key="index">{{ user }}</p>
 		</div>
@@ -60,6 +37,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
 import { mapGetters, mapActions } from 'vuex'
+import { API_BASE_URL } from '@/config';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -85,23 +63,16 @@ export default {
 			publisher: undefined,
 			subscribers: [],
 
-			mySessionId: 'SessionA',
-			myUserName: 'Participant' + Math.floor(Math.random() * 100),
+			mySessionId: '',
+			myUserName: '',
 			videoMute: false,		// 영상 중지
 			audioMute: false,		// 음소거
-			msg: "",		// 채팅 메시지 송신
-			chat: [],		// 채팅 메시지 수신
 
+			isHost: false,
 			status: 0,		// 동작 인식 상태
-			team1: ['a', 'b', 'c'],		// 팀 하드코딩(임시)
-			team2: ['d', 'e', 'f'],
+			team1: [],		// 팀 정보
+			team2: [],
 			personalScore: {		// 개인별 점수
-				'a': 0,
-				'b': 0,
-				'c': 0,
-				'd': 0,
-				'e': 0,
-				'f': 0
 			},
 			score1: 0,		// 팀별 점수
 			score2: 0,
@@ -109,20 +80,6 @@ export default {
 	},
 
 	methods: {
-		sendMSG () {
-			this.session.signal({
-				data: `${this.myUserName} : ${this.msg}`,  // Any string (optional)
-				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-				type: 'my-chat'             // The type of message (optional)
-			})
-			.then(() => {
-					console.log('Message successfully sent');
-			})
-			.catch(error => {
-					console.error(error);
-			});
-			this.msg = ''
-		},
 
 		joinSession () {
 			// --- Get an OpenVidu object ---
@@ -152,13 +109,7 @@ export default {
 			this.session.on('exception', ({ exception }) => {
 				console.warn(exception);
 			});
-			// 채팅 수신
-			this.session.on('signal:my-chat', (event) => {
-				console.log(`메시지 수신: ${event.data}`); // Message
-				this.chat.push(event.data)
-				console.log(event.from); // Connection object of the sender
-				console.log(event.type); // The type of message
-			});
+
 			// 운동 점수 수신
 			this.session.on('signal:score', (event) => {
 				console.log(event.data); // Message
@@ -168,6 +119,48 @@ export default {
 					this.score2 += 1
 				}
 				this.personalScore[`${event.data}`] += 1
+				console.log(event.from); // Connection object of the sender
+				console.log(event.type); // The type of message
+			});
+			// 참가자 입장 수신
+			this.session.on('signal:memberJoin', (event) => {
+				console.log(event.data); // Message
+				console.log("참가자 입장")
+				if (this.isHost) {
+					if (this.team1.length < 3) {
+						this.team1.push(event.data)
+					} else {
+						this.team2.push(event.data)
+					}
+					this.personalScore[`${event.data}`] = 0
+					this.sendTeamInfo()
+				}
+			});
+			// 참가자 퇴장 수신
+			this.session.on('signal:memberLeave', (event) => {
+				console.log(event.data); // Message
+				console.log("참가자 퇴장")
+				if (this.isHost) {
+					const id1 = this.team1.indexOf(`${event.data}`) 
+					const id2 = this.team2.indexOf(`${event.data}`) 
+					if (id1 !== -1){
+						this.team1.splice(id1, 1)
+					} else {
+						this.team2.splice(id2, 1)
+					}
+					delete this.personalScore[`${event.data}`]
+					this.sendTeamInfo()
+				}
+			});
+			// 호스트 수신
+			this.session.on('signal:host', (event) => {
+				console.log('호스트 수신'); // Message
+				if (!this.isHost) {
+					const data = JSON.parse(event.data)
+					this.team1 = data.team1
+					this.team2 = data.team2
+					this.personalScore = data.personalScore
+				}
 				console.log(event.from); // Connection object of the sender
 				console.log(event.type); // The type of message
 			});
@@ -216,7 +209,23 @@ export default {
 
 		leaveSession () {
 			// --- Leave the session by calling 'disconnect' method over the Session object ---
+			this.session.signal({		// 참가자 퇴장 송신
+				data: this.myUserName,  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'memberLeave'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
 			if (this.session) this.session.disconnect();
+			const joinInfo = {
+				code : this.mySessionId,
+				id : this.myUserName
+			}
+			this.leaveRoom(joinInfo)
 
 			this.session = undefined;
 			this.mainStreamManager = undefined;
@@ -226,6 +235,21 @@ export default {
 			this.setRoomClose()
 
 			window.removeEventListener('beforeunload', this.leaveSession);
+			this.$router.push('/waiting')
+		},
+
+		sendTeamInfo() {
+			this.session.signal({		// 호스트 송신
+				data: JSON.stringify({team1: this.team1, team2: this.team2, personalScore: this.personalScore}),  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'host'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
 		},
 
 		updateMainVideoStreamManager (stream) {
@@ -255,7 +279,7 @@ export default {
 
 		getToken (mySessionId, myUserName) {
 			axios ({
-				url: "https://localhost:8080/api/v1/rooms/get-token",
+				url: API_BASE_URL + "/api/v1/rooms/get-token",
         method: 'post',
         data: {"code" : mySessionId, "id" : myUserName},
         headers: this.authHeader,
@@ -286,10 +310,22 @@ export default {
 						// --- Publish your stream ---
 
 						this.session.publish(this.publisher);
-					})
-					.catch(error => {
-						console.log('There was an error connecting to the session:', error.code, error.message);
-					});
+
+						this.session.signal({		// 참가자 입장 송신
+							data: this.myUserName,  // Any string (optional)
+							to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+							type: 'memberJoin'             // The type of message (optional)
+						})
+						.then(() => {
+								console.log('Message successfully sent');
+						})
+						.catch(error => {
+								console.error(error);
+						})
+						})
+						.catch(error => {
+							console.log('There was an error connecting to the session:', error.code, error.message);
+						});
 				})
 		},
 
@@ -373,7 +409,7 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-		...mapActions(['setRoomClose'])
+		...mapActions(['setRoomClose', 'leaveRoom'])
 	},
 
 	computed : {
@@ -382,7 +418,7 @@ export default {
 	created () {
 		if (this.roomCreate) {
 			axios ({
-				url: "https://localhost:8080/api/v1/rooms/create-room",
+				url: API_BASE_URL + "/api/v1/rooms/create-room",
         method: 'post',
         data: this.roomInfo,
         headers: this.authHeader,
@@ -393,6 +429,9 @@ export default {
 					this.myUserName = res.data.host
 					this.joinSession()
 					this.connectSession(res.data.token)
+					this.isHost = true
+					this.team1.push(res.data.host)
+					this.personalScore[`${res.data.host}`] = 0
 				})
 		} else if (this.roomJoin) {
 				this.mySessionId = this.joinInfo.roomCode
@@ -401,14 +440,23 @@ export default {
 				this.joinSession()
 				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_BjMvFY12vK&token=tok_WfIoBmdus23jFzoX")
 				this.getToken(this.mySessionId, this.myUserName)
+		} else {
+				this.$router.push('/waiting')
 		}
 	},
+	beforeDestroy() {
+		console.log("destroy")
+		if (this.session) {
+			this.leaveSession()
+		}
+		// this.$router.push('/waiting')
+  },
 
-	beforeRouteLeave(to, from, next) {
-		console.log('leave')
-		this.leaveSession()
-		next()
-	}
+	// beforeRouteLeave(to, from, next) {
+	// 	console.log('leave')
+	// 	this.leaveSession()
+	// 	next()
+	// }
 }
 </script>
 <style scoped>
