@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/v1/ws")
 public class ChatController {
     List<String> userList = new ArrayList<>();
+    HashSet<String> userSet = new HashSet<>();
 
     @MessageMapping("/receive")
     @SendTo("/send")
@@ -25,19 +27,21 @@ public class ChatController {
         String type = socketVo.getType();
         SocketVO result;
         if(type.equals("enter")){
-            userList.add(userName);
+            userSet.add(userName);
             result = new SocketVO(userName, content, "enter");
         }else if(type.equals("exit")) {
-            userList.remove(userName);
+            userSet.remove(userName);
             result = new SocketVO(userName, content, "exit");
-        }else
+        }else {
+            userSet.add(userName);
             result = new SocketVO(userName, content, type);
+        }
         return result;
     }
 
     @RequestMapping("/users")
     @ResponseBody
     public List<String> getUserList(){
-        return userList;
+        return new ArrayList<>(userSet);
     }
 }
