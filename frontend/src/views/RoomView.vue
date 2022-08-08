@@ -1,7 +1,10 @@
 <template>
 	<div id="main-container" class="container">
 
+		<div id="game-container"></div>
 		<div id="session" v-if="session">
+			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
+	
 			<div id="session-header">
 				<h1 id="session-title">{{ mySessionId }}</h1>
 				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="leaveSession" value="Leave session">
@@ -38,6 +41,7 @@ import { OpenVidu } from 'openvidu-browser';
 import UserVideo from '../components/Room/UserVideo.vue';
 import { mapGetters, mapActions } from 'vuex'
 import { API_BASE_URL } from '@/config';
+import Game from '../game/game.js';
 
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -114,11 +118,37 @@ export default {
 			this.session.on('signal:score', (event) => {
 				console.log(event.data); // Message
 				if (this.team1.includes(event.data)) {
-					this.score1 += 1
+					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score1 += 1
+						this.personalScore[`${event.data}`] += 1
+
+						if (this.score1 - this.score2 >= 10){
+							this.game.scene.getScene('ropeFightScene').LeftWin();
+						}
+						else{
+							this.game.scene.getScene('ropeFightScene').goLeftHandler();
+						}						
+					}
+					//this.game.scene.getScene('ropeFightScene').goLeftHandler();
+
+
 				} else {
-					this.score2 += 1
+					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score2 += 1
+						this.personalScore[`${event.data}`] += 1
+						if (this.score2 - this.score1 >= 10){
+							this.game.scene.getScene('ropeFightScene').RightWin();
+						}
+						else{
+							this.game.scene.getScene('ropeFightScene').goRightHandler();
+						}
+
+					}
+					//this.game.scene.getScene('ropeFightScene').goRightHandler();
+
+
 				}
-				this.personalScore[`${event.data}`] += 1
+				//this.personalScore[`${event.data}`] += 1
 				console.log(event.from); // Connection object of the sender
 				console.log(event.type); // The type of message
 			});
@@ -175,6 +205,13 @@ export default {
 			this.init()
 
 			window.addEventListener('beforeunload', this.leaveSession)
+			//this.game = Game();			//generate phaser game when entering session
+		
+		},
+
+		sendStart () {
+			console.log("왔음")
+			this.game.scene.getScene('bootScene').StartScene(1);
 		},
 
 		connectSession (token) {
@@ -208,6 +245,7 @@ export default {
 		},
 
 		leaveSession () {
+			this.game.destroy(true)
 			// --- Leave the session by calling 'disconnect' method over the Session object ---
 			this.session.signal({		// 참가자 퇴장 송신
 				data: this.myUserName,  // Any string (optional)
@@ -414,6 +452,9 @@ export default {
 
 	computed : {
 		...mapGetters(['roomCreate', 'roomInfo', 'roomJoin', 'joinInfo', 'authHeader']),
+	},
+	mounted () {
+		this.game = Game();			//generate phaser game when entering session
 	},
 	created () {
 		if (this.roomCreate) {
