@@ -1,6 +1,6 @@
 <template>
     <div class="modal">
-        <div class="overlay" @click="$emit('close-modal')">
+        <div class="overlay">
         <div class="modal-card">
             <ContentBox :height="100" :width="100">
                 <div class="d-flex flex-column">
