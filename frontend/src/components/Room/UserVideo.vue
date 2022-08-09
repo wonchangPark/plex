@@ -1,6 +1,8 @@
 <template>
 <div class="d-flex justify-center" v-if="streamManager" style="height:100%; width:100%">
+	<div style="width:50%; height: 100%; background:red"></div>
 	<ov-video :stream-manager="streamManager"/>
+	<div style="width:50%; height: 100%; background:green"></div>
 </div>
 </template>
 
