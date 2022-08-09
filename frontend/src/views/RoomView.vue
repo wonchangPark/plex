@@ -7,8 +7,11 @@
       class="d-flex justify-center align-center"
       style="height: 50%; width: 100%"
     >
+	<GameResultModal v-if="gameFinished" v-bind:score="personalScore" v-bind:team1="this.team1" v-bind:team2="this.team2"/>
+		<div id='label-container' style='display:none;'/>
       <div class="d-flex" style="height: 98%; width: 90%">
         <div id="game-container" style="height: 100%; width: 100%"></div>
+				<TeachableItem ref="teachable" @sendScore="sendScore"></TeachableItem>
       </div>
     </div>
     <div
@@ -79,20 +82,19 @@ import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
+import TeachableItem from "@/components/Room/TeachableItem.vue"
 import ScoreBoard from '@/components/Room/ScoreBoard.vue'
-axios.defaults.headers.post["Content-Type"] = "application/json";
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-//const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
-const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
-let model, webcam, ctx, labelContainer, maxPredictions;
 
 export default {
-  name: "App",
+	name: 'App',
 
   components: {
     UserVideo,
     GameResultModal,
     ContentBox,
+		TeachableItem,
 	ScoreBoard,
   },
 
@@ -103,7 +105,7 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
-
+		game: undefined,
       mySessionId: "",
       myUserName: "",
       videoMute: false, // 영상 중지
@@ -134,30 +136,30 @@ export default {
       // --- Get an OpenVidu object ---
       this.OV = new OpenVidu();
 
-      // --- Init a session ---
-      this.session = this.OV.initSession();
+			// --- Init a session ---
+			this.session = this.OV.initSession();
 
-      // --- Specify the actions when events take place in the session ---
+			// --- Specify the actions when events take place in the session ---
 
-      // On every new Stream received...
-      this.session.on("streamCreated", ({ stream }) => {
-        // console.log(this.session)
-        const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
-      });
+			// On every new Stream received...
+			this.session.on('streamCreated', ({ stream }) => {
+				// console.log(this.session)
+				const subscriber = this.session.subscribe(stream);
+				this.subscribers.push(subscriber);
+			});
 
-      // On every Stream destroyed...
-      this.session.on("streamDestroyed", ({ stream }) => {
-        const index = this.subscribers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.subscribers.splice(index, 1);
-        }
-      });
+			// On every Stream destroyed...
+			this.session.on('streamDestroyed', ({ stream }) => {
+				const index = this.subscribers.indexOf(stream.streamManager, 0);
+				if (index >= 0) {
+					this.subscribers.splice(index, 1);
+				}
+			});
 
-      // On every asynchronous exception...
-      this.session.on("exception", ({ exception }) => {
-        console.warn(exception);
-      });
+			// On every asynchronous exception...
+			this.session.on('exception', ({ exception }) => {
+				console.warn(exception);
+			});
 
       // 운동 점수 수신
       this.session.on("signal:score", (event) => {
@@ -268,156 +270,137 @@ export default {
         console.log(event.type); // The type of message
       });
 
-      // --- Connect to the session with a valid user token ---
+			// --- Connect to the session with a valid user token ---
 
-      // 'getToken' method is simulating what your server-side should do.
-      // 'token' parameter should be retrieved and returned by your own backend
+			// 'getToken' method is simulating what your server-side should do.
+			// 'token' parameter should be retrieved and returned by your own backend
+			
+			// this.getToken(this.mySessionId, this.myUserName)
+			
 
-      // this.getToken(this.mySessionId, this.myUserName)
+			window.addEventListener('beforeunload', this.leaveSession)
+			//this.game = Game();			//generate phaser game when entering session
+		
+		},
 
-      this.init();
+		sendLeft(){
+				if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score1 += 1
+						this.personalScore[`${event.data}`] += 1
 
-      window.addEventListener("beforeunload", this.leaveSession);
-      //this.game = Game();			//generate phaser game when entering session
-    },
+						if (this.score1 - this.score2 >= 10){
+							this.game.scene.getScene('ropeFightScene').LeftWin();
+							setTimeout(() => this.gameFinished = true, 1000);
+							setTimeout(() => this.gameFinished = false, 7000);
+						}
+						else{
+							if (this.score1 > this.score2 + 7)
+								this.game.scene.getScene('ropeFightScene').goLeftHandler(1);
+							else
+								this.game.scene.getScene('ropeFightScene').goLeftHandler(-1);
+						}		
+				}
+		},
+		sendRight(){
+					if (this.score1 - this.score2 < 10 && this.score1 - this.score2 >-10){
+						this.score2 += 1
+						this.personalScore[`${event.data}`] += 1
+						if (this.score2 - this.score1 >= 10){
+							this.game.scene.getScene('ropeFightScene').RightWin();
+							setTimeout(() => this.gameFinished = true, 1000);
+							setTimeout(() => this.gameFinished = false, 7000);
+						}
+						else{
+							if (this.score2 > this.score1 + 7)
+								this.game.scene.getScene('ropeFightScene').goRightHandler(1);
+							else
+								this.game.scene.getScene('ropeFightScene').goRightHandler(-1);
+							//this.game.scene.getScene('ropeFightScene').goRightHandler();
+						}
 
-    sendLeft() {
-      if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
-        this.score1 += 1;
-        this.personalScore[`${event.data}`] += 1;
+					}
+		},
+		sendStart () {
+			console.log("게임시작")
+			// console.log(this.$refs.teachable)
+			this.$refs.teachable.init()
+			this.game.scene.getScene('bootScene').StartScene(1);
+		},
+		sendScore( ){
+			this.session.signal({		// 운동 점수 송신
+				data: this.myUserName,  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'score'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			});
+		},
 
-        if (this.score1 - this.score2 >= 10) {
-          this.game.scene.getScene("ropeFightScene").LeftWin();
-          setTimeout(() => (this.gameFinished = true), 1000);
-          setTimeout(() => (this.gameFinished = false), 7000);
-        } else {
-          if (this.score1 > this.score2 + 7)
-            this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
-          else this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
-        }
-      }
-    },
-    sendRight() {
-      if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
-        this.score2 += 1;
-        this.personalScore[`${event.data}`] += 1;
-        if (this.score2 - this.score1 >= 10) {
-          this.game.scene.getScene("ropeFightScene").RightWin();
-          setTimeout(() => (this.gameFinished = true), 1000);
-          setTimeout(() => (this.gameFinished = false), 7000);
-        } else {
-          if (this.score2 > this.score1 + 7)
-            this.game.scene.getScene("ropeFightScene").goRightHandler(1);
-          else this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
-          //this.game.scene.getScene('ropeFightScene').goRightHandler();
-        }
-      }
-    },
-    sendStart() {
-      console.log("왔음");
-      this.game.scene.getScene("bootScene").StartScene(1);
-      this.dataInit();
-      this.session
-        .signal({
-          // 게임 시작 송신
-          data: JSON.stringify({
-            score1: this.score1,
-            score2: this.score2,
-            personalScore: this.personalScore,
-          }), // Any string (optional)
-          to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: "gameStart", // The type of message (optional)
-        })
-        .then(() => {
-          console.log("Message successfully sent");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
+		connectSession (token) {
+			this.session.connect(token, { clientData: this.myUserName })
+			.then(() => {
 
-    connectSession(token) {
-      this.session
-        .connect(token, { clientData: this.myUserName })
-        .then(() => {
-          // --- Get your own camera stream with the desired properties ---
+				// --- Get your own camera stream with the desired properties ---
 
-          let publisher = this.OV.initPublisher(undefined, {
-            audioSource: undefined, // The source of audio. If undefined default microphone
-            videoSource: undefined, // The source of video. If undefined default webcam
-            publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-            publishVideo: true, // Whether you want to start publishing with your video enabled or not
-            resolution: "640x480", // The resolution of your video
-            frameRate: 30, // The frame rate of your video
-            insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-            mirror: true, // Whether to mirror your local video or not
-          });
+				let publisher = this.OV.initPublisher(undefined, {
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: true       	// Whether to mirror your local video or not
+				});
 
-          this.mainStreamManager = publisher;
-          console.log(this.mainStreamManager);
-          this.publisher = publisher;
+				this.mainStreamManager = publisher;
+				console.log(this.mainStreamManager)
+				this.publisher = publisher;
 
-          // --- Publish your stream ---
+				// --- Publish your stream ---
 
-          this.session.publish(this.publisher);
-        })
-        .catch((error) => {
-          console.log(
-            "There was an error connecting to the session:",
-            error.code,
-            error.message
-          );
-        });
-    },
+				this.session.publish(this.publisher);
+			})
+			.catch(error => {
+				console.log('There was an error connecting to the session:', error.code, error.message);
+			});
+		},
 
-    leaveSession() {
-      this.game.destroy(true);
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      this.session
-        .signal({
-          // 참가자 퇴장 송신
-          data: this.myUserName, // Any string (optional)
-          to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: "memberLeave", // The type of message (optional)
-        })
-        .then(() => {
-          console.log("Message successfully sent");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-      if (this.isHost) {
-        this.session
-          .signal({
-            // 호스트 퇴장 송신
-            data: this.myUserName, // Any string (optional)
-            to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-            type: "hostLeave", // The type of message (optional)
-          })
-          .then(() => {
-            console.log("Message successfully sent");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
-      if (this.session) this.session.disconnect();
-      const joinInfo = {
-        code: this.mySessionId,
-        id: this.myUserName,
-      };
-      this.leaveRoom(joinInfo);
+		leaveSession () {
+			this.game.destroy(true)
+			// --- Leave the session by calling 'disconnect' method over the Session object ---
+			this.session.signal({		// 참가자 퇴장 송신
+				data: this.myUserName,  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'memberLeave'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
+			if (this.session) this.session.disconnect();
+			const joinInfo = {
+				code : this.mySessionId,
+				id : this.myUserName
+			}
+			this.leaveRoom(joinInfo)
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-      this.setRoomClose();
+			this.session = undefined;
+			this.mainStreamManager = undefined;
+			this.publisher = undefined;
+			this.subscribers = [];
+			this.OV = undefined;
+			this.setRoomClose()
 
-      window.removeEventListener("beforeunload", this.leaveSession);
-      this.$router.push("/waiting");
-    },
+			window.removeEventListener('beforeunload', this.leaveSession);
+			this.$router.push('/waiting')
+		},
 
     sendTeamInfo() {
       this.session
@@ -439,36 +422,36 @@ export default {
         });
     },
 
-    updateMainVideoStreamManager(stream) {
-      if (this.mainStreamManager === stream) return;
-      this.mainStreamManager = stream;
-    },
+		updateMainVideoStreamManager (stream) {
+			if (this.mainStreamManager === stream) return;
+			this.mainStreamManager = stream;
+		},
 
-    videoControl() {
-      if (this.videoMute) {
-        this.publisher.publishVideo(true);
-        this.videoMute = false;
-      } else {
-        this.publisher.publishVideo(false);
-        this.videoMute = true;
-      }
-    },
+		videoControl () {
+			if (this.videoMute) {
+				this.publisher.publishVideo(true)
+				this.videoMute = false
+			} else {
+				this.publisher.publishVideo(false)
+				this.videoMute = true
+			}
+		},
 
-    audioControl() {
-      if (this.audioMute) {
-        this.publisher.publishAudio(true);
-        this.audioMute = false;
-      } else {
-        this.publisher.publishAudio(false);
-        this.audioMute = true;
-      }
-    },
+		audioControl () {
+			if (this.audioMute) {
+				this.publisher.publishAudio(true)
+				this.audioMute = false
+			} else {
+				this.publisher.publishAudio(false)
+				this.audioMute = true
+			}
+		},
 
-    getToken(mySessionId, myUserName) {
-      axios({
-        url: API_BASE_URL + "/api/v1/rooms/get-token",
-        method: "post",
-        data: { code: mySessionId, id: myUserName },
+		getToken (mySessionId, myUserName) {
+			axios ({
+				url: API_BASE_URL + "/api/v1/rooms/get-token",
+        method: 'post',
+        data: {"code" : mySessionId, "id" : myUserName},
         headers: this.authHeader,
       }).then((res) => {
         console.log(res);
@@ -521,88 +504,6 @@ export default {
       });
     },
 
-    //Methods related to Teachable Machine
-
-    async init() {
-      const modelURL = URL + "model.json";
-      const metadataURL = URL + "metadata.json";
-
-      // load the model and metadata
-      // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-      model = await tmPose.load(modelURL, metadataURL);
-      maxPredictions = model.getTotalClasses();
-
-      // Convenience function to setup a webcam
-      const flip = true; // whether to flip the webcam
-      webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-      await webcam.setup(); // request access to the webcam
-      webcam.play();
-      window.requestAnimationFrame(this.loop);
-
-      // append/get elements to the DOM
-      // append/get elements to the DOM
-      const canvas = document.getElementById("main-video-canvas");
-      canvas.width = 200;
-      canvas.height = 200;
-      ctx = canvas.getContext("2d");
-      labelContainer = document.getElementById("label-container");
-      for (let i = 0; i < maxPredictions; i++) {
-        // and class labels
-        labelContainer.appendChild(document.createElement("div"));
-      }
-    },
-
-    async loop(timestamp) {
-      webcam.update(); // update the webcam frame
-      await this.predict();
-      window.requestAnimationFrame(this.loop);
-    },
-
-    async predict() {
-      // Prediction #1: run input through posenet
-      // estimatePose can take in an image, video or canvas html element
-      const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-      // Prediction 2: run input through teachable machine classification model
-      const prediction = await model.predict(posenetOutput);
-      if (prediction[0].probability.toFixed(2) >= 0.99) {
-        if (this.status == 1) {
-          this.session
-            .signal({
-              // 운동 점수 송신
-              data: this.myUserName, // Any string (optional)
-              to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-              type: "score", // The type of message (optional)
-            })
-            .then(() => {
-              console.log("Message successfully sent");
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        }
-        this.status = 0;
-      } else if (prediction[1].probability.toFixed(2) >= 0.99) {
-        this.status = 1;
-      }
-      this.pose1 = parseFloat(prediction[0].probability.toFixed(2));
-      this.pose2 = parseFloat(prediction[1].probability.toFixed(2));
-
-      // finally draw the poses
-      //this.drawPose(pose);
-    },
-
-    drawPose(pose) {
-      ctx.drawImage(webcam.canvas, 0, 0);
-      // draw the keypoints and skeleton
-      if (pose) {
-        const minPartConfidence = 0.5;
-        tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-        tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-      }
-    },
-
-    //END OF TEACHABLE MACHINE METHODS
-
     ...mapActions(["setRoomClose", "leaveRoom"]),
   },
 
@@ -613,6 +514,7 @@ export default {
       "roomJoin",
       "joinInfo",
       "authHeader",
+			"predictionData"
     ]),
   },
   mounted() {
@@ -653,4 +555,6 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomJoinPostReq;
+import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.api.response.RoomCreateRes;
 import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.service.RoomUserService;
@@ -230,5 +231,15 @@ public class RoomController {
 		roomUserService.deleteRoomUser(roomUser);
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
-	
+
+	@PostMapping("/game")
+	public ResponseEntity<Long> insertGameHistory(@RequestParam long roomNo){
+		long gameHistoryNo = roomService.insertGameHistory(roomNo);
+		return ResponseEntity.status(200).body(gameHistoryNo);
+		// gameHistoryNo를 반환
+	}
+
+//	@PostMapping("/score")
+//	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq )
+
 }

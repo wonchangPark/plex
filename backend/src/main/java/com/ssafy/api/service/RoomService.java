@@ -9,4 +9,6 @@ public interface RoomService {
     Room getRoomByCode(String code);
 
     void endRoom(Room room);
+
+    long insertGameHistory(long roomNo);
 }

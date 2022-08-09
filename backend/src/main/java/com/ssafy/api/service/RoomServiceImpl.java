@@ -1,6 +1,7 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.request.RoomCreatePostReq;
+import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
 import com.ssafy.db.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class RoomServiceImpl implements RoomService{
     @Override
     @Transactional
     public Room createRoom(RoomCreatePostReq roomInfo, String code) throws NullPointerException {
-        Room room = Room.createRoom(roomInfo.getName(), code, roomInfo.getHost(), roomInfo.getRoomSize(), roomInfo.getGameNo(), roomInfo.getIsPrivate());
+        Room room = Room.createRoom(roomInfo.getName(), code, roomInfo.getHost(), roomInfo.getRoomSize(), 1, false);
         System.out.println("service");
         roomRepository.save(room);
         return room;
@@ -33,4 +34,18 @@ public class RoomServiceImpl implements RoomService{
     public void endRoom(Room room) {
         roomRepository.endRoom(room);
     }
+
+    @Override
+    @Transactional
+    public long insertGameHistory(long roomNo) {
+
+        Room room = roomRepository.findByNo(roomNo);
+        roomRepository.saveGameHistory(room);
+        return roomRepository.getGameNo(roomNo);
+    }
+
+//    @Override
+//    public void insertScoreHistory(long gameNo){
+//    }
+
 }

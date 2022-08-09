@@ -3,9 +3,9 @@
     id="login-page"
     class="d-flex flex-column justify-center align-center align-self-center"
   >
-    <ContentBox :height="30" :width="40">
+    <ContentBox :height="40" :width="50">
       <div
-        class="flex-grow-1 d-flex flex-row justify-center align-center">
+        class="flex-grow-1 d-flex flex-row justify-space-around align-center">
         <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold login-box-logo">LOGIN</div>
         <div class="flex-grow-1 d-flex flex-row justify-center">
             <LoginForm></LoginForm>
@@ -26,9 +26,6 @@ export default {
   },
   methods: {
 
-    doCancel() {
-      this.$router.push("/");
-    },
   },
   components: { ContentBox, LoginForm },
 };
@@ -40,6 +37,6 @@ export default {
   width: 100%;
 }
 .login-box-logo{
-    font-size: 4vw;
+    font-size: 5vw;
 }
 </style>
