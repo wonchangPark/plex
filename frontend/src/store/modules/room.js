@@ -1,8 +1,3 @@
-import axios from 'axios'
-import { API_BASE_URL } from '@/config';
-
-const API_URL = API_BASE_URL + '/api/v1';
-
 export default {
   namespaced: false,
   state: {
@@ -18,13 +13,15 @@ export default {
     joinInfo : {
       roomCode: '',
       userName: ''
-    }
+    },
+    predictionData: {},
   },
   getters: {
     roomCreate: state => state.roomCreate,
     roomInfo: state => state.roomInfo,
     roomJoin: state => state.roomJoin,
     joinInfo: state => state.joinInfo,
+    predictionData: state => state.predictionData
   },
   mutations: {
     SET_ROOMCREATE: (state) => {state.roomCreate = true},
@@ -35,6 +32,7 @@ export default {
     SET_ROOMINFO: (state, roomInfo) => {state.roomInfo = roomInfo},
     SET_ROOMJOIN: (state) => {state.roomJoin = true},
     SET_JOININFO: (state, joinInfo) => {state.joinInfo = joinInfo},
+    SET_PREDICTION: (state, predictionData) => {state.predictionData = predictionData}
   },
   actions: {
     setRoomCreate ({ commit }, roomInfo) {
@@ -52,19 +50,8 @@ export default {
       }
       commit('SET_JOININFO', joinInfo)
     },
-    leaveRoom ({ getters }, joinInfo) {
-      axios({
-        url: API_URL + '/rooms/leave-room',
-        method: 'post',
-        data: joinInfo,
-        headers: getters.authHeader
-      })
-      .then( (res) => {
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-    },
+    setPrediction({commit}, predictionData) {
+      commit('SET_PREDICTION', predictionData)
+    }
   }
 }

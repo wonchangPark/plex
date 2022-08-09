@@ -1,6 +1,6 @@
 <template>
     <div class="modal">
-        <div class="overlay" @click="$emit('close-modal')">
+        <div class="overlay">
         <div class="modal-card">
             <ContentBox :height="100" :width="100">
                 <div class="d-flex flex-column">
@@ -8,13 +8,13 @@
                     <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">
                         <div class="d-flex flex-column align-center">
                             TEAM 1
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>
+                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(score, teammate) in team1_personalScore" v-bind:key="teammate">{{ teammate }} : {{score}}</div>
+                            <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
                         </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <div class="d-flex flex-column align-center">
                             TEAM 2
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>
+                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(score, teammate) in team2_personalScore" v-bind:key="teammate">{{ teammate }} : {{score}}</div>
+                            <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,20 @@ export default {
     data() {
         return {
             winner: undefined,
+            team1_personalScore: {},
+            team2_personalScore: {},
         }
+    },
+    watch : {
+        team1() {
+            console.log("Team1 변경");
+        },
+        team2() {
+            console.log("Team2 변경")
+        },
+        score() {
+            console.log("score 변경")
+        },
     },
     methods: {
         WhoWins() {
@@ -52,16 +65,21 @@ export default {
             
             //console.log(this.team1.length);
             //console.log(this.team2.length);
-            //console.log(this.score.length);
-            /*for (var i = 0 ; i < this.score.length ; i++) {
-                if (i < 3)
-                    team1_score += this.score[i];
-                else
-                    team2_score += this.score[i];
-            }*/
+            //console.log(this.score);
+           
+            for (let i = 0 ; i < this.team1.length ; i++) {
+                team1_score += this.score[this.team1[i]];
+                //console.log(this.score[this.team1[i]]);
+                this.team1_personalScore[this.team1[i]] = this.score[this.team1[i]];
+            }
+            
+            for (let j = 0 ; j < this.team2.length ; j++) {
+                team2_score += this.score[this.team2[j]];
+                this.team2_personalScore[this.team2[j]] = this.score[this.team2[j]];
+            }
 
-            console.log(team1_score);
-            console.log(team2_score);
+            //console.log(team1_score);
+            //console.log(team2_score);
 
             if (team1_score > team2_score)
                 return "  Team 1 Wins! ";
