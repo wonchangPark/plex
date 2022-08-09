@@ -4,7 +4,7 @@
         <div class="modal-card">
             <ContentBox :height="100" :width="100">
                 <div class="d-flex flex-column">
-                    <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>
+                    <div id="Main" class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>
                     <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">
                         <div class="d-flex flex-column align-center">
                             TEAM 1
@@ -37,12 +37,20 @@ export default {
         },
         team2: {
             type: Array,
-        }
+        },
+        myName: {
+            type: String,
+        },
     },
     components: {ContentBox},
+    mounted() {
+        if (this.winner == this.myTeam)
+            document.getElementById("Main").classList.add('animate__heartBeat');
+    },
     data() {
         return {
             winner: undefined,
+            myTeam: 0,
             team1_personalScore: {},
             team2_personalScore: {},
         }
@@ -62,6 +70,19 @@ export default {
         WhoWins() {
             let team1_score = 0;
             let team2_score = 0;
+            let h = 0;
+
+            for (h = 0 ; h < this.team1.length ; h++) {
+                if (this.team1[h] == this.myName) {
+                    this.myTeam = 1;
+                    break;
+                }
+            }
+
+            if (this.myTeam == 0)
+                this.myTeam = 2;
+
+            
             
             //console.log(this.team1.length);
             //console.log(this.team2.length);
@@ -81,10 +102,26 @@ export default {
             //console.log(team1_score);
             //console.log(team2_score);
 
-            if (team1_score > team2_score)
-                return "  Team 1 Wins! ";
-            else if (team1_score < team2_score)
-                return "  Team 2 Wins! ";
+            if (team1_score > team2_score) {
+                if (this.myTeam == 1) {
+                    this.winner = 1;
+                    return "  You Win! ";
+                }
+                else {
+                    this.winner = 2;
+                    return " You Lose... ";
+                }
+            }
+            else if (team1_score < team2_score) {
+                if (this.myTeam == 2) {
+                    this.winner = 2;
+                    return "  You Win! ";
+                }
+                else {
+                    this.winner = 1;
+                    return " You Lose... ";
+                }
+            }
             else
                 return "draw!";
         }
