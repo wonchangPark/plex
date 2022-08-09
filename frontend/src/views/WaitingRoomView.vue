@@ -7,19 +7,17 @@
           style="flex: 0 0 20%; height: 20%; width: 100%"
         >
           <div
-            class="d-flex flex-column justify-space-around align-center"
-            style="width: 100%; height: 100%"
+            class="d-flex flex-column justify-space-between align-center"
+            style="width: 100%; height: 100%;"
           >
+            <button @click="fetchWaitingRoomPage" >test</button>
+            <CreateRoomDialog class="primary"
+            style="width: 70%; height: 40px; font-weight: bold">
+            </CreateRoomDialog>
             <button
               class="primary"
               style="width: 70%; height: 40px; font-weight: bold"
-            >
-              방 만들기
-            </button>
-
-            <button
-              class="primary"
-              style="width: 70%; height: 40px; font-weight: bold"
+              @click="rankBtn"
             >
               랭킹 보기
             </button>
@@ -51,12 +49,26 @@
 </template>
 
 <script>
-import UserList from "@/components/WaitingRoom/UserList.vue";
-import RoomList from "@/components/WaitingRoom/RoomList.vue";
-import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
+import UserList from "@/components/WaitingRoom/UserList.vue"
+import RoomList from "@/components/WaitingRoom/RoomList.vue"
+import ChattingList from "@/components/WaitingRoom/ChattingList.vue"
+import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue"
+
+import { mapActions, mapGetters } from "vuex"
+
 export default {
   name: "WaitingRoomView",
-  components: { UserList, RoomList, ChattingList },
+  components: { UserList, RoomList, ChattingList, CreateRoomDialog },
+  methods: {
+    ...mapActions(['setRoomCreate']),
+    ...mapActions(['fetchWaitingRoomPage']),
+    rankBtn() {
+    this.$router.push('/rank');
+    }
+  },
+  computed: {
+        ...mapGetters(['roompage'])
+    }
 };
 </script>
 <style scoped>

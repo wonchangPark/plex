@@ -24,6 +24,8 @@ public class RoomInfoRes {
     private LocalDateTime startTime;
     private Long userCount;
 
+    boolean isVisible;
+
     public RoomInfoRes(Long no,String host, String code, String name, Integer roomSize, Integer gameNo, LocalDateTime startTime, Long userCount) {
         this.no = no;
         this.host = host;
@@ -33,5 +35,6 @@ public class RoomInfoRes {
         this.gameNo = gameNo;
         this.startTime = startTime;
         this.userCount = userCount;
+        isVisible = true;
     }
 }

@@ -1,6 +1,7 @@
 package com.ssafy.api.controller;
 
 import com.ssafy.common.exception.UserDuplicateException;
+import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 /**
  * 유저 관련 API 요청 처리를 위한 컨트롤러 정의.
  */
@@ -33,7 +36,8 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping("/api/v1/users")
 @CrossOrigin("*")
 public class UserController {
-	
+	@Autowired
+	UserRepository userRepository;
 	private final UserService userService;
 
 	@Autowired
@@ -56,12 +60,48 @@ public class UserController {
 		try {
 			userService.createUser(registerInfo);
 		} catch (UserDuplicateException e) {
-			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "duplicated"));
+			System.out.println(e.getMessage());
+			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Duplicated"));
 		}
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
-	
+
+
+	@PostMapping("/nickname/check")
+	@ApiOperation(value = "닉네임 중복 확인", notes = "가입되어 있는 회원 정보들 중 중복되는 닉네임이 있는지 확인한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> validateCheckUserNick(
+			@RequestBody @ApiParam(value="닉네임 정보", required = true) UserRegisterPostReq registerInfo) {
+		User user = userRepository.findByUserNick(registerInfo.getNick());
+		if (user != null) {
+			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Duplicated"));
+		}
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
+
+	@PostMapping("/id/check")
+	@ApiOperation(value = "아이디 중복 확인", notes = "가입되어 있는 회원 정보들 중 중복되는 아이디가 있는지 확인한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> validateCheckUserId(
+			@RequestBody @ApiParam(value="닉네임 정보", required = true) UserRegisterPostReq registerInfo){
+		User user = userRepository.findByUserId(registerInfo.getId());
+		if (user != null) {
+			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Duplicated"));
+		}
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
+
 	@GetMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 조회", notes = "로그인한 회원 본인의 정보를 응답한다.") 
     @ApiResponses({
@@ -82,6 +122,19 @@ public class UserController {
 			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "noUserInfo"));
 		}
 		
-		return ResponseEntity.status(200).body(UserRes.of(user));
+		return ResponseEntity.status(200).body(UserRes.of(200, "Success", user));
 	}
+
+	@GetMapping("/ranking")
+	@ApiOperation(value = "회원 본인 정보 조회", notes = "로그인한 회원 본인의 정보를 응답한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<User>> getRankerList(){
+		return ResponseEntity.ok(userService.getRankingList());
+	}
+
 }

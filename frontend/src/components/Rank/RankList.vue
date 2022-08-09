@@ -1,41 +1,49 @@
 <template>
-  <div class="d-flex justify-center">
-    <ContentBox :height="90" :width="80">
-      <div class="d-flex flex-column" style="flex:1 1 100%">
-        <v-container>
-          <v-row justify="center" align="center">
-            <v-col cols="4">
-            </v-col>
-            <v-col cols="4">
-              <div class="white--text rank-label">닉네임</div>
-            </v-col>
-            <v-col cols="2">
-              <div class="white--text rank-label">점수</div>
-            </v-col>
-            <v-col cols="2">
-              <div class="white--text rank-label">순위</div>
-            </v-col>
-          </v-row>
-        </v-container>
-        <div class="rank-list d-flex flex-column align-center justify-space-around">
-            <RankItem></RankItem>
-            <RankItem></RankItem>
-            <RankItem></RankItem>
-        </div>
+  <v-container class="d-flex flex-column justify-center" style="flex: 1 1 100%; height:100%">
+      <v-row class="rank-content d-flex align-self-center" justify="center" align="center" style="width:90%;">
+        <v-col cols="4">
+        </v-col>
+        <v-col cols="4">
+          <div class="primary--text rank-label">닉네임</div>
+        </v-col>
+        <v-col cols="2">
+          <div class="primary--text rank-label">점수</div>
+        </v-col>
+        <v-col cols="2">
+          <div class="primary--text rank-label">순위</div>
+        </v-col>
+      </v-row>
+
+    <div class="rank-list-box d-flex flex-column" style="flex: 0 0 90%; width:100%; height: 90%;">
+      <div v-for="ranker in rankingList"
+      :key="ranker.no"
+      :ranker = ranker
+      >
+      <div class="d-flex justify-center align-center">
+        <RankItem :rankerNick="ranker.nick" :rankerTotalScore="ranker.totalScore" :rankerRanking="ranker.ranking"></RankItem>
       </div>
-    </ContentBox>
-  </div>
+      </div>
+    </div>
+  </v-container>
 </template>
 
 <script>
-import ContentBox from '@/components/common/ContentBox.vue'
 import RankItem from "@/components/Rank/RankItem.vue"
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'RankList',
   components: {
-    ContentBox,
     RankItem
+  },
+  methods: {
+    ...mapActions(['fetchRankingList'])
+  },
+  computed: {
+    ...mapGetters(['isLoggedIn', 'rankingList'])
+  },
+  created(){
+    this.fetchRankingList()
   }
 }
 </script>
@@ -48,5 +56,16 @@ export default {
 .rank-label{
   font-size: 1.5rem;
   font-weight: bold;
+}
+.rank-list-box{
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+}
+.rank-list-box::-webkit-scrollbar{
+  display: none;
 }
 </style>

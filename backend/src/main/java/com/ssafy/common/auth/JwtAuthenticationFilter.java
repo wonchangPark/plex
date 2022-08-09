@@ -73,7 +73,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             } else if(request.getMethod().equals("POST") && path.contains("/users")){
                 // 회원가입
                 filterChain.doFilter(request, response);
-            } else{
+            } else if (path.contains("/ws")){
+                filterChain.doFilter(request, response);
+            }
+            else{
                 response.sendError(401, "accessToken needed");
             }
             // 이렇게 하면 이상하게 swagger-ui에서 에러남

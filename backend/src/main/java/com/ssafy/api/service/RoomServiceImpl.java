@@ -21,4 +21,16 @@ public class RoomServiceImpl implements RoomService{
         roomRepository.save(room);
         return room;
     }
+
+    @Override
+    public Room getRoomByCode(String code){
+        // 디비에서 방 정보를 방코드를 이용하여 조회
+        return roomRepository.findByCode(code);// 없다면 null이 들어감
+    }
+
+    @Override
+    @Transactional
+    public void endRoom(Room room) {
+        roomRepository.endRoom(room);
+    }
 }

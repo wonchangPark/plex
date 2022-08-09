@@ -16,11 +16,15 @@
 
 <script>
 import ContentBox from "@/components/common/ContentBox.vue"
-
 export default {
   name: "CharaterBox",
   components: {
     ContentBox
+  },
+  methods: {
+  },
+  computed: {
+
   }
 }
 </script>
