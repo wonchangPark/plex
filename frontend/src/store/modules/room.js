@@ -14,7 +14,7 @@ export default {
       roomCode: '',
       userName: ''
     },
-    predictionData: {},
+    predictionData: {left:0, right:0},
   },
   getters: {
     roomCreate: state => state.roomCreate,
