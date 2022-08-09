@@ -13,6 +13,7 @@ import RunningRoom from '../assets/RunningRoom.png'
 import DeskRight from '../assets/DeskRight.png'
 import DeskLeft from '../assets/DeskLeft.png'
 
+
 import Slime3_1 from '../assets/Slime_3/1.png'
 import Slime3_2 from '../assets/Slime_3/2.png'
 import Slime3_3 from '../assets/Slime_3/3.png'
@@ -108,6 +109,10 @@ class BootScene extends Scene {
     }
 
     preload() {
+
+        this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
+
+        
         this.load.rexImageURI('player', Player);
         this.load.rexImageURI('player2', Player2);
         this.load.rexImageURI('rope', Rope);

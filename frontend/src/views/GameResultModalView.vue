@@ -28,10 +28,15 @@
 import ContentBox from '@/components/common/ContentBox.vue';
 
 export default {
-    props: {
+    props:{
         score: {
+            type: Object,
+        },
+        team1: {
             type: Array,
-            required: true,
+        },
+        team2: {
+            type: Array,
         }
     },
     components: {ContentBox},
@@ -42,22 +47,25 @@ export default {
     },
     methods: {
         WhoWins() {
-            var team1 = 0;
-            var team2 = 0;
-            console.log(this.score.length);
-            for (var i = 0 ; i < this.score.length ; i++) {
+            let team1_score = 0;
+            let team2_score = 0;
+            
+            //console.log(this.team1.length);
+            //console.log(this.team2.length);
+            //console.log(this.score.length);
+            /*for (var i = 0 ; i < this.score.length ; i++) {
                 if (i < 3)
-                    team1 += this.score[i];
+                    team1_score += this.score[i];
                 else
-                    team2 += this.score[i];
-            }
+                    team2_score += this.score[i];
+            }*/
 
-            console.log(team1);
-            console.log(team2);
+            console.log(team1_score);
+            console.log(team2_score);
 
-            if (team1 > team2)
+            if (team1_score > team2_score)
                 return "  Team 1 Wins! ";
-            else if (team1 < team2)
+            else if (team1_score < team2_score)
                 return "  Team 2 Wins! ";
             else
                 return "draw!";
