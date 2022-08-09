@@ -24,10 +24,10 @@
           style="height: 48%; width: 100%%"
         >
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-            <user-video :stream-manager="publisher" />
+            <user-video :pose1="pose1" :pose2="pose2" :stream-manager="publisher" />
           </div>
           <div style="heigth: 100%; width: 47%">
-            <ContentBox :height="100" :width="100"> </ContentBox>
+            <ContentBox :height="100" :width="100"> <ScoreBoard :score1="score1" :score2="score2"></ScoreBoard></ContentBox>
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
@@ -79,10 +79,10 @@ import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
-
+import ScoreBoard from '@/components/Room/ScoreBoard.vue'
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-// const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
+//const URL = 'https://teachablemachine.withgoogle.com/models/fKbC5tFyY/';
 const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
@@ -93,6 +93,7 @@ export default {
     UserVideo,
     GameResultModal,
     ContentBox,
+	ScoreBoard,
   },
 
   data() {
@@ -583,13 +584,8 @@ export default {
       } else if (prediction[1].probability.toFixed(2) >= 0.99) {
         this.status = 1;
       }
-      this.pose1 = prediction[0].probability.toFixed(2);
-      this.pose2 = prediction[1].probability.toFixed(2);
-      for (let i = 0; i < maxPredictions; i++) {
-        const classPrediction =
-          prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-        labelContainer.childNodes[i].innerHTML = classPrediction;
-      }
+      this.pose1 = parseFloat(prediction[0].probability.toFixed(2));
+      this.pose2 = parseFloat(prediction[1].probability.toFixed(2));
 
       // finally draw the poses
       //this.drawPose(pose);
