@@ -11,7 +11,12 @@ import java.util.List;
  */
 public interface UserService {
 	void createUser(UserRegisterPostReq userRegisterInfo) throws UserDuplicateException;
+
+	void validateDuplicateUser(UserRegisterPostReq userRegisterInfo) throws UserDuplicateException;
+
 	User getUserByUserId(String userId);
 
 	List<User> getRankingList();
+
+	void setMyImage(String image);
 }

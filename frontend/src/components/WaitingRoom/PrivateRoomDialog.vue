@@ -27,7 +27,11 @@
               </v-col>
             </v-row>
             <br>
-              <v-btn @click="joinRoom" color="primary" elevation="0" class="page-btn black--text align-self-center" style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"> 입장 </v-btn>
+              <v-btn @click="joinRoom" 
+              color="primary" 
+              elevation="0" 
+              class="page-btn black--text align-self-center" 
+              style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"> 입장 </v-btn>
           </v-container>
         </v-list-item-content>
       </v-card>

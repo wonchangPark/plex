@@ -25,7 +25,7 @@ export default {
     }),
 };
 </script>
-<style scoped>
+<style>
 #v-app {
     background-image: url(./assets/background_dot2.png);
     margin: 0;
@@ -57,5 +57,13 @@ export default {
 }
 .no-scrollbars::-webkit-scrollbar {
     display: none;
+}
+.v-application {
+    font-family: 'DungGeunMo', sans-serif !important;
+}
+@font-face {
+  font-family:'DungGeunMo';
+  src: url('assets/fonts/DungGeunMo.ttf') format('truetype');
+  font-weight: 400;
 }
 </style>

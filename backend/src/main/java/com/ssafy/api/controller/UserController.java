@@ -137,4 +137,9 @@ public class UserController {
 		return ResponseEntity.ok(userService.getRankingList());
 	}
 
+	@PostMapping("/image")
+	public void setMyImage(@RequestParam String image){
+		userService.setMyImage(image);
+	}
+
 }

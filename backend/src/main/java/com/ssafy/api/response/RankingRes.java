@@ -7,21 +7,32 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 /**
  * 회원 본인 정보 조회 API ([GET] /api/v1/users/ranking) 요청에 대한 응답값 정의.
  */
 @Getter
 @Setter
-@ApiModel("RankingResponse")
-public class RankingRes extends BaseResponseBody{
-	@ApiModelProperty(name="User Nickname")
+public class RankingRes implements Comparable<RankingRes>{
+	private Long userNo;
 	private String userNick;
-	private Long userTotalScore;
-	
-	public static RankingRes of(User user) {
-		RankingRes res = new RankingRes();
-		res.setUserNick(user.getNick());
-		res.setUserTotalScore(user.getTotalScore());
-		return res;
+	private Long rank;
+
+
+	public RankingRes() {
+	}
+
+	public RankingRes(Long userNo, String userNick, Long rank) {
+		this.userNo = userNo;
+		this.userNick = userNick;
+		this.rank = rank;
+	}
+
+
+	@Override
+	public int compareTo(RankingRes o) {
+		if(Objects.equals(this.userNo, o.userNo)) return 0;
+		return 1;
 	}
 }

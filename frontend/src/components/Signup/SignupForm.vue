@@ -59,6 +59,11 @@
         <v-btn color="primary" elevation="0" class="submit black--text" type="submit">가입</v-btn>
       </div>    
     </form>
+    <div class="d-flex justify-center align-center">
+      <router-link to="/login">
+        <v-btn color="primary" elevation="0" class="submit black--text" type="submit">로그인 화면으로 돌아가기</v-btn>
+      </router-link>
+    </div>  
   </div>
 </template>
 

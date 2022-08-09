@@ -7,7 +7,7 @@
             <label class="primary--text" for="nickname">닉네임</label>
           </v-col>
           <v-col cols="11">
-            <div class="nickname white--text">{{ profile.nick }}</div>
+            <div class="nickname white--text">{{ getUser.nick }}</div>
           </v-col>
         </v-row>
         <v-row justify="center" align="center">
@@ -40,17 +40,17 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'profile',
-      'isLoggedIn'
+      'isLoggedIn',
+      'getUser'
     ])
   },
   methods: {
     ...mapActions([
-      'fetchprofile'
+      'fetchUserInfo'
     ])
   },
   created(){
-    this.fetchprofile()
+    this.fetchUserInfo()
   }
 }
 </script>

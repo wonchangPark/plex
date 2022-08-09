@@ -7,16 +7,15 @@
           style="flex: 0 0 20%; height: 20%; width: 100%"
         >
           <div
-            class="d-flex flex-column justify-space-between align-center"
+            class="d-flex flex-column justify-space-around align-center"
             style="width: 100%; height: 100%;"
           >
-            <button @click="fetchWaitingRoomPage" >test</button>
             <CreateRoomDialog class="primary"
-            style="width: 70%; height: 40px; font-weight: bold">
+            style="width: 70%; height: 45px; font-weight: bold">
             </CreateRoomDialog>
             <button
               class="primary"
-              style="width: 70%; height: 40px; font-weight: bold"
+              style="width: 70%; height: 45px; font-weight: bold"
               @click="rankBtn"
             >
               랭킹 보기
