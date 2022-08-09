@@ -65,7 +65,7 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "../components/Room/UserVideo.vue";
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
@@ -92,7 +92,7 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
-		game: undefined,
+			game: undefined,
       mySessionId: "",
       myUserName: "",
       videoMute: false, // 영상 중지
@@ -515,6 +515,7 @@ export default {
   },
 
   computed: {
+		// ...mapState(['room/predictionData']),
     ...mapGetters([
       "roomCreate",
       "roomInfo",

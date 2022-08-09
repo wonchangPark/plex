@@ -1,7 +1,7 @@
 <template>
   <div>
     <canvas id="main-video-canvas" style="display:none;"/>
-    <div id='label-container'></div>
+    <div id='label-container' style="display:none;"></div>
   </div>
 </template>
 
@@ -80,7 +80,7 @@ export default {
         const classPrediction =
           prediction[i].className + ": " + prediction[i].probability.toFixed(2);
         this.labelContainer.childNodes[i].innerHTML = classPrediction;
-        this.predictionData[`${prediction[i].className}`] = prediction[i].probability.toFixed(2)
+        this.predictionData[`${prediction[i].className}`] = Number(prediction[i].probability.toFixed(2))
       }
       this.setPrediction(this.predictionData)
 
