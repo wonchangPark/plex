@@ -9,7 +9,6 @@ import GameRoom from "@/views/RoomView.vue";
 import Mypage from "@/views/MypageView.vue";
 import SignUp from "@/views/SignupView.vue";
 import Rank from "@/views/RankView.vue";
-import Session from "@/views/SessionView.vue";
 
 Vue.use(VueRouter);
 
@@ -48,11 +47,6 @@ const routes = [
     path: "/rank",
     name: "rank",
     component: Rank,
-  },
-  {
-    path: "/session",
-    name: "session",
-    component: Session,
   },
 ];
 

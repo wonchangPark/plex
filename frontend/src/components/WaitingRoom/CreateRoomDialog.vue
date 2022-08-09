@@ -2,10 +2,12 @@
   <div class="create-room-dialog">
     <v-dialog
       v-model="dialog"
+      class="d-flex align-center"
+      max-width="35vw"
     >
       <template v-slot:activator="{ on, attrs }">
         <button
-          style="width: 100%; height: 40px; font-weight: bold"
+          style="width: 100%; height: 50px; font-weight: bold"
           v-bind="attrs"
           v-on="on"
         >
@@ -78,9 +80,7 @@ export default {
 </script>
 
 <style>
-.room-create{
-  margin: auto;
-}
+
 .room-create label{
     font-size: 1.2rem;
     font-weight: bold;
