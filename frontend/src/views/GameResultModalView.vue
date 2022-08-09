@@ -30,7 +30,7 @@ import ContentBox from '@/components/common/ContentBox.vue';
 export default {
     props:{
         score: {
-            type: Object,
+            type: Array,
         },
         team1: {
             type: Array,
@@ -45,20 +45,31 @@ export default {
             winner: undefined,
         }
     },
+    watch : {
+        team1() {
+            console.log("Team1 변경");
+        },
+        team2() {
+            console.log("Team2 변경")
+        },
+        score() {
+            console.log("score 변경")
+        },
+    },
     methods: {
         WhoWins() {
             let team1_score = 0;
             let team2_score = 0;
             
-            //console.log(this.team1.length);
-            //console.log(this.team2.length);
-            //console.log(this.score.length);
-            /*for (var i = 0 ; i < this.score.length ; i++) {
-                if (i < 3)
-                    team1_score += this.score[i];
-                else
-                    team2_score += this.score[i];
-            }*/
+            console.log(this.team1.length);
+            console.log(this.team2.length);
+            console.log(this.score);
+           
+            for (let i = 0 ; i < this.team1.length ; i++)
+                team1_score += this.score[this.team1[i]];
+            
+            for (let j = 0 ; j < this.team2.length ; j++)
+                team2_score += this.score[this.team2[j]];
 
             console.log(team1_score);
             console.log(team2_score);

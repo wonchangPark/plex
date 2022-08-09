@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container" class="container">
-		<GameResultModal v-if="gameFinished" :score="personalScore" :team1="team1" :team2="team2" @close-modal="gameFinished=false"/>
+		<GameResultModal v-if="gameFinished" v-bind:score="personalScore" v-bind:team1="this.team1" v-bind:team2="this.team2" @close-modal="gameFinished=false"/>
 		<div id="game-container"></div>
 		<div id="session" v-if="session">
 			<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
@@ -255,6 +255,7 @@ export default {
 
 						if (this.score1 - this.score2 >= 10){
 							this.game.scene.getScene('ropeFightScene').LeftWin();
+							setTimeout(() => this.gameFinished = true, 1000);
 						}
 						else{
 							if (this.score1 > this.score2 + 7)
@@ -270,6 +271,7 @@ export default {
 						this.personalScore[`${event.data}`] += 1
 						if (this.score2 - this.score1 >= 10){
 							this.game.scene.getScene('ropeFightScene').RightWin();
+							setTimeout(() => this.gameFinished = true, 1000);
 						}
 						else{
 							if (this.score2 > this.score1 + 7)
