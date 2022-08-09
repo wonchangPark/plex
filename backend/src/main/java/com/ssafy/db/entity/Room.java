@@ -67,4 +67,10 @@ public class Room {
     public static Room createRoom(String name, String code, String host, int roomSize, int gameNo, boolean isPrivate){
         return new Room(name, code, host, roomSize, gameNo, isPrivate);
     }
+
+    public static Room createRoom(Long roomNo){
+        Room room = new Room();
+        room.setNo(roomNo);
+        return room;
+    }
 }

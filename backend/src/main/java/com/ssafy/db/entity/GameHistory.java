@@ -26,18 +26,14 @@ public class GameHistory {
     @JoinColumn(name = "room_no")
     private Room room;
 
-    @NotNull
-    @Column(name = "gamecategory_no")
-    private Long gamecategoryNo; // 연관관계를 설정하지 않았으므로 더 신경써서 카테고리에 있는지 확인후 세팅할 것.
-
     protected GameHistory(){}
-    protected GameHistory(Room room, Long gamecategoryNo){
+    protected GameHistory(Room room){
+        this.startTime = LocalDateTime.now();
         this.room = room;
-        this.gamecategoryNo = gamecategoryNo;
     }
 
-    public static GameHistory createGameHistory(Room room, Long gamecategoryNo){
-        return new GameHistory(room, gamecategoryNo);
+    public static GameHistory createGameHistory(Room room){
+        return new GameHistory(room);
     }
 
 }

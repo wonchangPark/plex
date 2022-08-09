@@ -1,6 +1,7 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.request.RoomCreatePostReq;
+import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
 import com.ssafy.db.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,18 @@ public class RoomServiceImpl implements RoomService{
     public void endRoom(Room room) {
         roomRepository.endRoom(room);
     }
+
+    @Override
+    @Transactional
+    public long insertGameHistory(long roomNo) {
+
+        Room room = roomRepository.findByNo(roomNo);
+        roomRepository.saveGameHistory(room);
+        return roomRepository.getGameNo(roomNo);
+    }
+
+//    @Override
+//    public void insertScoreHistory(long gameNo){
+//    }
+
 }

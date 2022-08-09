@@ -40,6 +40,7 @@ public class OAuthRepository {
         em.createQuery("update OAuth o set o.accessToken = :accessToken where o.userId = :userId")
                 .setParameter("accessToken", oAuth.getAccessToken())
                 .setParameter("userId", oAuth.getUserId()).executeUpdate();
+        em.clear();
     }
 
     @Transactional
