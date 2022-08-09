@@ -258,7 +258,7 @@ export default {
 						if (this.score1 - this.score2 >= 10){
 							this.game.scene.getScene('ropeFightScene').LeftWin();
 							setTimeout(() => this.gameFinished = true, 1000);
-							setTimeout(() => this.gameFinished = false, 5000);
+							setTimeout(() => this.gameFinished = false, 7000);
 						}
 						else{
 							if (this.score1 > this.score2 + 7)
@@ -275,7 +275,7 @@ export default {
 						if (this.score2 - this.score1 >= 10){
 							this.game.scene.getScene('ropeFightScene').RightWin();
 							setTimeout(() => this.gameFinished = true, 1000);
-							setTimeout(() => this.gameFinished = false, 5000);
+							setTimeout(() => this.gameFinished = false, 7000);
 						}
 						else{
 							if (this.score2 > this.score1 + 7)
