@@ -70,6 +70,9 @@ export default {
       this.send("exit", this.getUser.nick, "");
     });
     this.send("exit", this.userName, "");
+    this.stompClient.disconnect(() => {
+      console.log("소켓 연결 해제");
+    }, {});
   },
   methods: {
     ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
@@ -131,12 +134,16 @@ export default {
     ...mapState(["token", "auth"]),
     ...mapGetters(["getUser"]),
   },
-  watch: {
-    recvList() {},
-  },
   updated() {
-    console.log("prev:"+this.prevScrollHeight+ " scrollTop:"+this.$refs.chattingListBox.scrollTop);
-    if (Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5) {
+    console.log(
+      "prev:" +
+        this.prevScrollHeight +
+        " scrollTop:" +
+        this.$refs.chattingListBox.scrollTop
+    );
+    if (
+      Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5
+    ) {
       this.$refs.chattingListBox.scrollTop =
         this.$refs.chattingListBox.scrollHeight -
         this.$refs.chattingListBox.clientHeight;
