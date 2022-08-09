@@ -7,7 +7,7 @@
       class="d-flex justify-center align-center"
       style="height: 50%; width: 100%"
     >
-	<GameResultModal v-if="gameFinished" v-bind:score="personalScore" v-bind:team1="this.team1" v-bind:team2="this.team2"/>
+	<GameResultModal v-if="gameFinished" v-bind:score="personalScore" v-bind:team1="this.team1" v-bind:team2="this.team2" v-bind:myName="this.myUserName"/>
 		<div id='label-container' style='display:none;'/>
       <div class="d-flex" style="height: 98%; width: 90%">
         <div id="game-container" style="height: 100%; width: 100%"></div>
