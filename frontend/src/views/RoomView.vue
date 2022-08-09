@@ -7,6 +7,8 @@
       class="d-flex justify-center align-center"
       style="height: 50%; width: 100%"
     >
+	<GameResultModal v-if="gameFinished" v-bind:score="personalScore" v-bind:team1="this.team1" v-bind:team2="this.team2"/>
+		<div id='label-container' style='display:none;'/>
       <div class="d-flex" style="height: 98%; width: 90%">
         <div id="game-container" style="height: 100%; width: 100%"></div>
 				<TeachableItem ref="teachable" @sendScore="sendScore"></TeachableItem>
@@ -26,15 +28,12 @@
         >
           <div style="heigth: 100%; width: 23%; background: #123455">
             <user-video :stream-manager="publisher" />
-						<!-- <canvas id="main-video-canvas" style="display:none;"/> -->
+			<canvas id="main-video-canvas" style="display:none;"/>
           </div>
           <div style="heigth: 100%; width: 49%">
-            <ContentBox :height="100" :width="100">
-							<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
-							<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="!audioMute" value="오디오 중지">
-							<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" @click="audioControl" v-if="audioMute" value="오디오 시작">
-							<!-- <div id='label-container'></div> -->
-						</ContentBox>
+            <ContentBox :height="100" :width="100"> 
+				<button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
+			</ContentBox>
           </div>
           <div style="heigth: 100%; width: 23%; background: #123455">
             <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" />
@@ -93,7 +92,7 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
-
+		game: undefined,
       mySessionId: "",
       myUserName: "",
       videoMute: false, // 영상 중지
@@ -511,7 +510,7 @@ export default {
           });
       });
     },
-		
+
     ...mapActions(["setRoomClose", "leaveRoom"]),
   },
 
