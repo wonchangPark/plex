@@ -326,12 +326,25 @@ export default {
         }
       }
     },
-    sendStart() {
-      console.log("게임시작");
-      // console.log(this.$refs.teachable)
-      this.$refs.teachable.init();
-      this.game.scene.getScene("bootScene").StartScene(1);
-    },
+    sendStart () {
+			console.log("게임시작")
+			// console.log(this.$refs.teachable)
+			this.$refs.teachable.init()
+			this.game.scene.getScene('bootScene').StartScene(1);
+			this.dataInit()
+			this.session.signal({		// 게임 시작 송신
+				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'gameStart'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
+		},
+
     sendScore() {
       this.session
         .signal({
@@ -522,7 +535,6 @@ export default {
   },
 
   computed: {
-		// ...mapState(['room/predictionData']),
     ...mapGetters([
       "roomCreate",
       "roomInfo",
