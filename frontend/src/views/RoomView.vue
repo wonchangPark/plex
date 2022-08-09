@@ -52,9 +52,6 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-// const OPENVIDU_SERVER_SECRET = "MY_SECRET";
-
 export default {
   name: "App",
 
@@ -241,7 +238,7 @@ export default {
 			
 			// this.getToken(this.mySessionId, this.myUserName)
 
-			this.init()
+			this.init() // teachable machine 시작
 
 			window.addEventListener('beforeunload', this.leaveSession)
 			//this.game = Game();			//generate phaser game when entering session
@@ -284,18 +281,20 @@ export default {
 		sendStart () {
 			console.log("왔음")
 			this.game.scene.getScene('bootScene').StartScene(1);
-			this.dataInit()
-			this.session.signal({		// 게임 시작 송신
-				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
-				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-				type: 'gameStart'             // The type of message (optional)
-			})
-			.then(() => {
-					console.log('Message successfully sent');
-			})
-			.catch(error => {
-					console.error(error);
-			})
+			if (this.host) {
+				this.dataInit()
+				this.session.signal({		// 게임 시작 송신
+					data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
+					to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+					type: 'gameStart'             // The type of message (optional)
+				})
+				.then(() => {
+						console.log('Message successfully sent');
+				})
+				.catch(error => {
+						console.error(error);
+				})
+			}
 		},
 
 		connectSession (token) {
@@ -573,10 +572,8 @@ export default {
 				})
 		} else if (this.roomJoin) {
 				this.mySessionId = this.joinInfo.roomCode
-				// this.mySessionId = "5YeWZztlx2"
 				this.myUserName = this.joinInfo.userName
 				this.joinSession()
-				// this.connectSession("wss://i7a307.p.ssafy.io:4443?sessionId=ses_BjMvFY12vK&token=tok_WfIoBmdus23jFzoX")
 				this.getToken(this.mySessionId, this.myUserName)
 		} else {
 				this.$router.push('/waiting')
