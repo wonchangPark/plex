@@ -1,5 +1,6 @@
 package com.ssafy.db.repository;
 
+import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
 import com.ssafy.db.entity.User;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,6 +31,15 @@ public class RoomRepository {
         return room;
     }
 
+    public Room findByNo(Long roomNo){
+        Room room = null;
+        try {
+            room = em.createQuery("select r from Room r where r.no = :roomNo", Room.class)
+                    .setParameter("roomNo", roomNo).getSingleResult();
+        } catch (NoResultException ignored){}
+        return room;
+    }
+
     public void endRoom(Room room) {
         LocalDateTime endDate = LocalDateTime.now();
         room.setEndTime(endDate);
@@ -39,5 +50,15 @@ public class RoomRepository {
         // 캐시 서버에서 salt 값이 있는 user들을 가지고 와야 한다.
         em.createQuery("select u from User u").setFirstResult(from).setMaxResults(to).getResultList();
         return null;
+    }
+
+    public void saveGameHistory(Room room){
+        em.persist(GameHistory.createGameHistory(room));
+    }
+
+    public Long getGameNo(long roomNo){
+        List<GameHistory> list = em.createQuery("select gh from GameHistory gh where gh.room = :roomNo", GameHistory.class)
+                .setParameter("roomNo", roomNo).setMaxResults(1).getResultList();
+        return list.get(0).getNo();
     }
 }

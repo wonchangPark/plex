@@ -59,4 +59,13 @@ public class UserRepository {
                 "select u from User u order by u.totalScore", User.class
         ).getResultList();
     }
+
+    public int setMyImage(String image){
+        int result = em.createQuery("update User u set u.img = :img")
+                .setParameter("img", image).executeUpdate();
+        em.clear();
+        return result; // 반영된 레코드의 수를 반환. 즉 0을 반환하면 반영이 되지 않은 것
+    }
+
+
 }

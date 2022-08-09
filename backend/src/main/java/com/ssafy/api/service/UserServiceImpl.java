@@ -32,7 +32,8 @@ public class UserServiceImpl implements UserService {
 		// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
 	}
 
-	private void validateDuplicateUser(UserRegisterPostReq userRegisterInfo) throws UserDuplicateException {
+	@Override
+	public void validateDuplicateUser(UserRegisterPostReq userRegisterInfo) throws UserDuplicateException {
 		User user = userRepository.validationCheck(userRegisterInfo.getId(), userRegisterInfo.getNick());
 		if(user != null){
 			throw new UserDuplicateException("이미 존재하는 회원입니다.");
@@ -46,8 +47,14 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByUserId(userId); // 없다면 null이 들어감
 	}
 
+	@Override
 	public List<User> getRankingList(){
 		return userRepository.getRankingList();
+	}
+
+	@Override
+	public void setMyImage(String image){
+		userRepository.setMyImage(image);
 	}
 
 }
