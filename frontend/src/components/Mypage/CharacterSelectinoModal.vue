@@ -6,13 +6,13 @@
       max-width="35vw"
     >
       <template v-slot:activator="{ on, attrs }">
-        <button
-          style="width: 100%; height: 50px; font-weight: bold"
+        <v-btn
+          class="character-btn primary"
           v-bind="attrs"
           v-on="on"
         >
           캐릭터 변경
-        </button>
+        </v-btn>
       </template>
       
       <v-card class="room-create align-center" color="brown" width="35vw">
@@ -20,36 +20,44 @@
           <v-container class="d-flex flex-column justify-center">
             <v-row class="d-flex mt-2 mb-2">
               <v-col class="text-center" cols="4">
-                <v-avatar>
+                <v-avatar color="white">
                   <img src="@/assets/profile/bear.png" alt="">
                 </v-avatar>
               </v-col>
               <v-col class="text-center" cols="4">
-                <v-avatar>
+                <v-avatar color="white">
                   <img src="@/assets/profile/pudding.png" alt="">
                 </v-avatar>
               </v-col>
               <v-col class="text-center" cols="4">
-                <v-avatar>
+                <v-avatar color="white">
                   <img src="@/assets/profile/chick.png" alt="">
                 </v-avatar>
               </v-col>
             </v-row>
-
-            <v-row class="d-flex">
+            <v-row class="d-flex mt-2 mb-2">
               <v-col class="text-center" cols="4">
-                <div class="primary--text" style="font-size:1.2rem; font-weight: bold;">비공개</div>
+                <v-avatar color="white">
+                  <img src="@/assets/profile/gummybear.png" alt="">
+                </v-avatar>
               </v-col>
-              <v-col cols="8">
-                <v-checkbox class="mt-0 pt-0" v-model="roomInfo.isPrivate"></v-checkbox>
+              <v-col class="text-center" cols="4">
+                <v-avatar color="white">
+                  <img src="@/assets/profile/slime.png" alt="">
+                </v-avatar>
+              </v-col>
+              <v-col class="text-center" cols="4">
+                <v-avatar color="white">
+                  <img src="@/assets/profile/sushi.png" alt="">
+                </v-avatar>
               </v-col>
             </v-row>
             <br>
               <v-btn color="primary" elevation="0" 
               class="page-btn black--text align-self-center" 
               style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"
-              @click="createRoom"> 
-              방 만들기 </v-btn>
+              @click="closeDialog"> 
+              캐릭터 변경 </v-btn>
           </v-container>
         </v-list-item-content>
       </v-card>
@@ -58,46 +66,30 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  name : 'CreateRoomDialog',
+  name : 'CharacterSelectionModal',
   components: {
   },
   data: () => ({
       dialog: false,
-      roomInfo: {
-        name: '',
-        host: '',
-        roomSize: 6,
-        isPrivate: false,
-        gameNo: 1
-      }
     }),
   methods: {
-    ...mapActions(['setRoomCreate']),
-    createRoom() {
-      this.roomInfo.host = this.getUser.userId
-      this.setRoomCreate(this.roomInfo)
-      this.$router.push('/room')
+    closeDialog() {
+      this.dialog = false
     },
   },
   computed: {
-    ...mapGetters(['getUser',]),
   },
 }
 </script>
 
 <style>
-
-.room-create label{
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-.room-create input {
-  background: white;
-  border-radius: 5px;
-  border: 3px solid #ffb82f;
+.character-btn {
+  width: 10rem;
+  height: 2rem;
   font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
 }
 </style>
