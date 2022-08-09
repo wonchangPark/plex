@@ -151,7 +151,6 @@ export default {
 						if (this.score2 - this.score1 >= 10){
 							this.game.scene.getScene('ropeFightScene').RightWin();
 							setTimeout(() => this.gameFinished = true, 1000);
-							
 						}
 						else{
 							if (this.score2 > this.score1 + 7)
