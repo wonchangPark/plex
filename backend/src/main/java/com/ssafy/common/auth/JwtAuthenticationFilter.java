@@ -86,6 +86,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             Authentication authentication = getAuthentication(request, response);
             System.out.println("authentication done");
             // jwt 토큰으로 부터 획득한 인증 정보(authentication) 설정.
+            // SecurityContextHolder를 가지고 authentication을 가져와서 이용 가능
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ReIssuanceAccessTokenException ex){
             System.out.println("hello world");
