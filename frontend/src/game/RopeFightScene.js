@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Game, Scene } from 'phaser';
 import Phaser from 'phaser';
 //import RoomView from '../views/RoomView.vue';
 //import testPlayer from require('../assets/test_player.png');
@@ -19,31 +19,42 @@ class RopeFightScene extends Scene {
     team2Shake = false;
 
 
+    //this.$refs.game-container.clientHeight
+    //spriteScale = Game.world.width / 1600;
+
+
+    WidthScale = 1;
+    HeightScale = 1;
 
     create() {
+
 
         var outEvent = new Phaser.Events.EventEmitter();
         var inEvent = new Phaser.Events.EventEmitter();
         var goLeftEvent = new Phaser.Events.EventEmitter();
         var goRightEvent = new Phaser.Events.EventEmitter();
 
-        this.LeftGround = this.physics.add.image(300, 300, 'ground')
-        this.RightGround = this.physics.add.image(1300, 300, 'ground')
-
-        this.add.image(800, 256, 'background');
-        this.grounds = this.physics.add.staticGroup();
+        // this.LeftGround = this.physics.add.image(300, 300, 'ground')
+        // this.RightGround = this.physics.add.image(1300, 300, 'ground')
 
 
+        this.WidthScale = this.sys.game.canvas.width / 1600;
+        this.HeightScale = this.sys.game.canvas.height / 512;
+
+        this.add.image(800*this.WidthScale , 256*this.WidthScale, 'background').setScale(this.WidthScale);
+        // this.grounds = this.physics.add.staticGroup();
 
 
-        this.LeftGround.setImmovable(true);
-        this.LeftGround.body.allowGravity = false;
 
-        this.RightGround.setImmovable(true);
-        this.RightGround.body.allowGravity = false;
 
-        this.RightDesk = this.add.image(800, 260, 'DeskRight');
-        this.LeftDesk = this.add.image(800, 260, 'DeskLeft');
+        // this.LeftGround.setImmovable(true);
+        // this.LeftGround.body.allowGravity = false;
+
+        // this.RightGround.setImmovable(true);
+        // this.RightGround.body.allowGravity = false;
+
+        this.RightDesk = this.add.image(800*this.WidthScale, 260*this.WidthScale, 'DeskRight').setScale(this.WidthScale);
+        this.LeftDesk = this.add.image(800*this.WidthScale, 260*this.WidthScale, 'DeskLeft').setScale(this.WidthScale);
 
         this.shakeRightGround = this.plugins.get('rexshakepositionplugin').add(this.RightDesk, {
             duration: 10000,
@@ -56,6 +67,7 @@ class RopeFightScene extends Scene {
             // magnitude: 50,
             mode: 'effect'
         });
+
 
 
     //    this.LeftGround = this.grounds.create(300, 305, 'ground');
@@ -78,22 +90,22 @@ class RopeFightScene extends Scene {
         this.rope[2] = this.add.sprite(656, 200, 'rope');*/
 
 
-        this.rope = this.physics.add.sprite(800, 200, 'rope');
+        this.rope = this.physics.add.sprite(800*this.WidthScale, 200*this.WidthScale, 'rope').setScale(this.WidthScale);
         this.rope.setImmovable(true);
         this.rope.body.allowGravity = false;
 
         this.ropePosition = this.rope.x;
 
-        this.team1[0] = this.physics.add.sprite(150, 200, 'slime1_1').play('slime1Move');
+        this.team1[0] = this.physics.add.sprite(150*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
 
         //this.team1[0] = this.physics.add.sprite(100, 200, 'player');    //adding sprites with physics
-        this.team1[1] = this.physics.add.sprite(300, 200, 'Slime3_1').setScale(2).play('Slime3Move');
-        this.team1[2] = this.physics.add.sprite(450, 200, 'Sushi_1').play('SushiMove');
+        this.team1[1] = this.physics.add.sprite(300*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+        this.team1[2] = this.physics.add.sprite(450*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
         //this.team2[0] = this.physics.add.sprite(500, 200, 'player3');
 
-        this.team2[0] = this.physics.add.sprite(1050, 200, 'gummybear_1').play('gummybearMove');
-        this.team2[1] = this.physics.add.sprite(1200, 200, 'pudding_1').play('puddingMove');
-        this.team2[2] = this.physics.add.sprite(1350, 200, 'test1').play('move');
+        this.team2[0] = this.physics.add.sprite(1050*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+        this.team2[1] = this.physics.add.sprite(1200*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+        this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
 
         this.shakePosition1_0 = this.plugins.get('rexshakepositionplugin').add(this.team1[0], {
             duration: 10000,
@@ -133,7 +145,7 @@ class RopeFightScene extends Scene {
 
         this.team2[0].flipX = true;
         this.team2[1].flipX = true;
-        this.team2[2].flipX = true;
+        this.team2[2].flipX = false;
 
         this.team1[0].flipX = false;
         this.team1[1].flipX = false;
@@ -149,7 +161,7 @@ class RopeFightScene extends Scene {
         // this.physics.add.collider(this.team1, this.LeftGround);
         // this.physics.add.collider(this.team2, this.RightGround);
 
-        this.grounds.refresh(); //refresh to sync elements of groups
+        // this.grounds.refresh(); //refresh to sync elements of groups
 
         // for (var i = 0 ; i < this.team1.length ; i++)
         //     this.physics.add.collider(this.team1[i], this.grounds);
@@ -159,10 +171,10 @@ class RopeFightScene extends Scene {
         this.rope.body.allowGravity = false;
 
     
-        for (var i = 0 ; i < this.team1.length ; i++)
-            this.physics.add.collider(this.team1[i], this.grounds);
-        for (var j = 0 ; j < this.team1.length ; j++)
-            this.physics.add.collider(this.team2[j], this.grounds);
+        // for (var i = 0 ; i < this.team1.length ; i++)
+        //     this.physics.add.collider(this.team1[i], this.grounds);
+        // for (var j = 0 ; j < this.team1.length ; j++)
+        //     this.physics.add.collider(this.team2[j], this.grounds);
             
         for (var i = 0 ; i < this.team1.length ; i++){
             this.team1[i].setImmovable(true)
@@ -275,16 +287,16 @@ class RopeFightScene extends Scene {
     }
     LeftWin(){
         this.shakeRightGround.stop();
-        this.RightGround.setX(2500);
-        this.RightDesk.setX(2500);
+        // this.RightGround.setX(2500);
+        this.RightDesk.setX(6000);
 
         for (var i=0; i<3; i++)
             this.team2[i].body.allowGravity = true;
     }
     RightWin(){
         this.shakeLeftGround.stop();
-        this.LeftGround.setX(2500);
-        this.LeftDesk.setX(2500);
+        // this.LeftGround.setX(2500);
+        this.LeftDesk.setX(6000);
 
         for (var i=0; i<3; i++)
             this.team1[i].body.allowGravity = true;

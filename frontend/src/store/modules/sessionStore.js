@@ -57,7 +57,7 @@ const sessionStore = {
       }
     },
     actions:{
-      joinSession ({ commit, getters }) {
+      joinSession () {
         // --- Get an OpenVidu object ---
         this.OV = new OpenVidu();
   

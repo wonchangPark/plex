@@ -135,12 +135,6 @@ export default {
     ...mapGetters(["getUser"]),
   },
   updated() {
-    console.log(
-      "prev:" +
-        this.prevScrollHeight +
-        " scrollTop:" +
-        this.$refs.chattingListBox.scrollTop
-    );
     if (
       Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5
     ) {

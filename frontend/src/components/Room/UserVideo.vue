@@ -1,7 +1,6 @@
 <template>
-<div v-if="streamManager">
+<div class="d-flex justify-center" v-if="streamManager" style="height:100%; width:100%">
 	<ov-video :stream-manager="streamManager"/>
-	<div><p>{{ clientData }}</p></div>
 </div>
 </template>
 
