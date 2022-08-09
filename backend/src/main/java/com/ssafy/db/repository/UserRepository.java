@@ -1,6 +1,9 @@
 package com.ssafy.db.repository;
 
+import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.db.entity.User;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -65,6 +68,27 @@ public class UserRepository {
                 .setParameter("img", image).executeUpdate();
         em.clear();
         return result; // 반영된 레코드의 수를 반환. 즉 0을 반환하면 반영이 되지 않은 것
+    }
+
+    public List<UserExerciseRes> getMyTotalExercise(User user){
+        return em.createQuery("select new com.ssafy.api.response.UserExerciseRes(gc.type, gc.name, sum(sh.exerciseNum)) " +
+                "from ScoreHistory sh, GameCategory gc " +
+                "where sh.user = :user and sh.gameNo = gc.no " +
+                "group by gc.no", UserExerciseRes.class).setParameter("user", user).getResultList();
+    }
+
+    public UserTotalGameCntRes getMyTotalGameCnt(User user){
+        UserTotalGameCntRes userTotalGameCntRes = null;
+        try {
+            Object obj = em.createQuery("select count(sh) from ScoreHistory sh where sh.user = :user group by sh.user")
+                    .setParameter("user", user).getSingleResult();
+            userTotalGameCntRes.setTotalCnt((Long)obj);
+        } catch (NoResultException ignored){}
+        return userTotalGameCntRes;
+//            userTotalGameCntRes = em.createQuery("select new com.ssafy.api.response.UserTotalGameCntRes(count(sh), count(case when (sh.win == true) then 1 end), count(case when sh.win==false then 1 end)) " +
+//                    "from ScoreHistory sh " +
+//                    "where sh.user = :user " +
+//                    "group by sh.user", UserTotalGameCntRes.class).setParameter("user", user).getSingleResult();
     }
 
 

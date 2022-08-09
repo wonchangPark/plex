@@ -1,5 +1,7 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.common.exception.UserDuplicateException;
 import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void setMyImage(String image){
 		userRepository.setMyImage(image);
+	}
+
+	@Override
+	public List<UserExerciseRes> getMyTotalExercise(User user){
+		return userRepository.getMyTotalExercise(user);
+	}
+
+	@Override
+	public UserTotalGameCntRes getMyTotalGameCnt(User user){
+		return userRepository.getMyTotalGameCnt(user);
 	}
 
 }

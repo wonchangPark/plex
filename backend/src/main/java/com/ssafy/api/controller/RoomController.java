@@ -239,7 +239,10 @@ public class RoomController {
 		// gameHistoryNo를 반환
 	}
 
-//	@PostMapping("/score")
-//	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq )
+	@PostMapping("/score")
+	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq scoreHistoryPostReq){
+		roomService.insertScoreHistory(scoreHistoryPostReq);
+		return ResponseEntity.status(200).build();
+	}
 
 }
