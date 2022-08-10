@@ -117,7 +117,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
-      subscribers: [],
+      subscribers: [null, null, null, null, null],
 			game: undefined,
       mySessionId: "",
       myUserName: "",
@@ -158,15 +158,18 @@ export default {
       this.session.on("streamCreated", ({ stream }) => {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
+        for (let i = 0; i < 6; i++ ){
+          if (this.subscribers[i] === null) {
+            this.subscribers[i] = subscriber
+            break
+          }
+        }
       });
 
       // On every Stream destroyed...
       this.session.on("streamDestroyed", ({ stream }) => {
         const index = this.subscribers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.subscribers.splice(index, 1);
-        }
+          this.subscribers[index] = null
       });
 
       // On every asynchronous exception...
