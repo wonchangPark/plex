@@ -38,14 +38,14 @@ import com.ssafy.db.entity.User;
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     private final UserService userService;
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     // AuthenticationManager가 인증서들을 관리한다.
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService, RedisTemplate<String, Object> redisTemplate) {
         super(authenticationManager);
         this.userService = userService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -72,9 +72,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         System.out.println("==============doFilterINternal===================");
         String header1 = request.getHeader(JwtTokenUtil.HEADER_STRING);
         String header2 = request.getHeader(JwtTokenUtil.HEADER_STRING_REFRESH);
-//        Enumeration<String> enumeration = request.getHeaders(JwtTokenUtil.HEADER_STRING);
-//        String accessToken = enumeration.nextElement();
-//        String refreshToken = enumeration.nextElement();
+
         System.out.println(header1);
         System.out.println(header2);
 
@@ -96,6 +94,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             filterChain.doFilter(request, response);
             return;
         } catch (JwtTokenException ex) {
+            ex.printStackTrace();
             response.sendError(401, "login needed");
             return;
         } catch (Exception ex) {
@@ -127,7 +126,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
         String redisAccessToken = hashOperations.get(userId, "accessToken");
         String redisRefreshToken = hashOperations.get(userId, "refreshToken");
-        if (!accessToken.equals(redisAccessToken) || !refreshToken.equals(redisRefreshToken)) {
+        if (!accessToken.replace(JwtTokenUtil.TOKEN_PREFIX,"").equals(redisAccessToken) || !refreshToken.replace(JwtTokenUtil.TOKEN_PREFIX, "").equals(redisRefreshToken)) {
             // redis에서 가져온 토큰들이 없거나
             // 두 개의 토큰중 안맞는 토큰이 있으므로 둘 다 만료 시키고 401로 로그인을 다시하라고 알리기
             hashOperations.delete(userId);
