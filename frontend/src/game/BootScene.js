@@ -2,7 +2,7 @@ import {Scene} from 'phaser';
 import Player from '../assets/test_player.png';
 import Player2 from '../assets/chick.png';
 import Rope from '../assets/rope.png';
-import Ground from '../assets/platform.png';
+// import Ground from '../assets/platform.png';
 
 import T1 from '../assets/Test1.png'
 import T2 from '../assets/Test2.png'
@@ -99,7 +99,39 @@ import slime1_14 from '../assets/slime1/slime1 (14).png'
 import slime1_15 from '../assets/slime1/slime1 (15).png'
 import slime1_16 from '../assets/slime1/slime1 (16).png'
 
+import stone_1 from '../assets/stone/stone (1).png'
+import stone_2 from '../assets/stone/stone (2).png'
+import stone_3 from '../assets/stone/stone (3).png'
+import stone_4 from '../assets/stone/stone (4).png'
+import stone_5 from '../assets/stone/stone (5).png'
+import stone_6 from '../assets/stone/stone (6).png'
+import stone_7 from '../assets/stone/stone (7).png'
+import stone_8 from '../assets/stone/stone (8).png'
+import stone_9 from '../assets/stone/stone (9).png'
+import stone_10 from '../assets/stone/stone (10).png'
+import stone_11 from '../assets/stone/stone (11).png'
+import stone_12 from '../assets/stone/stone (12).png'
+import stone_13 from '../assets/stone/stone (13).png'
+import stone_14 from '../assets/stone/stone (14).png'
+import stone_15 from '../assets/stone/stone (15).png'
+import stone_16 from '../assets/stone/stone (16).png'
 
+import whale_1 from '../assets/whale/whale (1).png'
+import whale_2 from '../assets/whale/whale (2).png'
+import whale_3 from '../assets/whale/whale (3).png'
+import whale_4 from '../assets/whale/whale (4).png'
+import whale_5 from '../assets/whale/whale (5).png'
+import whale_6 from '../assets/whale/whale (6).png'
+import whale_7 from '../assets/whale/whale (7).png'
+import whale_8 from '../assets/whale/whale (8).png'
+import whale_9 from '../assets/whale/whale (9).png'
+import whale_10 from '../assets/whale/whale (10).png'
+import whale_11 from '../assets/whale/whale (11).png'
+import whale_12 from '../assets/whale/whale (12).png'
+import whale_13 from '../assets/whale/whale (13).png'
+import whale_14 from '../assets/whale/whale (14).png'
+import whale_15 from '../assets/whale/whale (15).png'
+import whale_16 from '../assets/whale/whale (16).png'
 
 class BootScene extends Scene {
 
@@ -116,7 +148,7 @@ class BootScene extends Scene {
         this.load.rexImageURI('player', Player);
         this.load.rexImageURI('player2', Player2);
         this.load.rexImageURI('rope', Rope);
-        this.load.rexImageURI('ground', Ground);
+        // this.load.rexImageURI('ground', Ground);
 
 
         this.load.rexImageURI('background', BackGround)
@@ -219,15 +251,96 @@ class BootScene extends Scene {
         this.load.rexImageURI('slime1_14', slime1_14)
         this.load.rexImageURI('slime1_15', slime1_15)
         this.load.rexImageURI('slime1_16', slime1_16)
-        
-        
 
+        //stone
+        this.load.rexImageURI('stone_1', stone_1)
+        this.load.rexImageURI('stone_2', stone_2)
+        this.load.rexImageURI('stone_3', stone_3)
+        this.load.rexImageURI('stone_4', stone_4)
+        this.load.rexImageURI('stone_5', stone_5)
+        this.load.rexImageURI('stone_6', stone_6)
+        this.load.rexImageURI('stone_7', stone_7)
+        this.load.rexImageURI('stone_8', stone_8)
+        this.load.rexImageURI('stone_9', stone_9)
+        this.load.rexImageURI('stone_10', stone_10)
+        this.load.rexImageURI('stone_11', stone_11)
+        this.load.rexImageURI('stone_12', stone_12)
+        this.load.rexImageURI('stone_13', stone_13)
+        this.load.rexImageURI('stone_14', stone_14)
+        this.load.rexImageURI('stone_15', stone_15)
+        this.load.rexImageURI('stone_16', stone_16)
+        
+        
+        //whale
+        this.load.rexImageURI('whale_1', whale_1)
+        this.load.rexImageURI('whale_2', whale_2)
+        this.load.rexImageURI('whale_3', whale_3)
+        this.load.rexImageURI('whale_4', whale_4)
+        this.load.rexImageURI('whale_5', whale_5)
+        this.load.rexImageURI('whale_6', whale_6)
+        this.load.rexImageURI('whale_7', whale_7)
+        this.load.rexImageURI('whale_8', whale_8)
+        this.load.rexImageURI('whale_9', whale_9)
+        this.load.rexImageURI('whale_10', whale_10)
+        this.load.rexImageURI('whale_11', whale_11)
+        this.load.rexImageURI('whale_12', whale_12)
+        this.load.rexImageURI('whale_13', whale_13)
+        this.load.rexImageURI('whale_14', whale_14)
+        this.load.rexImageURI('whale_15', whale_15)
+        this.load.rexImageURI('whale_16', whale_16)
 
         //this.textures.addBase64('player', Player);
         //this.textures.addBase64('player2', Player2);        
     }
 
     create() {
+        this.anims.create({
+            key: 'whaleMove',
+            frames: [
+                { key: 'whale_1' },
+                { key: 'whale_2' },
+                { key: 'whale_3' },
+                { key: 'whale_4' },
+                { key: 'whale_5' },
+                { key: 'whale_6' },
+                { key: 'whale_7' },
+                { key: 'whale_8' },
+                { key: 'whale_9' },
+                { key: 'whale_10' },
+                { key: 'whale_11' },
+                { key: 'whale_12' },
+                { key: 'whale_13' },
+                { key: 'whale_14' },
+                { key: 'whale_15' },
+                { key: 'whale_16', duration: 50 }
+            ],
+            frameRate: 20,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'stoneMove',
+            frames: [
+                { key: 'stone_1' },
+                { key: 'stone_2' },
+                { key: 'stone_3' },
+                { key: 'stone_4' },
+                { key: 'stone_5' },
+                { key: 'stone_6' },
+                { key: 'stone_7' },
+                { key: 'stone_8' },
+                { key: 'stone_9' },
+                { key: 'stone_10' },
+                { key: 'stone_11' },
+                { key: 'stone_12' },
+                { key: 'stone_13' },
+                { key: 'stone_14' },
+                { key: 'stone_15' },
+                { key: 'stone_16', duration: 50 }
+            ],
+            frameRate: 20,
+            repeat: -1
+        });
 
         this.anims.create({
             key: 'slime1Move',
@@ -249,7 +362,7 @@ class BootScene extends Scene {
                 { key: 'slime1_15' },
                 { key: 'slime1_16', duration: 50 }
             ],
-            frameRate: 16,
+            frameRate: 20,
             repeat: -1
         });
 
@@ -366,7 +479,12 @@ class BootScene extends Scene {
         //this.scene.start("RunningScene");
     }
     StartScene(idx) {  
-        this.scene.start("ropeFightScene");
+        if (idx == 1){
+            this.scene.start("ropeFightScene");
+        }
+        // else if (idx == 0){
+        //     this.scene.start("waitingScene");
+        // }
     }
 }
 

@@ -9,18 +9,16 @@ export default {
     user: {},
     token: localStorage.getItem('token') || '' ,
     authError: null,
-    userNav: {},
-    profile: {},
     passwordFlag: false,
     nicknameFlag: false,
     idFlag: false,
-    rankingList: {}
+    rankingList: {},
+    loginModal: false,
   },
   getters:{
     isLoggedIn: state => !!state.token,
+    loginModal: state => state.loginModal,
     getUser: state => state.user,
-    userNav: state => state.userNav,
-    profile: state => state.profile,
     passwordFlag: state => state.passwordFlag,
     nicknameFlag: state => state.nicknameFlag,
     idFlag: state => state.idFlag,
@@ -30,8 +28,7 @@ export default {
   },
   mutations: {
     SET_USER: (state, user) => state.user = user,
-    SET_USERNAV: (state, userNav) => state.userNav = userNav,
-    SET_PROFILE: (state, profile) => state.profile = profile,
+    SET_LOGINMODAL: (state, loginModal) => state.loginModal = loginModal,
     SET_PASSWORDFLAG: (state, passwordFlag) => state.passwordFlag = passwordFlag,
     SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
     SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
@@ -50,7 +47,7 @@ export default {
       localStorage.setItem('token', '')
     },
 
-    fetchNav({ commit, getters }) {
+    fetchUserInfo({ commit, getters }) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + '/users/me',
@@ -67,7 +64,6 @@ export default {
               totalScore: res.data.totalScore
             }
             commit('SET_USER', user)
-            commit('SET_USERNAV', res.data)
           }
             )
           .catch(err => {
@@ -75,25 +71,7 @@ export default {
           })
       }
     },
-
-    fetchprofile({ commit, getters }) {
-      if (getters.isLoggedIn) {
-        axios({
-          url: API_URL + '/users/me',
-          method: 'get',
-          headers: getters.authHeader,
-        })
-          .then(res => {
-            console.log(res.data)
-            commit('SET_PROFILE', res.data)
-          }
-            )
-          .catch(err => {
-            console.log(err)
-          })
-      }
-    },
-
+    
     fetchRankingList({ commit, getters }){
       if (getters.isLoggedIn){
         axios({
@@ -135,7 +113,7 @@ export default {
         })
         .catch(err => {
           console.error(err.response.data)
-          alert('아이디 또는 비밀번호를 확인해주세요')
+          commit('SET_LOGINMODAL', true)
           commit('SET_AUTH_ERROR', err.response.data)
         })
     },

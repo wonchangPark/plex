@@ -1,5 +1,5 @@
 <template>
-	<video autoplay/>
+	<video style="height:100%" autoplay/>
 </template>
 
 <script>
