@@ -329,13 +329,16 @@ class RopeFightScene extends Scene {
                 this.nowPosition2[i] = this.team2[i].x;
             }
         }
-
-        this.timerText.setText(this.leftTime);
+        
+        if (this.leftTime >= 0)
+            this.timerText.setText(this.leftTime);
+        else
+            this.timerText.setText("연장전!먼저 3점차 내기!");
     }
 
     onTimerEvent() {
         this.leftTime--;
-        console.log(this.leftTime);
+        //console.log(this.leftTime);
     }
 
 }
