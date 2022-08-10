@@ -77,19 +77,4 @@ public class UserRepository {
                 "group by gc.no", UserExerciseRes.class).setParameter("user", user).getResultList();
     }
 
-    public UserTotalGameCntRes getMyTotalGameCnt(User user){
-        UserTotalGameCntRes userTotalGameCntRes = null;
-        try {
-            Object obj = em.createQuery("select count(sh) from ScoreHistory sh where sh.user = :user group by sh.user")
-                    .setParameter("user", user).getSingleResult();
-            userTotalGameCntRes.setTotalCnt((Long)obj);
-        } catch (NoResultException ignored){}
-        return userTotalGameCntRes;
-//            userTotalGameCntRes = em.createQuery("select new com.ssafy.api.response.UserTotalGameCntRes(count(sh), count(case when (sh.win == true) then 1 end), count(case when sh.win==false then 1 end)) " +
-//                    "from ScoreHistory sh " +
-//                    "where sh.user = :user " +
-//                    "group by sh.user", UserTotalGameCntRes.class).setParameter("user", user).getSingleResult();
-    }
-
-
 }

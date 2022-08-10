@@ -148,7 +148,7 @@ public class UserController {
 		return ResponseEntity.status(200).body(list);
 	}
 
-	@GetMapping("/totalGame")
+	@GetMapping("/totalgame")
 	public ResponseEntity<UserTotalGameCntRes> getMyTotalGameCnt(){
 		SsafyUserDetails details = (SsafyUserDetails)(SecurityContextHolder.getContext().getAuthentication().getDetails());
 		User user = details.getUser();

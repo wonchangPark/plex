@@ -17,18 +17,26 @@ import java.util.Objects;
 public class RankingRes implements Comparable<RankingRes>{
 	private Long userNo;
 	private String userNick;
+
+	private Long score;
 	private Long rank;
 
 
 	public RankingRes() {
 	}
 
-	public RankingRes(Long userNo, String userNick, Long rank) {
+	public RankingRes(Long userNo, String userNick, Long score, Long rank) {
 		this.userNo = userNo;
 		this.userNick = userNick;
+		this.score = score;
 		this.rank = rank;
 	}
 
+	public RankingRes(Long userNo, String userNick, Long score) {
+		this.userNo = userNo;
+		this.userNick = userNick;
+		this.score = score;
+	}
 
 	@Override
 	public int compareTo(RankingRes o) {
