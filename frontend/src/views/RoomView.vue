@@ -377,7 +377,7 @@ export default {
 
     connectSession(token) {
       this.session
-        .connect(token, { clientData: this.myUserName })
+        .connect(token, this.myUserName )
         .then(() => {
           // --- Get your own camera stream with the desired properties ---
 
@@ -510,7 +510,7 @@ export default {
         console.log(res);
         const token = res.data.token;
         this.session
-          .connect(token, { clientData: this.myUserName })
+          .connect(token, this.myUserName)
           .then(() => {
             // --- Get your own camera stream with the desired properties ---
 

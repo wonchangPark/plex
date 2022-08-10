@@ -51,7 +51,7 @@ export default {
       commit('SET_ROOMJOIN')
       const joinInfo = {
           roomCode: roomCode,
-          userName: getters.getUser.userId,
+          userName: getters.getUser.nick,
       }
       commit('SET_JOININFO', joinInfo)
     },
