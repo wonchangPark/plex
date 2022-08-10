@@ -131,6 +131,7 @@ export default {
       personalScore: {}, // 개인별 점수,
       score1: 0, // 팀별 점수
       score2: 0,
+      teamNo: 0,
       gameFinished: false,
       pose1: 0,
       pose2: 0,
@@ -160,6 +161,7 @@ export default {
       this.session.on("streamCreated", ({ stream }) => {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
+        console.log(subscriber.stream.connection.data)
         for (let i = 0; i < 6; i++ ){
           if (this.subscribers[i] === null) {
             this.subscribers[i] = subscriber
@@ -259,12 +261,18 @@ export default {
       });
       // 호스트 수신 => 팀원 정보 수신
       this.session.on("signal:host", (event) => {
+        console.log(event.data)
         console.log("호스트 수신"); // Message
         if (!this.isHost) {
           const data = JSON.parse(event.data);
           this.team1 = data.team1;
           this.team2 = data.team2;
           this.personalScore = data.personalScore;
+          if (this.team1.includes(this.userName)) {
+            this.teamNo = 1
+          } else {
+            this.teamNo = 2
+          }
         }
         console.log(event.from); // Connection object of the sender
         console.log(event.type); // The type of message
@@ -670,6 +678,7 @@ export default {
         this.isHost = true;
         this.team1.push(res.data.host);
         this.personalScore[`${res.data.host}`] = 0;
+        this.teamNo = 1;
       });
     } else if (this.roomJoin) {
       this.mySessionId = this.joinInfo.roomCode;
