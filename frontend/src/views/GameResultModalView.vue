@@ -44,8 +44,22 @@ export default {
     },
     components: {ContentBox},
     mounted() {
-        if (this.winner == this.myTeam)
-            document.getElementById("Main").classList.add('animate__heartBeat');
+
+        let elMain = document.getElementById("Main");
+
+        if (this.winner == this.myTeam) {
+            if (!elMain.classList.contains('animate__heartBeat'));
+                elMain.classList.add('animate__heartBeat');
+            if (elMain.classList.contains('animate__headShake'))
+                elMain.classList.remove('animate__headShake');
+        }
+
+        else {
+            if (elMain.classList.contains('animate__heartBeat'));
+                elMain.classList.remove('animate__heartBeat');
+            if (!elMain.classList.contains('animate__headShake'))
+                elMain.classList.add('animate__headShake');
+        }
     },
     data() {
         return {
