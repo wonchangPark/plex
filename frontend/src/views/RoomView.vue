@@ -97,8 +97,8 @@ import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-// const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
-const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+ const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+// const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 export default {
@@ -182,8 +182,10 @@ export default {
         console.log(event.data); // Message
         if (this.team1.includes(event.data)) {
           if (
-            this.score1 - this.score2 < 10 &&
-            this.score1 - this.score2 > -10
+			(this.game.scene.getScene("ropeFightScene").leftTime <= 0
+			&&	Math.abs(this.score1 - this.score2) < 3)
+            || (this.game.scene.getScene("ropeFightScene").leftTime > 0 && this.score1 - this.score2 < 10 &&
+            this.score1 - this.score2 > -10)
           ) {
             this.score1 += 1;
             this.personalScore[`${event.data}`] += 1;
@@ -203,8 +205,10 @@ export default {
           //this.game.scene.getScene('ropeFightScene').goLeftHandler();
         } else {
           if (
-            this.score1 - this.score2 < 10 &&
-            this.score1 - this.score2 > -10
+			(this.game.scene.getScene("ropeFightScene").leftTime <= 0
+			&&	Math.abs(this.score1 - this.score2) < 3)
+            || (this.game.scene.getScene("ropeFightScene").leftTime > 0 && this.score1 - this.score2 < 10 &&
+            this.score1 - this.score2 > -10)
           ) {
             this.score2 += 1;
             this.personalScore[`${event.data}`] += 1;

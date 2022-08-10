@@ -76,7 +76,7 @@ class RopeFightScene extends Scene {
             mode: 'effect'
         });
 
-        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(3*this.WidthScale);
+        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo', align: 'center' }).setColor('#660000').setScale(5*this.WidthScale);
 
     //    this.LeftGround = this.grounds.create(300, 305, 'ground');
     //    this.RightGround = this.grounds.create(1300, 305, 'ground');
@@ -333,7 +333,7 @@ class RopeFightScene extends Scene {
         if (this.leftTime >= 0)
             this.timerText.setText(this.leftTime);
         else
-            this.timerText.setText("연장전!먼저 3점차 내기!");
+            this.timerText.setText("연장전!");
     }
 
     onTimerEvent() {
