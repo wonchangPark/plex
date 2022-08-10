@@ -390,39 +390,51 @@ export default {
         });
     },
 
-    leaveSession() {
-      this.game.destroy(true);
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      this.session
-        .signal({
-          // 참가자 퇴장 송신
-          data: this.myUserName, // Any string (optional)
-          to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: "memberLeave", // The type of message (optional)
+    leaveSession () {
+			this.game.destroy(true)
+			// --- Leave the session by calling 'disconnect' method over the Session object ---
+      if (this.isHost) {
+        this.session.signal({		// 호스트 퇴장 송신
+          data: this.myUserName,  // Any string (optional)
+          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+          type: 'hostLeave'             // The type of message (optional)
         })
         .then(() => {
-          console.log("Message successfully sent");
+            console.log('Message successfully sent');
         })
-        .catch((error) => {
-          console.error(error);
-        });
-      if (this.session) this.session.disconnect();
-      const joinInfo = {
-        code: this.mySessionId,
-        id: this.myUserName,
-      };
-      this.leaveRoom(joinInfo);
+        .catch(error => {
+            console.error(error);
+        })
+      } else {
+        this.session.signal({		// 참가자 퇴장 송신
+          data: this.myUserName,  // Any string (optional)
+          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+          type: 'memberLeave'             // The type of message (optional)
+        })
+        .then(() => {
+            console.log('Message successfully sent');
+        })
+        .catch(error => {
+            console.error(error);
+        })
+      }
+			if (this.session) this.session.disconnect();
+			const joinInfo = {
+				code : this.mySessionId,
+				id : this.myUserName
+			}
+			this.leaveRoom(joinInfo)
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-      this.setRoomClose();
+			this.session = undefined;
+			this.mainStreamManager = undefined;
+			this.publisher = undefined;
+			this.subscribers = [];
+			this.OV = undefined;
+			this.setRoomClose()
 
-      window.removeEventListener("beforeunload", this.leaveSession);
-      this.$router.push("/waiting");
-    },
+			window.removeEventListener('beforeunload', this.leaveSession);
+			this.$router.push('/waiting')
+		},
 
     sendTeamInfo() {
       this.session

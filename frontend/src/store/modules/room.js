@@ -1,3 +1,8 @@
+import axios from 'axios'
+import { API_BASE_URL } from '@/config';
+
+const API_URL = API_BASE_URL + '/api/v1';
+
 export default {
   namespaced: false,
   state: {
@@ -52,6 +57,20 @@ export default {
     },
     setPrediction({commit}, predictionData) {
       commit('SET_PREDICTION', predictionData)
-    }
+    },
+    leaveRoom ({ getters }, joinInfo) {
+      axios({
+        url: API_URL + '/rooms/leave-room',
+        method: 'post',
+        data: joinInfo,
+        headers: getters.authHeader
+      })
+      .then( (res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+    },
   }
 }
