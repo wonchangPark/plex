@@ -1,10 +1,9 @@
 package com.ssafy.api.controller;
 
-import com.ssafy.db.entity.OAuth;
 import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +17,6 @@ import com.ssafy.api.service.UserService;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.db.entity.User;
-import com.ssafy.db.repository.UserRepositorySupport;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -71,13 +69,18 @@ public class AuthController {
 			String accessToken = JwtTokenUtil.getAccessToken(userId);
 			String refreshToken = JwtTokenUtil.getRefreshToken(userId); // 이 정보는 userId와 키밸류로 레디스에 들어갈 것.
 			System.out.println(accessToken+ " "+refreshToken);
-			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
-			System.out.println("oAuth : "+oAuth);
-			oAuthRepository.save(oAuth);
+
+			// redis에 accessToken, refreshToken 저장하기
+			HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+			hashOperations.put(userId, "accessToken",accessToken);
+			hashOperations.put(userId, "refreshToken",refreshToken);
+
+
+//			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
+//			System.out.println("oAuth : "+oAuth);
+//			oAuthRepository.save(oAuth);
 
 			// redis 로 바꿀 때 사용
-//			ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-//			valueOperations.set(userId, refreshToken);
 
 			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", user, accessToken, refreshToken));
 		}

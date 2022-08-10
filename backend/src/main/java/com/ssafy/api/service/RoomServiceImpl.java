@@ -1,9 +1,13 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.request.RoomCreatePostReq;
+import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
+import com.ssafy.db.entity.ScoreHistory;
+import com.ssafy.db.entity.User;
 import com.ssafy.db.repository.RoomRepository;
+import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +17,9 @@ public class RoomServiceImpl implements RoomService{
 
     @Autowired
     RoomRepository roomRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     @Transactional
@@ -44,8 +51,14 @@ public class RoomServiceImpl implements RoomService{
         return roomRepository.getGameNo(roomNo);
     }
 
-//    @Override
-//    public void insertScoreHistory(long gameNo){
-//    }
+    @Override
+    public void insertScoreHistory(ScoreHistoryPostReq scoreHistoryPostReq){
+        long userNo = scoreHistoryPostReq.getUserNo();
+        long gameHistoryNo = scoreHistoryPostReq.getGameHistoryNo();
+        User user = userRepository.findOne(userNo);
+        GameHistory gameHistory = roomRepository.getGameHistoryByNo(gameHistoryNo);
+        ScoreHistory scoreHistory = ScoreHistory.createScoreHistory(user, gameHistory, scoreHistoryPostReq.getScore(), scoreHistoryPostReq.getTeamNo(), scoreHistoryPostReq.isWin(), scoreHistoryPostReq.getExerciseNum(), scoreHistoryPostReq.getGameNo() );
+        roomRepository.saveScoreHistory(scoreHistory);
+    }
 
 }

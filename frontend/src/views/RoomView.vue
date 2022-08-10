@@ -11,7 +11,7 @@
 		<div id='label-container' style='display:none;'/>
       <div class="d-flex" style="height: 98%; width: 90%">
         <div id="game-container" style="height: 100%; width: 100%"></div>
-        <TeachableItem ref="teachable" @sendScore="sendScore"></TeachableItem>
+
       </div>
     </div>
     <div
@@ -28,17 +28,20 @@
         >
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              :pose1="parseFloat(room.predictionData.left)"
-              :pose2="parseFloat(room.predictionData.right)"
+              :pose1="parseFloat(pose1)"
+              :pose2="parseFloat(pose2)"
               :stream-manager="publisher"
             />
+            <canvas id="main-video-canvas" style="display:none;"/>
           </div>
           <div style="heigth: 100%; width: 47%">
             <ContentBox :height="100" :width="100">
               <ScoreBoard :score1="score1" :score2="score2"></ScoreBoard
               ><button class="btn btn-lg btn-success" @click="sendStart()">
                 Start
-              </button></ContentBox
+              </button>
+              <div id='label-container'></div>
+              </ContentBox
             >
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
@@ -91,9 +94,12 @@ import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
-import TeachableItem from "@/components/Room/TeachableItem.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
+
+//const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+let model, webcam, ctx, labelContainer, maxPredictions;
 
 export default {
   name: "App",
@@ -102,7 +108,6 @@ export default {
     UserVideo,
     GameResultModal,
     ContentBox,
-    TeachableItem,
     ScoreBoard,
   },
 
@@ -112,7 +117,7 @@ export default {
       session: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
-      subscribers: [],
+      subscribers: [null, null, null, null, null],
 			game: undefined,
       mySessionId: "",
       myUserName: "",
@@ -147,21 +152,26 @@ export default {
       // --- Init a session ---
       this.session = this.OV.initSession();
 
+  
+
       // --- Specify the actions when events take place in the session ---
 
       // On every new Stream received...
       this.session.on("streamCreated", ({ stream }) => {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
+        for (let i = 0; i < 6; i++ ){
+          if (this.subscribers[i] === null) {
+            this.subscribers[i] = subscriber
+            break
+          }
+        }
       });
 
       // On every Stream destroyed...
       this.session.on("streamDestroyed", ({ stream }) => {
         const index = this.subscribers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.subscribers.splice(index, 1);
-        }
+          this.subscribers[index] = null
       });
 
       // On every asynchronous exception...
@@ -269,6 +279,9 @@ export default {
       // 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
       this.session.on("signal:gameStart", (event) => {
         this.game.scene.getScene("bootScene").StartScene(1);
+        this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
+
         const data = JSON.parse(event.data);
         this.score1 = data.score1;
         this.score2 = data.score2;
@@ -285,8 +298,11 @@ export default {
 
       // this.getToken(this.mySessionId, this.myUserName)
 
+      this.init()
+
       window.addEventListener("beforeunload", this.leaveSession);
       //this.game = Game();			//generate phaser game when entering session
+      
     },
 
     sendLeft() {
@@ -324,8 +340,11 @@ export default {
     sendStart () {
 			console.log("게임시작")
 			// console.log(this.$refs.teachable)
-			this.$refs.teachable.init()
+			// this.$refs.teachable.init()
+      // this.init()
 			this.game.scene.getScene('bootScene').StartScene(1);
+      this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
 			this.dataInit()
 			this.session.signal({		// 게임 시작 송신
 				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
@@ -358,14 +377,14 @@ export default {
 
     connectSession(token) {
       this.session
-        .connect(token, { clientData: this.myUserName })
+        .connect(token, this.myUserName )
         .then(() => {
           // --- Get your own camera stream with the desired properties ---
 
           let publisher = this.OV.initPublisher(undefined, {
             audioSource: undefined, // The source of audio. If undefined default microphone
             videoSource: undefined, // The source of video. If undefined default webcam
-            publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+            publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
             publishVideo: true, // Whether you want to start publishing with your video enabled or not
             resolution: "640x480", // The resolution of your video
             frameRate: 30, // The frame rate of your video
@@ -390,39 +409,51 @@ export default {
         });
     },
 
-    leaveSession() {
-      this.game.destroy(true);
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      this.session
-        .signal({
-          // 참가자 퇴장 송신
-          data: this.myUserName, // Any string (optional)
-          to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-          type: "memberLeave", // The type of message (optional)
+    leaveSession () {
+			this.game.destroy(true)
+			// --- Leave the session by calling 'disconnect' method over the Session object ---
+      if (this.isHost) {
+        this.session.signal({		// 호스트 퇴장 송신
+          data: this.myUserName,  // Any string (optional)
+          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+          type: 'hostLeave'             // The type of message (optional)
         })
         .then(() => {
-          console.log("Message successfully sent");
+            console.log('Message successfully sent');
         })
-        .catch((error) => {
-          console.error(error);
-        });
-      if (this.session) this.session.disconnect();
-      const joinInfo = {
-        code: this.mySessionId,
-        id: this.myUserName,
-      };
-      this.leaveRoom(joinInfo);
+        .catch(error => {
+            console.error(error);
+        })
+      } else {
+        this.session.signal({		// 참가자 퇴장 송신
+          data: this.myUserName,  // Any string (optional)
+          to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+          type: 'memberLeave'             // The type of message (optional)
+        })
+        .then(() => {
+            console.log('Message successfully sent');
+        })
+        .catch(error => {
+            console.error(error);
+        })
+      }
+			if (this.session) this.session.disconnect();
+			const joinInfo = {
+				code : this.mySessionId,
+				id : this.myUserName
+			}
+			this.leaveRoom(joinInfo)
 
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-      this.setRoomClose();
+			this.session = undefined;
+			this.mainStreamManager = undefined;
+			this.publisher = undefined;
+			this.subscribers = [];
+			this.OV = undefined;
+			this.setRoomClose()
 
-      window.removeEventListener("beforeunload", this.leaveSession);
-      this.$router.push("/waiting");
-    },
+			window.removeEventListener('beforeunload', this.leaveSession);
+			this.$router.push('/waiting')
+		},
 
     sendTeamInfo() {
       this.session
@@ -479,7 +510,7 @@ export default {
         console.log(res);
         const token = res.data.token;
         this.session
-          .connect(token, { clientData: this.myUserName })
+          .connect(token, this.myUserName)
           .then(() => {
             // --- Get your own camera stream with the desired properties ---
 
@@ -525,6 +556,87 @@ export default {
           });
       });
     },
+    //Methods related to Teachable Machine
+
+		async init () {
+			const modelURL = URL + 'model.json';
+			const metadataURL = URL + 'metadata.json';
+
+		// load the model and metadata
+		// Refer to tmPose.loadFromFiles() in the API to support files from a file picker
+			model = await tmPose.load(modelURL, metadataURL);
+			maxPredictions = model.getTotalClasses();
+
+		// Convenience function to setup a webcam
+			const flip = true; // whether to flip the webcam
+			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+			await webcam.setup(); // request access to the webcam
+			webcam.play();
+			window.requestAnimationFrame(this.loop);
+
+		// append/get elements to the DOM
+			// append/get elements to the DOM
+			const canvas = document.getElementById('main-video-canvas');
+			canvas.width = 200; canvas.height = 200;
+			ctx = canvas.getContext('2d');
+			labelContainer = document.getElementById('label-container');
+			for (let i = 0; i < maxPredictions; i++) { // and class labels
+					labelContainer.appendChild(document.createElement('div'));
+			}
+		},
+
+		async loop(timestamp) {
+			webcam.update(); // update the webcam frame
+			await this.predict();
+			window.requestAnimationFrame(this.loop);
+		},
+		async predict() {
+			// Prediction #1: run input through posenet
+			// estimatePose can take in an image, video or canvas html element
+			const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+			// Prediction 2: run input through teachable machine classification model
+			const prediction = await model.predict(posenetOutput);
+			if (prediction[0].probability.toFixed(2) >= 0.99) {
+				if (this.status == 1) {
+					this.session.signal({		// 운동 점수 송신
+						data: this.myUserName,  // Any string (optional)
+						to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+						type: 'score'             // The type of message (optional)
+					})
+					.then(() => {
+							console.log('Message successfully sent');
+					})
+					.catch(error => {
+							console.error(error);
+					});
+				}
+				this.status = 0
+			} else if (prediction[1].probability.toFixed(2) >= 0.99) {
+				this.status = 1
+			}
+			for (let i = 0; i < maxPredictions; i++) {
+					const classPrediction =
+							prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+			}
+      this.pose1 = Number(prediction[0].probability.toFixed(2))
+      this.pose2 = Number(prediction[1].probability.toFixed(2))
+
+			// finally draw the poses
+			//this.drawPose(pose);
+		},
+
+		drawPose(pose) {
+			ctx.drawImage(webcam.canvas, 0, 0);
+			// draw the keypoints and skeleton
+			if (pose) {
+				const minPartConfidence = 0.5;
+				tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+				tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+			}
+		},
+		
+		//END OF TEACHABLE MACHINE METHODS
 
     ...mapActions(["setRoomClose", "leaveRoom"]),
   },

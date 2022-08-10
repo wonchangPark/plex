@@ -1,24 +1,22 @@
 package com.ssafy.api.controller;
 
 import com.ssafy.api.request.ImgPostReq;
+import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.common.exception.UserDuplicateException;
 import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import com.ssafy.api.request.UserLoginPostReq;
 import com.ssafy.api.request.UserRegisterPostReq;
-import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
-import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.db.entity.User;
-import com.ssafy.db.repository.UserRepositorySupport;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -143,6 +141,22 @@ public class UserController {
 	@PostMapping("/image")
 	public void setMyImage(@RequestBody(required = false)ImgPostReq imgInfo){
 		userService.setMyImage(imgInfo.getImage());
+	}
+
+	@GetMapping("/exercise")
+	public ResponseEntity<List<UserExerciseRes>> getMyTotalExcercise(){
+		SsafyUserDetails details = (SsafyUserDetails)(SecurityContextHolder.getContext().getAuthentication().getDetails());
+		User user = details.getUser();
+		List<UserExerciseRes> list = userService.getMyTotalExercise(user);
+		return ResponseEntity.status(200).body(list);
+	}
+
+	@GetMapping("/totalgame")
+	public ResponseEntity<UserTotalGameCntRes> getMyTotalGameCnt(){
+		SsafyUserDetails details = (SsafyUserDetails)(SecurityContextHolder.getContext().getAuthentication().getDetails());
+		User user = details.getUser();
+		UserTotalGameCntRes userTotalGameCntRes = userService.getMyTotalGameCnt(user);
+		return ResponseEntity.status(200).body(userTotalGameCntRes);
 	}
 
 }

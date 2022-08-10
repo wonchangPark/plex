@@ -2,6 +2,7 @@ package com.ssafy.db.repository;
 
 import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
+import com.ssafy.db.entity.ScoreHistory;
 import com.ssafy.db.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -60,5 +61,19 @@ public class RoomRepository {
         List<GameHistory> list = em.createQuery("select gh from GameHistory gh where gh.room = :roomNo", GameHistory.class)
                 .setParameter("roomNo", roomNo).setMaxResults(1).getResultList();
         return list.get(0).getNo();
+    }
+
+    public GameHistory getGameHistoryByNo(long gameHistoryNo){
+        GameHistory gameHistory = null;
+        try{
+            gameHistory = em.createQuery("select gh from GameHistory gh where gh.no = :gameHistoryNo",GameHistory.class)
+                    .setParameter("gameHistoryNo", gameHistoryNo).setMaxResults(1).getSingleResult();
+        } catch(NoResultException ignored){
+        }
+        return gameHistory;
+    }
+
+    public void saveScoreHistory(ScoreHistory scoreHistory) {
+        em.persist(scoreHistory);
     }
 }

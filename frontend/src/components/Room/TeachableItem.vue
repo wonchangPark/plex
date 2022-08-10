@@ -1,7 +1,7 @@
 <template>
   <div>
     <canvas id="main-video-canvas" style="display:none;"/>
-    <div id='label-container' style="display:none;"></div>
+    <div id='label-container'></div>
   </div>
 </template>
 
