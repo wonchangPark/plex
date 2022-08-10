@@ -75,10 +75,11 @@ public class RoomController {
 		// Optional data to be passed to other users when this user connects to the
 		// video-call. In this case, a JSON with the value we stored in the HttpSession
 		// object on login
+
 		String serverData = "{\"serverData\": \"" + roomInfo.getHost() + "\"}";
 
 		// Build connectionProperties object with the serverData and the role
-		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).data(serverData).role(role).build();
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role).build();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists
@@ -148,10 +149,11 @@ public class RoomController {
 		// Optional data to be passed to other users when this user connects to the
 		// video-call. In this case, a JSON with the value we stored in the HttpSession
 		// object on login
-		String serverData = "{\"serverData\": \"" + joinInfo.getId() + "\"}";
+//		String serverData = "{\"serverData\": \"" + roomInfo.getHost() + "\"}";
+
 
 		// Build connectionProperties object with the serverData and the role
-		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).data(serverData).role(role).build();
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role).build();
 
 
 		if (this.mapSessions.get(sessionName) != null) {
@@ -239,7 +241,10 @@ public class RoomController {
 		// gameHistoryNo를 반환
 	}
 
-//	@PostMapping("/score")
-//	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq )
+	@PostMapping("/score")
+	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq scoreHistoryPostReq){
+		roomService.insertScoreHistory(scoreHistoryPostReq);
+		return ResponseEntity.status(200).build();
+	}
 
 }

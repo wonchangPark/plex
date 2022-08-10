@@ -2,6 +2,7 @@ package com.ssafy.api.service;
 
 import com.ssafy.api.response.RankingRes;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.repository.JdbcTemplateRepository;
 import com.ssafy.db.repository.RankRepository;
 import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +20,19 @@ public class RankServiceImpl implements RankService{
     RankRepository rankRepository;
 
     @Autowired
+    JdbcTemplateRepository jdbcTemplateRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Override
     public List<RankingRes> getRankList() {
-        return rankRepository.getRankList();
+//        return rankRepository.getRankList();
+        return jdbcTemplateRepository.getRankList();
     }
 
     @Override
-    @Transactional
     public RankingRes getMyRank(Long userNo) {
-        List<RankingRes> list = getRankList();
-        RankingRes temp = new RankingRes();
-        temp.setUserNo(userNo);
-        return list.get(list.indexOf(temp));
+        return jdbcTemplateRepository.getMyRank(userNo);
     }
 }

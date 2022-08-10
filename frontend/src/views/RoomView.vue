@@ -106,7 +106,7 @@ import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-// const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+//const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
@@ -161,6 +161,8 @@ export default {
 
       // --- Init a session ---
       this.session = this.OV.initSession();
+
+  
 
       // --- Specify the actions when events take place in the session ---
 
@@ -296,6 +298,9 @@ export default {
       // 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
       this.session.on("signal:gameStart", (event) => {
         this.game.scene.getScene("bootScene").StartScene(1);
+        this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
+
         const data = JSON.parse(event.data);
         this.score1 = data.score1;
         this.score2 = data.score2;
@@ -316,6 +321,7 @@ export default {
 
       window.addEventListener("beforeunload", this.leaveSession);
       //this.game = Game();			//generate phaser game when entering session
+      
     },
 
     sendLeft() {
@@ -355,6 +361,7 @@ export default {
       // console.log(this.$refs.teachable)
       // this.$refs.teachable.init()
       // this.init()
+<<<<<<< HEAD
       this.game.scene.getScene("bootScene").StartScene(1);
       this.dataInit();
       this.session
@@ -375,6 +382,24 @@ export default {
           console.error(error);
         });
     },
+=======
+			this.game.scene.getScene('bootScene').StartScene(1);
+      this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
+			this.dataInit()
+			this.session.signal({		// 게임 시작 송신
+				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
+				to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+				type: 'gameStart'             // The type of message (optional)
+			})
+			.then(() => {
+					console.log('Message successfully sent');
+			})
+			.catch(error => {
+					console.error(error);
+			})
+		},
+>>>>>>> origin/develop
 
     sendScore() {
       this.session
@@ -394,7 +419,7 @@ export default {
 
     connectSession(token) {
       this.session
-        .connect(token, { clientData: this.myUserName })
+        .connect(token, this.myUserName )
         .then(() => {
           // --- Get your own camera stream with the desired properties ---
 
@@ -531,7 +556,7 @@ export default {
         console.log(res);
         const token = res.data.token;
         this.session
-          .connect(token, { clientData: this.myUserName })
+          .connect(token, this.myUserName)
           .then(() => {
             // --- Get your own camera stream with the desired properties ---
 

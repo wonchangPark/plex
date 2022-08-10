@@ -17,7 +17,8 @@ public class RankRepository {
         return em.createQuery("select new com.ssafy.api.response.RankingRes(u.no, u.nick, sum(sh.score)) " +
                 "from ScoreHistory sh, User u " +
                 "where u = sh.user " +
-                "group by u.no", RankingRes.class).getResultList();
+                "group by u.no " +
+                "order by sum(sh.score) desc", RankingRes.class).getResultList();
     }
 
 }
