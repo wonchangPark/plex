@@ -68,7 +68,7 @@ export default {
   methods: {
     ...mapActions(['setRoomCreate']),
     createRoom() {
-      this.roomInfo.host = this.getUser.userId
+      this.roomInfo.host = this.getUser.nick
       this.setRoomCreate(this.roomInfo)
       this.$router.push('/room')
     },

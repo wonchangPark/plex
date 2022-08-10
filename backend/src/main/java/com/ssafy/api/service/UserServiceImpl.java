@@ -1,6 +1,9 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.common.exception.UserDuplicateException;
+import com.ssafy.db.repository.JdbcTemplateRepository;
 import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +22,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	JdbcTemplateRepository jdbcTemplateRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -55,6 +61,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void setMyImage(String image){
 		userRepository.setMyImage(image);
+	}
+
+	@Override
+	public List<UserExerciseRes> getMyTotalExercise(User user){
+		return userRepository.getMyTotalExercise(user);
+	}
+
+	@Override
+	public UserTotalGameCntRes getMyTotalGameCnt(User user){
+		return jdbcTemplateRepository.getMyTotalGameCnt(user.getNo());
 	}
 
 }

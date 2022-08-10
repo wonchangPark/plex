@@ -18,6 +18,11 @@ class RopeFightScene extends Scene {
     team1Shake = false;
     team2Shake = false;
 
+    teamName1 = ["", "", ""];
+    teamName2 = ["","",""];
+    teamNameMove1 = []
+    teamNameMove2 = []
+
 
     //this.$refs.game-container.clientHeight
     //spriteScale = Game.world.width / 1600;
@@ -114,6 +119,15 @@ class RopeFightScene extends Scene {
         this.team2[0] = this.physics.add.sprite(1050*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
         this.team2[1] = this.physics.add.sprite(1200*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
         this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+
+
+        this.teamNameMove1[0] = this.add.text(125*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove1[1] = this.add.text(275*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove1[2] = this.add.text(425*this.WidthScale, 275*this.WidthScale, this.teamName1[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+
+        this.teamNameMove2[0] = this.add.text(1025*this.WidthScale, 275*this.WidthScale, this.teamName2[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove2[1] = this.add.text(1175*this.WidthScale, 275*this.WidthScale, this.teamName2[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove2[2] = this.add.text(1325*this.WidthScale, 275*this.WidthScale, this.teamName2[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
 
         this.shakePosition1_0 = this.plugins.get('rexshakepositionplugin').add(this.team1[0], {
             duration: 10000,
@@ -221,10 +235,13 @@ class RopeFightScene extends Scene {
         // this.shakePosition1.shake();
         // this.shakePosition.shake();
 
-        for (var i = 0 ; i < this.team1.length ; i++)   //move players to left
+        for (var i = 0 ; i < this.team1.length ; i++){   //move players to left
             this.team1[i].setVelocityX(-20);
-        for (var j = 0 ; j < this.team2.length ; j++)
-            this.team2[j].setVelocityX(-20);
+            this.team2[i].setVelocityX(-20);
+        }
+        // for (var j = 0 ; j < this.team2.length ; j++){
+        //     this.team2[j].setVelocityX(-20);
+        // }
         this.rope.setVelocityX(-20);
 
 
@@ -265,10 +282,15 @@ class RopeFightScene extends Scene {
         //     this.team2[j].setX(this.team2[j].x + 10);
         // this.rope.x += 10;
 
-        for (var i = 0 ; i < this.team1.length ; i++)   //move players to right
-        this.team1[i].setVelocityX(20);
-        for (var j = 0 ; j < this.team2.length ; j++)
-            this.team2[j].setVelocityX(20);
+        // for (var i = 0 ; i < this.team1.length ; i++)   //move players to right
+        // this.team1[i].setVelocityX(20);
+        // for (var j = 0 ; j < this.team2.length ; j++)
+        //     this.team2[j].setVelocityX(20);
+
+        for (var i = 0 ; i < this.team1.length ; i++){   //move players to left
+            this.team1[i].setVelocityX(-20);
+            this.team2[i].setVelocityX(-20);
+        }
         this.rope.setVelocityX(20);
 
 
@@ -299,8 +321,10 @@ class RopeFightScene extends Scene {
         this.RightDesk.setX(6000);
         this.timer.remove(false);
 
-        for (var i=0; i<3; i++)
+        for (var i=0; i<3; i++){
             this.team2[i].body.allowGravity = true;
+            this.teamNameMove2[i].setX(6000);
+        }
     }
     RightWin(){
         this.shakeLeftGround.stop();
@@ -308,12 +332,25 @@ class RopeFightScene extends Scene {
         this.LeftDesk.setX(6000);
         this.timer.remove(false);
 
-        for (var i=0; i<3; i++)
+        for (var i=0; i<3; i++){
             this.team1[i].body.allowGravity = true;
+            this.teamNameMove1[i].setX(6000);
+        }
 
     }
 
+    setTeamName(team1, team2){
+        for (var i=0; i<3; i++){
+            this.teamName1[i] = team1[i];
+            this.teamName2[i] = team2[i];
+        }
+    }
+
     update() {
+
+        for (var i=0; i<3; i++){
+            this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
+        }
 
         if (this.rope.x >= this.ropePosition + 10 || this.rope.x <= this.ropePosition - 10){
             this.rope.setVelocityX(0);
