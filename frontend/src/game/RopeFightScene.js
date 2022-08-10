@@ -26,6 +26,10 @@ class RopeFightScene extends Scene {
     WidthScale = 1;
     HeightScale = 1;
 
+    leftTime = 10;
+    timerText;
+    timer;
+
     create() {
 
 
@@ -33,6 +37,9 @@ class RopeFightScene extends Scene {
         var inEvent = new Phaser.Events.EventEmitter();
         var goLeftEvent = new Phaser.Events.EventEmitter();
         var goRightEvent = new Phaser.Events.EventEmitter();
+
+        this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
+        this.timerText = this.add.text(32, 32);
 
         // this.LeftGround = this.physics.add.image(300, 300, 'ground')
         // this.RightGround = this.physics.add.image(1300, 300, 'ground')
@@ -318,6 +325,16 @@ class RopeFightScene extends Scene {
                 this.team2[i].setVelocityX(0);
                 this.nowPosition2[i] = this.team2[i].x;
             }
+        }
+
+        this.timerText.setText(this.leftTime);
+    }
+
+    onTimerEvent() {
+        this.leftTime--;
+        console.log(this.leftTime);
+        if (this.leftTime === 0) {
+            this.timer.remove(false);
         }
     }
 
