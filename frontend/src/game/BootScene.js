@@ -479,7 +479,12 @@ class BootScene extends Scene {
         //this.scene.start("RunningScene");
     }
     StartScene(idx) {  
-        this.scene.start("ropeFightScene");
+        if (idx == 1){
+            this.scene.start("ropeFightScene");
+        }
+        // else if (idx == 0){
+        //     this.scene.start("waitingScene");
+        // }
     }
 }
 
