@@ -67,27 +67,27 @@ const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 export default {
-    name: "App",
+  name: "App",
 
-    components: {
-        UserVideo,
-        GameResultModal,
-        ContentBox,
-        ScoreBoard,
-    },
+  components: {
+    UserVideo,
+    GameResultModal,
+    ContentBox,
+    ScoreBoard,
+  },
 
-    data() {
-        return {
-            OV: undefined,
-            session: undefined,
-            mainStreamManager: undefined,
-            publisher: undefined,
-            subscribers: [null, null, null, null, null],
-            game: undefined,
-            mySessionId: "",
-            myUserName: "",
-            videoMute: false, // 영상 중지
-            audioMute: false, // 음소거
+  data() {
+    return {
+      OV: undefined,
+      session: undefined,
+      mainStreamManager: undefined,
+      publisher: undefined,
+      subscribers: [null, null, null, null, null],
+			game: undefined,
+      mySessionId: "",
+      myUserName: "",
+      videoMute: false, // 영상 중지
+      audioMute: false, // 음소거
 
             isHost: false,
             status: 0, // 동작 인식 상태
@@ -96,6 +96,7 @@ export default {
             personalScore: {}, // 개인별 점수,
             score1: 0, // 팀별 점수
             score2: 0,
+      teamNo: 0,
             gameFinished: false,
             pose1: 0,
             pose2: 0,
@@ -103,47 +104,48 @@ export default {
         };
     },
 
-    methods: {
-        dataInit() {
-            this.score1 = 0;
-            this.score2 = 0;
-            for (let key in this.personalScore) {
-                this.personalScore[`${key}`] = 0;
-            }
-        },
-        joinSession() {
-            // --- Get an OpenVidu object ---
-            this.OV = new OpenVidu();
+  methods: {
+    dataInit() {
+      this.score1 = 0;
+      this.score2 = 0;
+      for (let key in this.personalScore) {
+        this.personalScore[`${key}`] = 0;
+      }
+    },
+    joinSession() {
+      // --- Get an OpenVidu object ---
+      this.OV = new OpenVidu();
 
-            // --- Init a session ---
-            this.session = this.OV.initSession();
+      // --- Init a session ---
+      this.session = this.OV.initSession();
 
-            // --- Specify the actions when events take place in the session ---
+  
 
-            // On every new Stream received...
-            this.session.on("streamCreated", ({ stream }) => {
-                // console.log(this.session)
-                const subscriber = this.session.subscribe(stream);
-                for (let i = 0; i < 6; i++) {
-                    if (this.subscribers[i] === null) {
-                        this.subscribers[i] = subscriber;
-                        break;
-                    }
-                }
-                console.log("subscribers:");
-                console.log(this.subscribers);
-            });
+      // --- Specify the actions when events take place in the session ---
 
-            // On every Stream destroyed...
-            this.session.on("streamDestroyed", ({ stream }) => {
-                const index = this.subscribers.indexOf(stream.streamManager, 0);
-                this.subscribers[index] = null;
-            });
+      // On every new Stream received...
+      this.session.on("streamCreated", ({ stream }) => {
+        // console.log(this.session)
+        const subscriber = this.session.subscribe(stream);
+        console.log(subscriber.stream.connection.data)
+        for (let i = 0; i < 6; i++ ){
+          if (this.subscribers[i] === null) {
+            this.subscribers[i] = subscriber
+            break
+          }
+        }
+      });
 
-            // On every asynchronous exception...
-            this.session.on("exception", ({ exception }) => {
-                console.warn(exception);
-            });
+      // On every Stream destroyed...
+      this.session.on("streamDestroyed", ({ stream }) => {
+        const index = this.subscribers.indexOf(stream.streamManager, 0);
+          this.subscribers[index] = null
+      });
+
+      // On every asynchronous exception...
+      this.session.on("exception", ({ exception }) => {
+        console.warn(exception);
+      });
 
             // 운동 점수 수신
             this.session.on("signal:score", (event) => {
@@ -225,12 +227,18 @@ export default {
             });
             // 호스트 수신 => 팀원 정보 수신
             this.session.on("signal:host", (event) => {
+        console.log(event.data)
                 console.log("호스트 수신"); // Message
                 if (!this.isHost) {
                     const data = JSON.parse(event.data);
                     this.team1 = data.team1;
                     this.team2 = data.team2;
                     this.personalScore = data.personalScore;
+          if (this.team1.includes(this.userName)) {
+            this.teamNo = 1
+          } else {
+            this.teamNo = 2
+          }
                 }
                 console.log(event.from); // Connection object of the sender
                 console.log(event.type); // The type of message
@@ -247,27 +255,29 @@ export default {
                 this.game.scene.getScene("bootScene").StartScene(1);
                 this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
-                const data = JSON.parse(event.data);
-                this.score1 = data.score1;
-                this.score2 = data.score2;
-                this.personalScore = data.personalScore;
-                console.log("게임 시작 수신"); // Message
-                console.log(event.from); // Connection object of the sender
-                console.log(event.type); // The type of message
-            });
 
-            // --- Connect to the session with a valid user token ---
+        const data = JSON.parse(event.data);
+        this.score1 = data.score1;
+        this.score2 = data.score2;
+        this.personalScore = data.personalScore;
+        console.log("게임 시작 수신"); // Message
+        console.log(event.from); // Connection object of the sender
+        console.log(event.type); // The type of message
+      });
 
-            // 'getToken' method is simulating what your server-side should do.
-            // 'token' parameter should be retrieved and returned by your own backend
+      // --- Connect to the session with a valid user token ---
 
-            // this.getToken(this.mySessionId, this.myUserName)
+      // 'getToken' method is simulating what your server-side should do.
+      // 'token' parameter should be retrieved and returned by your own backend
 
-            this.init();
+      // this.getToken(this.mySessionId, this.myUserName)
 
-            window.addEventListener("beforeunload", this.leaveSession);
-            //this.game = Game();			//generate phaser game when entering session
-        },
+      this.init()
+
+      window.addEventListener("beforeunload", this.leaveSession);
+      //this.game = Game();			//generate phaser game when entering session
+      
+    },
 
         sendLeft() {
             if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
@@ -497,112 +507,113 @@ export default {
 
                         this.session.publish(this.publisher);
 
-                        this.session
-                            .signal({
-                                // 참가자 입장 송신
-                                data: this.myUserName, // Any string (optional)
-                                to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-                                type: "memberJoin", // The type of message (optional)
-                            })
-                            .then(() => {
-                                console.log("Message successfully sent");
-                            })
-                            .catch((error) => {
-                                console.error(error);
-                            });
-                    })
-                    .catch((error) => {
-                        console.log("There was an error connecting to the session:", error.code, error.message);
-                    });
-            });
-        },
-        //Methods related to Teachable Machine
-
-        async init() {
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
-
-            // load the model and metadata
-            // Refer to tmPose.loadFromFiles() in the API to support files from a file picker
-            model = await tmPose.load(modelURL, metadataURL);
-            maxPredictions = model.getTotalClasses();
-
-            // Convenience function to setup a webcam
-            const flip = true; // whether to flip the webcam
-            webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
-            await webcam.setup(); // request access to the webcam
-            webcam.play();
-            window.requestAnimationFrame(this.loop);
-
-            // append/get elements to the DOM
-            // append/get elements to the DOM
-            const canvas = document.getElementById("main-video-canvas");
-            canvas.width = 200;
-            canvas.height = 200;
-            ctx = canvas.getContext("2d");
-            labelContainer = document.getElementById("label-container");
-            for (let i = 0; i < maxPredictions; i++) {
-                // and class labels
-                labelContainer.appendChild(document.createElement("div"));
-            }
-        },
-
-        async loop(timestamp) {
-            webcam.update(); // update the webcam frame
-            await this.predict();
-            window.requestAnimationFrame(this.loop);
-        },
-        async predict() {
-            // Prediction #1: run input through posenet
-            // estimatePose can take in an image, video or canvas html element
-            const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-            // Prediction 2: run input through teachable machine classification model
-            const prediction = await model.predict(posenetOutput);
-            if (prediction[0].probability.toFixed(2) >= 0.99) {
-                if (this.status == 1) {
-                    this.session
-                        .signal({
-                            // 운동 점수 송신
-                            data: this.myUserName, // Any string (optional)
-                            to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-                            type: "score", // The type of message (optional)
-                        })
-                        .then(() => {
-                            console.log("Message successfully sent");
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                        });
-                }
-                this.status = 0;
-            } else if (prediction[1].probability.toFixed(2) >= 0.99) {
-                this.status = 1;
-            }
-            for (let i = 0; i < maxPredictions; i++) {
-                const classPrediction = prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-                labelContainer.childNodes[i].innerHTML = classPrediction;
-            }
-            this.pose1 = Number(prediction[0].probability.toFixed(2));
-            this.pose2 = Number(prediction[1].probability.toFixed(2));
-
-            // finally draw the poses
-            //this.drawPose(pose);
-        },
-
-        drawPose(pose) {
-            ctx.drawImage(webcam.canvas, 0, 0);
-            // draw the keypoints and skeleton
-            if (pose) {
-                const minPartConfidence = 0.5;
-                tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
-                tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
-            }
-        },
-
-        //END OF TEACHABLE MACHINE METHODS
-
-        ...mapActions(["setRoomClose", "leaveRoom"]),
+            this.session
+              .signal({
+                // 참가자 입장 송신
+                data: this.myUserName, // Any string (optional)
+                to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+                type: "memberJoin", // The type of message (optional)
+              })
+              .then(() => {
+                console.log("Message successfully sent");
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.log(
+              "There was an error connecting to the session:",
+              error.code,
+              error.message
+            );
+          });
+      });
     },
+    //Methods related to Teachable Machine
+
+		async init () {
+			const modelURL = URL + 'model.json';
+			const metadataURL = URL + 'metadata.json';
+
+		// load the model and metadata
+		// Refer to tmPose.loadFromFiles() in the API to support files from a file picker
+			model = await tmPose.load(modelURL, metadataURL);
+			maxPredictions = model.getTotalClasses();
+
+		// Convenience function to setup a webcam
+			const flip = true; // whether to flip the webcam
+			webcam = new tmPose.Webcam(200, 200, flip); // width, height, flip
+			await webcam.setup(); // request access to the webcam
+			webcam.play();
+			window.requestAnimationFrame(this.loop);
+
+		// append/get elements to the DOM
+			// append/get elements to the DOM
+			const canvas = document.getElementById('main-video-canvas');
+			canvas.width = 200; canvas.height = 200;
+			ctx = canvas.getContext('2d');
+			labelContainer = document.getElementById('label-container');
+			for (let i = 0; i < maxPredictions; i++) { // and class labels
+					labelContainer.appendChild(document.createElement('div'));
+			}
+		},
+
+		async loop(timestamp) {
+			webcam.update(); // update the webcam frame
+			await this.predict();
+			window.requestAnimationFrame(this.loop);
+		},
+		async predict() {
+			// Prediction #1: run input through posenet
+			// estimatePose can take in an image, video or canvas html element
+			const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+			// Prediction 2: run input through teachable machine classification model
+			const prediction = await model.predict(posenetOutput);
+			if (prediction[0].probability.toFixed(2) >= 0.99) {
+				if (this.status == 1) {
+					this.session.signal({		// 운동 점수 송신
+						data: this.myUserName,  // Any string (optional)
+						to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+						type: 'score'             // The type of message (optional)
+					})
+					.then(() => {
+							console.log('Message successfully sent');
+					})
+					.catch(error => {
+							console.error(error);
+					});
+				}
+				this.status = 0
+			} else if (prediction[1].probability.toFixed(2) >= 0.99) {
+				this.status = 1
+			}
+			for (let i = 0; i < maxPredictions; i++) {
+					const classPrediction =
+							prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+			}
+      this.pose1 = Number(prediction[0].probability.toFixed(2))
+      this.pose2 = Number(prediction[1].probability.toFixed(2))
+
+			// finally draw the poses
+			//this.drawPose(pose);
+		},
+
+		drawPose(pose) {
+			ctx.drawImage(webcam.canvas, 0, 0);
+			// draw the keypoints and skeleton
+			if (pose) {
+				const minPartConfidence = 0.5;
+				tmPose.drawKeypoints(pose.keypoints, minPartConfidence, ctx);
+				tmPose.drawSkeleton(pose.keypoints, minPartConfidence, ctx);
+			}
+		},
+		
+		//END OF TEACHABLE MACHINE METHODS
+
+    ...mapActions(["setRoomClose", "leaveRoom"]),
+  },
 
     computed: {
         ...mapGetters(["roomCreate", "roomInfo", "roomJoin", "joinInfo", "authHeader"]),
@@ -627,6 +638,7 @@ export default {
                 this.isHost = true;
                 this.team1.push(res.data.host);
                 this.personalScore[`${res.data.host}`] = 0;
+        this.teamNo = 1;
             });
         } else if (this.roomJoin) {
             this.mySessionId = this.joinInfo.roomCode;
