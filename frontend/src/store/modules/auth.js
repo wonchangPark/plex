@@ -7,7 +7,8 @@ const API_URL = API_BASE_URL + '/api/v1';
 export default {
   state: {
     user: {},
-    token: localStorage.getItem('token') || '' ,
+    accessToken: localStorage.getItem('accessToken') || '' ,
+    refreshToken: localStorage.getItem('refreshToken') || '',
     authError: null,
     passwordFlag: false,
     nicknameFlag: false,
@@ -16,7 +17,7 @@ export default {
     loginModal: false
   },
   getters:{
-    isLoggedIn: state => !!state.token,
+    isLoggedIn: state => !!state.accessToken,
     loginModal: state => state.loginModal,
     getUser: state => state.user,
     passwordFlag: state => state.passwordFlag,
@@ -24,8 +25,9 @@ export default {
     idFlag: state => state.idFlag,
     rankingList: state => state.rankingList,
     authError: state => state.authError,
-    authHeader: state => ({ Authorization: 'Bearer ' + state.token })
-  },
+    authHeader: state => ({ Authorization:'Bearer ' + state.accessToken,
+        Authorization2: 'Bearer ' + state.refreshToken})},
+    
   mutations: {
     SET_USER: (state, user) => state.user = user,
     SET_LOGINMODAL: (state, loginModal) => state.loginModal = loginModal,
@@ -33,18 +35,23 @@ export default {
     SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
     SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
     SET_RANKINGLIST: (state, rankingList) => state.rankingList = rankingList,
-    SET_TOKEN: (state, token) => state.token = token,
+    SET_ACCESSTOKEN: (state, accessToken) => state.accessToken = accessToken,
+    SET_REFRESHTOKEN: (state, refreshToken) => state.refreshToken = refreshToken,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   },
   actions: {
-    saveToken({ commit }, token) {
-      commit('SET_TOKEN', token)
-      localStorage.setItem('token', token)
+    saveToken({ commit }, {accessToken, refreshToken}) {
+      commit('SET_ACCESSTOKEN', accessToken)
+      commit('SET_REFRESHTOKEN', refreshToken)
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
     },
 
     removeToken({commit}){
-      commit('SET_TOKEN', '')
-      localStorage.setItem('token', '')
+      commit('SET_ACCESSTOKEN', '')
+      commit('SET_REFRESHTOKEN', '')
+      localStorage.setItem('accessToken', '')
+      localStorage.setItem('refreshToken', '')
     },
 
     fetchUserInfo({ commit, getters }) {
@@ -52,7 +59,7 @@ export default {
         axios({
           url: API_URL + '/users/me',
           method: 'get',
-          headers: getters.authHeader,
+          headers: getters.authHeader
         })
           .then(res => {
             console.log(res.data)
@@ -78,7 +85,7 @@ export default {
         axios({
           url: API_URL + '/rank',
           method: 'get',
-          headers: getters.authHeader,
+          headers: getters.authHeader
         })
         .then(res => {
           console.log(res)
@@ -97,7 +104,7 @@ export default {
           url: API_URL + '/users/image',
           method: 'post',
           data: img,
-          headers: getters.authHeader
+          headers: getters.authHeader,
         })
         .then(res => {
           console.log(res)
@@ -132,8 +139,9 @@ export default {
             totalScore: res.data.totalScore,
             img: res.data.img
           }
-          const token = res.data.accessToken
-          dispatch('saveToken', token)
+          const accessToken = res.data.accessToken
+          const refreshToken = res.data.refreshToken
+          dispatch('saveToken', {accessToken, refreshToken})
           commit('SET_USER', user)
           router.push({ name: 'waiting' })
         })
