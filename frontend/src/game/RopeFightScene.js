@@ -26,7 +26,7 @@ class RopeFightScene extends Scene {
     WidthScale = 1;
     HeightScale = 1;
 
-    leftTime = 10;
+    leftTime = 60;
     timerText;
     timer;
 
@@ -76,7 +76,7 @@ class RopeFightScene extends Scene {
             mode: 'effect'
         });
 
-        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo', align: 'center' }).setColor('#660000').setScale(5*this.WidthScale);
+        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#660000').setScale(5*this.WidthScale);
 
     //    this.LeftGround = this.grounds.create(300, 305, 'ground');
     //    this.RightGround = this.grounds.create(1300, 305, 'ground');

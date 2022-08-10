@@ -342,6 +342,7 @@ export default {
 			// this.$refs.teachable.init()
       // this.init()
 			this.game.scene.getScene('bootScene').StartScene(1);
+      this.game.scene.getScene('ropeFightScene').leftTime = 60;
 			this.dataInit()
 			this.session.signal({		// 게임 시작 송신
 				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)
