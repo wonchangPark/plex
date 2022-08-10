@@ -113,13 +113,13 @@ class RopeFightScene extends Scene {
         this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
 
 
-        this.teamNameMove1[0] = this.add.text(125*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-        this.teamNameMove1[1] = this.add.text(275*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-        this.teamNameMove1[2] = this.add.text(425*this.WidthScale, 275*this.WidthScale, this.teamName1[2], { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove1[0] = this.add.text(125*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove1[1] = this.add.text(275*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove1[2] = this.add.text(425*this.WidthScale, 275*this.WidthScale, this.teamName1[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
 
-        this.teamNameMove2[0] = this.add.text(1025*this.WidthScale, 275*this.WidthScale, this.teamName2[0], { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-        this.teamNameMove2[1] = this.add.text(1175*this.WidthScale, 275*this.WidthScale, this.teamName2[1], { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-        this.teamNameMove2[2] = this.add.text(1325*this.WidthScale, 275*this.WidthScale, this.teamName2[2], { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove2[0] = this.add.text(1025*this.WidthScale, 275*this.WidthScale, this.teamName2[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove2[1] = this.add.text(1175*this.WidthScale, 275*this.WidthScale, this.teamName2[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+        this.teamNameMove2[2] = this.add.text(1325*this.WidthScale, 275*this.WidthScale, this.teamName2[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
 
         this.shakePosition1_0 = this.plugins.get('rexshakepositionplugin').add(this.team1[0], {
             duration: 10000,
