@@ -2,9 +2,7 @@ package com.ssafy.common.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Objects;
+import java.util.Enumeration;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,26 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.api.service.UserServiceImpl;
 import com.ssafy.common.exception.JwtTokenException;
 import com.ssafy.common.exception.ReIssuanceAccessTokenException;
-import com.ssafy.db.entity.OAuth;
-import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -78,7 +67,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        System.out.println("==============doFilterINternal===================");
+        System.out.println("==============doFilterInternal===================");
         String header = request.getHeader(JwtTokenUtil.HEADER_STRING);
         System.out.println(header);
 

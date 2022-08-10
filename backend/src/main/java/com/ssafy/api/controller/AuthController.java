@@ -57,7 +57,6 @@ public class AuthController {
 		System.out.println("login start");
 		
 		User user = userService.getUserByUserId(userId);
-		System.out.println("User : "+user);
 		if(user == null) {
 			System.out.println("user == null == 401 error");
 			return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Not Registered",null, null, null));
