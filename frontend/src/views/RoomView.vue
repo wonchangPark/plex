@@ -151,32 +151,42 @@ export default {
             this.session.on("signal:score", (event) => {
                 console.log(event.data); // Message
                 if (this.team1.includes(event.data)) {
-                    if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
+                    if ((this.game.scene.getScene("ropeFightScene").leftTime <= 0
+                        && Math.abs(this.score1 - this.score2) < 3)
+                        || (this.game.scene.getScene("ropeFightScene").leftTime > 0 && this.score1 - this.score2 < 10 
+                        && this.score1 - this.score2 > -10)) {
                         this.score1 += 1;
                         this.personalScore[`${event.data}`] += 1;
                         console.log(this.personalScore[`${event.data}`]);
                         console.log(this.personalScore);
-                        if (this.score1 - this.score2 >= 10) {
+                        if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 3)) {
                             this.game.scene.getScene("ropeFightScene").LeftWin();
                             setTimeout(() => (this.gameFinished = true), 1000);
                             setTimeout(() => (this.gameFinished = false), 7000);
                         } else {
-                            if (this.score1 > this.score2 + 7) this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
-                            else this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
+                            if (this.score1 > this.score2 + 7)
+                              this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
+                            else 
+                              this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
                         }
                     }
                     //this.game.scene.getScene('ropeFightScene').goLeftHandler();
                 } else {
-                    if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
+                    if ((this.game.scene.getScene("ropeFightScene").leftTime <= 0
+                        &&	Math.abs(this.score1 - this.score2) < 3)
+                        || (this.game.scene.getScene("ropeFightScene").leftTime > 0 && this.score1 - this.score2 < 10 
+                        && this.score1 - this.score2 > -10)) {
                         this.score2 += 1;
                         this.personalScore[`${event.data}`] += 1;
-                        if (this.score2 - this.score1 >= 10) {
+                        if (this.score2 - this.score1 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score2 - this.score1 >= 3)) {
                             this.game.scene.getScene("ropeFightScene").RightWin();
                             setTimeout(() => (this.gameFinished = true), 1000);
                             setTimeout(() => (this.gameFinished = false), 7000);
                         } else {
-                            if (this.score2 > this.score1 + 7) this.game.scene.getScene("ropeFightScene").goRightHandler(1);
-                            else this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
+                            if (this.score2 > this.score1 + 7)
+                              this.game.scene.getScene("ropeFightScene").goRightHandler(1);
+                            else
+                              this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
                             //this.game.scene.getScene('ropeFightScene').goRightHandler();
                         }
                     }
@@ -315,7 +325,7 @@ export default {
             // this.$refs.teachable.init()
             // this.init()
             this.game.scene.getScene("bootScene").StartScene(1);
-      this.game.scene.getScene('ropeFightScene').leftTime = 60;
+            this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
             this.dataInit();
