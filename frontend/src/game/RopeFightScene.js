@@ -39,7 +39,7 @@ class RopeFightScene extends Scene {
         var goRightEvent = new Phaser.Events.EventEmitter();
 
         this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
-        this.timerText = this.add.text(32, 32);
+        
 
         // this.LeftGround = this.physics.add.image(300, 300, 'ground')
         // this.RightGround = this.physics.add.image(1300, 300, 'ground')
@@ -49,6 +49,7 @@ class RopeFightScene extends Scene {
         this.HeightScale = this.sys.game.canvas.height / 512;
 
         this.add.image(800*this.WidthScale , 256*this.WidthScale, 'background').setScale(this.WidthScale);
+        
         // this.grounds = this.physics.add.staticGroup();
 
 
@@ -75,7 +76,7 @@ class RopeFightScene extends Scene {
             mode: 'effect'
         });
 
-
+        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(3*this.WidthScale);
 
     //    this.LeftGround = this.grounds.create(300, 305, 'ground');
     //    this.RightGround = this.grounds.create(1300, 305, 'ground');
@@ -296,6 +297,7 @@ class RopeFightScene extends Scene {
         this.shakeRightGround.stop();
         // this.RightGround.setX(2500);
         this.RightDesk.setX(6000);
+        this.timer.remove(false);
 
         for (var i=0; i<3; i++)
             this.team2[i].body.allowGravity = true;
@@ -304,6 +306,7 @@ class RopeFightScene extends Scene {
         this.shakeLeftGround.stop();
         // this.LeftGround.setX(2500);
         this.LeftDesk.setX(6000);
+        this.timer.remove(false);
 
         for (var i=0; i<3; i++)
             this.team1[i].body.allowGravity = true;
@@ -333,9 +336,6 @@ class RopeFightScene extends Scene {
     onTimerEvent() {
         this.leftTime--;
         console.log(this.leftTime);
-        if (this.leftTime === 0) {
-            this.timer.remove(false);
-        }
     }
 
 }
