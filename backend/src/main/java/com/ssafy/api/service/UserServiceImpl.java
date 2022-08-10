@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public void setMyImage(String image){
 		userRepository.setMyImage(image);
 	}

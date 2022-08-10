@@ -16,11 +16,11 @@
 
     <div class="rank-list-box d-flex flex-column" style="flex: 0 0 90%; width:100%; height: 90%;">
       <div v-for="ranker in rankingList"
-      :key="ranker.no"
+      :key="ranker.userNo"
       :ranker = ranker
       >
       <div class="d-flex justify-center align-center">
-        <RankItem :rankerNick="ranker.nick" :rankerTotalScore="ranker.totalScore" :rankerRanking="ranker.ranking"></RankItem>
+        <RankItem :rankerNick="ranker.userNick" :rankerRanking="ranker.rank"></RankItem>
       </div>
       </div>
     </div>

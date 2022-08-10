@@ -13,7 +13,7 @@ export default {
     nicknameFlag: false,
     idFlag: false,
     rankingList: {},
-    loginModal: false,
+    loginModal: false
   },
   getters:{
     isLoggedIn: state => !!state.token,
@@ -61,7 +61,8 @@ export default {
               userId: res.data.userId,
               nick: res.data.nick,
               email: res.data.email,
-              totalScore: res.data.totalScore
+              totalScore: res.data.totalScore,
+              img: res.data.img
             }
             commit('SET_USER', user)
           }
@@ -75,7 +76,7 @@ export default {
     fetchRankingList({ commit, getters }){
       if (getters.isLoggedIn){
         axios({
-          url: API_URL + '/users/ranking',
+          url: API_URL + '/rank',
           method: 'get',
           headers: getters.authHeader,
         })
@@ -87,6 +88,30 @@ export default {
         .catch(err => {
           console.error(err.response.data)
         })
+      }
+    },
+
+    changeImg({getters}, img){
+      if (getters.isLoggedIn){
+        axios({
+          url: API_URL + '/users/image',
+          method: 'post',
+          data: img,
+          headers: getters.authHeader
+        })
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.error(err.response.data)
+        })
+      //   axios.post(API_URL+'/users/image', {imgData: img, headers: getters.authHeader})
+      //   .then((req) => {
+      //     console.log(req)
+      //   })
+      //   .catch(err => {
+      //     console.error(err.response.data)
+      //   })
       }
     },
     
@@ -104,7 +129,8 @@ export default {
             userId: res.data.userId,
             nick: res.data.nick,
             email: res.data.email,
-            totalScore: res.data.totalScore
+            totalScore: res.data.totalScore,
+            img: res.data.img
           }
           const token = res.data.accessToken
           dispatch('saveToken', token)
