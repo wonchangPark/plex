@@ -262,7 +262,7 @@ export default {
             });
             // 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
             this.session.on("signal:gameStart", (event) => {
-                this.game.scene.getScene("bootScene").StartScene(1);
+                this.game.scene.getScene("bootScene").StartScene(0);
                 this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
 
@@ -324,7 +324,7 @@ export default {
             // console.log(this.$refs.teachable)
             // this.$refs.teachable.init()
             // this.init()
-            this.game.scene.getScene("bootScene").StartScene(1);
+            this.game.scene.getScene("bootScene").StartScene(0);
             this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
