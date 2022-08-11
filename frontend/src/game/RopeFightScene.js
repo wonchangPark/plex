@@ -22,6 +22,8 @@ class RopeFightScene extends Scene {
     teamName2 = ["","",""];
     teamNameMove1 = []
     teamNameMove2 = []
+    shakePosition1 = []
+    shakePosition2 = []
 
 
     //this.$refs.game-container.clientHeight
@@ -106,37 +108,19 @@ class RopeFightScene extends Scene {
             mode: 'effect'
         });
 
-        this.shakePosition1_0 = this.plugins.get('rexshakepositionplugin').add(this.team1[0], {
-            duration: 10000,
-            // magnitude: 50,
-            mode: 'effect'
-        });1
-        this.shakePosition1_1 = this.plugins.get('rexshakepositionplugin').add(this.team1[1], {
-            duration: 10000,
-            // magnitude: 50,
-            mode: 'effect'
-        });
-        this.shakePosition1_2 = this.plugins.get('rexshakepositionplugin').add(this.team1[2], {
-            duration: 10000,
-            // magnitude: 50,
-            mode: 'effect'
-        });
-        this.shakePosition2_0 = this.plugins.get('rexshakepositionplugin').add(this.team2[0], {
-            duration: 10000,
-            // magnitude: 50,
-            mode: 'effect'
-        });
-        this.shakePosition2_1 = this.plugins.get('rexshakepositionplugin').add(this.team2[1], {
-            duration: 10000,
-            // magnitude: 50,
-            mode: 'effect'
-        });
-        this.shakePosition2_2 = this.plugins.get('rexshakepositionplugin').add(this.team2[2], {
-            duration: 10000,
-            // magnitude: 50,
-            mode: 'effect'
-        });
 
+        for (var i=0; i<3; i++){
+            this.shakePosition1[i] = this.plugins.get('rexshakepositionplugin').add(this.team1[i], {
+                duration: 10000,
+                // magnitude: 50,
+                mode: 'effect'
+            });
+            this.shakePosition2[i] = this.plugins.get('rexshakepositionplugin').add(this.team2[i], {
+                duration: 10000,
+                // magnitude: 50,
+                mode: 'effect'
+            });
+        }
 
         // for update
         for (var i=0; i<3; i++){
@@ -190,20 +174,19 @@ class RopeFightScene extends Scene {
 
         // shake and stop
         if (idx == 1){
-            this.shakePosition2_0.shake();
-            this.shakePosition2_1.shake();
-            this.shakePosition2_2.shake();
+            for (var i=0; i<3; i++){
+                this.shakePosition2[i].shake();
+            }
             this.shakeRightGround.shake();
             this.team2Shake = true;
         } else{
             if (this.team2Shake){
-                this.shakePosition2_0.stop();
-                this.shakePosition2_1.stop();
-                this.shakePosition2_2.stop();
+                for (var i=0; i<3; i++){
+                    this.shakePosition2[i].stop();
+                    this.shakePosition1[i].stop();
+                }
+                
                 this.shakeRightGround.stop();
-                this.shakePosition1_0.stop();
-                this.shakePosition1_1.stop();
-                this.shakePosition1_2.stop();
                 this.shakeLeftGround.stop();
                 this.team2Shake = false;
             }
@@ -223,20 +206,19 @@ class RopeFightScene extends Scene {
 
 
         if (idx2 == 1){
-            this.shakePosition1_0.shake();
-            this.shakePosition1_1.shake();
-            this.shakePosition1_2.shake();
+            
+            for (var i=0; i<3; i++){
+                this.shakePosition1[i].stop();
+            }
             this.shakeLeftGround.shake();
             this.team1Shake = true;
         }else{
             if (this.team1Shake){
-                this.shakePosition2_0.stop();
-                this.shakePosition2_1.stop();
-                this.shakePosition2_2.stop();
+                for (var i=0; i<3; i++){
+                    this.shakePosition2[i].stop();
+                    this.shakePosition1[i].stop();
+                }
                 this.shakeRightGround.stop();
-                this.shakePosition1_0.stop();
-                this.shakePosition1_1.stop();
-                this.shakePosition1_2.stop();
                 this.shakeLeftGround.stop();
                 this.team1Shake = false;
 
