@@ -116,8 +116,6 @@ class RunningScene extends Scene {
             
             if (this.team1[i].x >= this.nowPosition[i] + this.nextPosition[i]){
                 this.team1[i].setVelocityX(0);
-            } else{
-                console.log("뭐냐 이거 "+ (this.nowPosition[0] + this.nextPosition[0]))
             }
         }
     }
