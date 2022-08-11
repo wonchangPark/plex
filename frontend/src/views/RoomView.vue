@@ -50,8 +50,8 @@
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              v-if="subscribers[0] !== null"
-              :stream-manager="subscribers[0]"
+              v-if="subscribers[2] !== null"
+              :stream-manager="subscribers[2]"
             />
           </div>
         </div>
@@ -61,14 +61,14 @@
         >
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              v-if="subscribers[1] !== null"
-              :stream-manager="subscribers[1]"
+              v-if="subscribers[0] !== null"
+              :stream-manager="subscribers[0]"
             />
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              v-if="subscribers[2] !== null"
-              :stream-manager="subscribers[2]"
+              v-if="subscribers[1] !== null"
+              :stream-manager="subscribers[1]"
             />
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
@@ -132,14 +132,15 @@ export default {
 
       isHost: false,
       status: 0, // 동작 인식 상태
-      team1: [],
+      team1: [], // 팀 정보
       team2: [],
-      team3: ["han", "kjhTest", "콩"], // 팀 정보
+      team3: ["han", "TESTKJH", "콩"], 
       team4: ["zzz", "990129", "정예원"],
       personalScore: {}, // 개인별 점수,
       score1: 0, // 팀별 점수
       score2: 0,
       teamNo: 0,
+      teamNo1: 0,
       gameFinished: false,
       pose1: 0,
       pose2: 0,
@@ -191,10 +192,26 @@ export default {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
         console.log(subscriber.stream.connection.data)
-        for (let i = 0; i < 6; i++ ){
-          if (this.subscribers[i] === null) {
-            this.subscribers[i] = subscriber
-            break
+        if (this.team3.includes(subscriber.stream.connection.data) && this.teamNo1 === 1) {
+          for (let i = 0; i < 2; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
+          }
+        } else if (this.team4.includes(subscriber.stream.connection.data) && this.teamNo1 === 2) {
+          for (let i = 0; i < 2; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
+          }
+        } else {
+          for (let i = 2; i < 5; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
           }
         }
       });
@@ -297,7 +314,7 @@ export default {
           this.team1 = data.team1;
           this.team2 = data.team2;
           this.personalScore = data.personalScore;
-          if (this.team1.includes(this.userName)) {
+          if (this.team1.includes(this.myUserName)) {
             this.teamNo = 1
           } else {
             this.teamNo = 2
@@ -702,13 +719,18 @@ export default {
         this.isHost = true;
         this.team1.push(res.data.host);
         this.personalScore[`${res.data.host}`] = 0;
-        this.teamNo = 1;
+        this.teamNo1 = 1;
       });
     } else if (this.roomJoin) {
       this.mySessionId = this.joinInfo.roomCode;
       this.myUserName = this.joinInfo.userName;
       this.joinSession();
       this.getToken(this.mySessionId, this.myUserName);
+      if (this.team3.includes(this.myUserName)) {
+            this.teamNo1 = 1
+          } else {
+            this.teamNo1 = 2
+          }
     } else {
       this.$router.push("/waiting");
     }
