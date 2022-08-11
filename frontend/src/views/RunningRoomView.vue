@@ -121,7 +121,7 @@ export default {
       // --- Init a session ---
       this.session = this.OV.initSession();
 
-  
+     this.game.scene.getScene("waitingScene").gameCategory = 1;
 
       // --- Specify the actions when events take place in the session ---
 
