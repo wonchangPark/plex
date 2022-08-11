@@ -77,10 +77,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         System.out.println(header2);
 
         // If header does not contain BEARER or is null delegate to Spring impl and exit
-//        if (header == null || !header.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
-//            response.sendError(401, "login needed");
-//            return;
-//        }
+        if (header1 == null || !header1.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
+            response.sendError(401, "login needed");
+            return;
+        }
 
         try {
             // If header is present, try grab user principal from database and perform authorization
@@ -91,7 +91,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (ReIssuanceAccessTokenException ex) {
             System.out.println("인가 토큰 재발급");
-            filterChain.doFilter(request, response);
+//            filterChain.doFilter(request, response);
+
             return;
         } catch (JwtTokenException ex) {
             ex.printStackTrace();
@@ -120,20 +121,23 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         JWTVerifier verifierRefresh = JwtTokenUtil.getRefreshTokenVerifier();
         // 먼저 accessToken이 null이 아니므로 있다는 것인데 그러면 redis에 이 토큰이 실제로
         // 있는 지 체크 후에 validation 진행
-        DecodedJWT decodedJWT = verifier.verify(accessToken.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
-        String userId = decodedJWT.getSubject();
-        if (userId == null) throw new JwtTokenException("no userId");
+
+
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        String redisAccessToken = hashOperations.get(userId, "accessToken");
-        String redisRefreshToken = hashOperations.get(userId, "refreshToken");
-        if (!accessToken.replace(JwtTokenUtil.TOKEN_PREFIX,"").equals(redisAccessToken) || !refreshToken.replace(JwtTokenUtil.TOKEN_PREFIX, "").equals(redisRefreshToken)) {
-            // redis에서 가져온 토큰들이 없거나
-            // 두 개의 토큰중 안맞는 토큰이 있으므로 둘 다 만료 시키고 401로 로그인을 다시하라고 알리기
-            hashOperations.delete(userId);
-            throw new JwtTokenException("thats not exact token");
-        }
 
         try {
+            DecodedJWT decodedJWT = verifier.verify(accessToken.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
+            String userId = decodedJWT.getSubject();
+            if (userId == null) throw new JwtTokenException("no userId");
+            String redisAccessToken = hashOperations.get(userId, "accessToken");
+            String redisRefreshToken = hashOperations.get(userId, "refreshToken");
+            if (!accessToken.replace(JwtTokenUtil.TOKEN_PREFIX,"").equals(redisAccessToken) || !refreshToken.replace(JwtTokenUtil.TOKEN_PREFIX, "").equals(redisRefreshToken)) {
+                // redis에서 가져온 토큰들이 없거나
+                // 두 개의 토큰중 안맞는 토큰이 있으므로 둘 다 만료 시키고 401로 로그인을 다시하라고 알리기
+                hashOperations.delete(userId);
+                throw new JwtTokenException("thats not exact token");
+            }
+            System.out.println("h3");
             JwtTokenUtil.accessHandleError(accessToken); // 이곳에서 토큰 만료 여부가 체크됨
 
             // jwt 토큰에 포함된 계정 정보(userId) 통해 실제 디비에 해당 정보의 계정이 있는지 조회.
@@ -156,7 +160,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 System.out.println("refresh alive ");
 
                 DecodedJWT decodedJWTRefresh = verifierRefresh.verify(refreshToken.replace(JwtTokenUtil.TOKEN_PREFIX, ""));
-                userId = decodedJWTRefresh.getSubject();
+                String userId = decodedJWTRefresh.getSubject();
                 if (userId == null) throw new JwtTokenException("no userId");
 
                 // jwt 토큰에 포함된 계정 정보(userId) 통해 실제 디비에 해당 정보의 계정이 있는지 조회.
@@ -168,10 +172,12 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 System.out.println(newAccessToken);
                 hashOperations.delete(userId, "accessToken");
                 hashOperations.put(userId, "accessToken", newAccessToken);
-                PrintWriter out = response.getWriter();
-                out.print(new ObjectMapper().writeValueAsString(newAccessToken));
-                out.flush();
-                out.close();
+//                PrintWriter out = response.getWriter();
+//                // 이부분 하기
+//                out.print(new ObjectMapper().writeValueAsString(newAccessToken));
+//                out.flush();
+//                out.close();
+                response.setHeader("Authorization", newAccessToken);
                 throw new ReIssuanceAccessTokenException("인가토큰 재발급");
 
             } catch (TokenExpiredException ex) {
@@ -184,6 +190,5 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         }
 
     }
-
 
 }
