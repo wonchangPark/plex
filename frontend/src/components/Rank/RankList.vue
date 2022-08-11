@@ -20,7 +20,7 @@
       :ranker = ranker
       >
       <div class="d-flex justify-center align-center">
-        <RankItem :rankerNick="ranker.userNick" :rankerRanking="ranker.rank"></RankItem>
+        <RankItem :rankerNick="ranker.userNick" :rankerRanking="ranker.rank" :rankerTotalScore="ranker.score"></RankItem>
       </div>
       </div>
     </div>

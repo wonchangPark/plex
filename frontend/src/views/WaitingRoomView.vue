@@ -60,7 +60,6 @@ export default {
   components: { UserList, RoomList, ChattingList, CreateRoomDialog },
   methods: {
     ...mapActions(['setRoomCreate']),
-    ...mapActions(['fetchWaitingRoomPage']),
     rankBtn() {
     this.$router.push('/rank');
     }

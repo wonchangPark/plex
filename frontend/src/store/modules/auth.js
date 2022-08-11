@@ -10,10 +10,14 @@ export default {
     accessToken: localStorage.getItem('accessToken') || '' ,
     refreshToken: localStorage.getItem('refreshToken') || '',
     authError: null,
+    authHeader: null,
     passwordFlag: false,
     nicknameFlag: false,
     idFlag: false,
     rankingList: {},
+    exerciseList: {},
+    totalGameList: {},
+    myRanking: {},
     loginModal: false
   },
   getters:{
@@ -24,9 +28,11 @@ export default {
     nicknameFlag: state => state.nicknameFlag,
     idFlag: state => state.idFlag,
     rankingList: state => state.rankingList,
+    myRanking: state => state.myRanking,
+    exerciseList: state => state.exerciseList,
+    totalGameList: state => state.totalGameList,
     authError: state => state.authError,
-    authHeader: state => ({ Authorization:'Bearer ' + state.accessToken,
-        Authorization2: 'Bearer ' + state.refreshToken})},
+    authHeader: state => state.authHeader},
     
   mutations: {
     SET_USER: (state, user) => state.user = user,
@@ -35,14 +41,20 @@ export default {
     SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
     SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
     SET_RANKINGLIST: (state, rankingList) => state.rankingList = rankingList,
+    SET_MYRANKING: (state, myRanking) => state.myRanking = myRanking,
+    SET_EXERCISELIST: (state, exerciseList) => state.exerciseList = exerciseList,
+    SET_TOTALGAMELIST: (state, totalGameList) => state.totalGameList = totalGameList,
     SET_ACCESSTOKEN: (state, accessToken) => state.accessToken = accessToken,
     SET_REFRESHTOKEN: (state, refreshToken) => state.refreshToken = refreshToken,
+    SET_AUTH_HEADER: (state, authHeader) => state.authHeader = authHeader,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   },
   actions: {
     saveToken({ commit }, {accessToken, refreshToken}) {
       commit('SET_ACCESSTOKEN', accessToken)
       commit('SET_REFRESHTOKEN', refreshToken)
+      commit('SET_AUTH_HEADER', ({ Authorization:'Bearer ' + accessToken,
+      Authorization2: 'Bearer ' + refreshToken}))
       localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('refreshToken', refreshToken)
     },
@@ -54,15 +66,59 @@ export default {
       localStorage.setItem('refreshToken', '')
     },
 
-    fetchUserInfo({ commit, getters }) {
+    checkAccessToken({dispatch}, {accessToken, refreshToken}){
+      dispatch('saveToken', {accessToken, refreshToken})
+    },
+    // checkAuthorization(){
+    //   axios({
+    //     headers: getters.authHeader
+    //   })
+    //   .then(res => {})
+    //   .catch(err => {
+    //     console.log(err.response.data)
+    //     commit('SET_AUTH_ERROR', err.response.data)
+    //   })
+    // },
+
+    fetchUserInfo({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + '/users/me',
           method: 'get',
           headers: getters.authHeader
         })
-          .then(res => {
-            console.log(res.data)
+        .then(res => {
+          console.log(getters.authHeader)
+          if (res.headers.authorization){
+            const newAccessToken = res.headers.authorization
+            const refreshToken = localStorage.getItem('refreshToken') || ''
+            console.log(newAccessToken)
+            dispatch('saveToken', {newAccessToken, refreshToken})
+            // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
+            // Authorization2: 'Bearer ' + refreshToken})
+            console.log('info', getters.authHeader)
+            axios({
+              url: API_URL + '/users/me',
+              method: 'get',
+              headers: getters.authHeader
+            })
+            .then(res => {
+              console.log(res)
+              const user = {
+                no: res.data.no,
+                userId: res.data.userId,
+                nick: res.data.nick,
+                email: res.data.email,
+                totalScore: res.data.totalScore,
+                img: res.data.img
+              }
+              commit('SET_USER', user)
+            })
+            .catch(err => {
+              console.err(err.response.data)
+            })
+          } else {
+            console.log('user', res.data)
             const user = {
               no: res.data.no,
               userId: res.data.userId,
@@ -73,14 +129,11 @@ export default {
             }
             commit('SET_USER', user)
           }
-            )
-          .catch(err => {
-            console.log(err)
-          })
+        })
       }
     },
     
-    fetchRankingList({ commit, getters }){
+    fetchRankingList({ commit, getters, dispatch }){
       if (getters.isLoggedIn){
         axios({
           url: API_URL + '/rank',
@@ -88,12 +141,154 @@ export default {
           headers: getters.authHeader
         })
         .then(res => {
-          console.log(res)
-          const rankingList = res.data
-          commit('SET_RANKINGLIST', rankingList)
+          console.log(getters.authHeader)
+          if (res.headers.authorization){
+            const newAccessToken = res.headers.authorization
+            const refreshToken = localStorage.getItem('refreshToken') || ''
+            dispatch('checkAccessToken', {newAccessToken, refreshToken})
+            console.log(newAccessToken)
+            // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
+            // Authorization2: 'Bearer ' + refreshToken})
+            console.log(getters.authHeader)
+            axios({
+              url: API_URL + '/rank',
+              method: 'get',
+              headers: getters.authHeader
+            })
+            .then(res => {
+              console.log(res)
+              const rankingList = res.data
+              commit('SET_RANKINGLIST', rankingList)
+            })
+            .catch(err => {
+              console.err(err.response.data)
+            })
+          } else {
+            console.log(res)
+            const rankingList = res.data
+            commit('SET_RANKINGLIST', rankingList)
+          }
         })
-        .catch(err => {
-          console.error(err.response.data)
+      .catch(err => {
+        console.error(err.response.data)
+      })
+      }
+    },
+
+    fetchMyRanking({ commit, getters, dispatch }, no){
+      if (getters.isLoggedIn){
+        axios({
+          url: API_URL + '/rank/' + no,
+          method: 'get',
+          headers: getters.authHeader
+        })
+        .then(res => {
+          console.log(getters.authHeader)
+          if (res.headers.authorization){
+            const newAccessToken = res.headers.authorization
+            const refreshToken = localStorage.getItem('refreshToken') || ''
+            dispatch('checkAccessToken', {newAccessToken, refreshToken})
+            console.log(newAccessToken)
+            // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
+            // Authorization2: 'Bearer ' + refreshToken})
+            console.log(getters.authHeader)
+            axios({
+              url: API_URL + '/rank/' + no,
+              method: 'get',
+              headers: getters.authHeader
+            })
+            .then(res => {
+              console.log('myranking', res)
+              const myRanking = res.data
+              commit('SET_MYRANKING', myRanking)
+            })
+            .catch(err => {
+              console.err(err.response.data)
+            })
+          } else {
+            console.log('myranking', res)
+            const myRanking = res.data
+            commit('SET_MYRANKING', myRanking)
+          }
+        })
+      .catch(err => {
+        console.error(err.response.data)
+      })
+      }
+    },
+
+    fetchExercise({getters, commit, dispatch}){
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + '/users/exercise',
+          method: 'get',
+          headers: getters.authHeader
+        })
+        .then(res => {
+          if (res.headers.authorization) {
+            const newAccessToken = res.headers.authorization
+            const refreshToken = localStorage.getItem('refreshToken') || ''
+            console.log(newAccessToken)
+            dispatch('checkAccessToken', {newAccessToken, refreshToken})
+            console.log(newAccessToken)
+            commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
+            Authorization2: 'Bearer ' + refreshToken})
+            axios({
+              url: API_URL + '/users/exercise',
+              method: 'get',
+              headers: getters.authHeader
+            })
+            .then(res => {
+              console.log('ex', res)
+              const exerciseList = res.data
+              commit('SET_EXERCISELIST', exerciseList)
+            })
+            .catch(err => {
+              console.log(err.response.data)
+            })
+          } else {
+            console.log(res)
+            const exerciseList = res.data
+            commit('SET_EXERCISELIST', exerciseList)
+          }
+        })
+      }
+    },
+
+    fetchTotalGame({getters, commit, dispatch}){
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + '/users/totalgame',
+          method: 'get',
+          headers: getters.authHeader
+        })
+        .then(res => {
+          if (res.headers.authorization) {
+            const newAccessToken = res.headers.authorization
+            const refreshToken = localStorage.getItem('refreshToken') || ''
+            console.log(newAccessToken)
+            dispatch('checkAccessToken', {newAccessToken, refreshToken})
+            console.log(newAccessToken)
+            commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
+            Authorization2: 'Bearer ' + refreshToken})
+            axios({
+              url: API_URL + '/users/totalgame',
+              method: 'get',
+              headers: getters.authHeader
+            })
+            .then(res => {
+              console.log('tot', res)
+              const totalGameList = res.data
+              commit('SET_TOTALGAMELIST', totalGameList)
+            })
+            .catch(err => {
+              console.err(err.response.data)
+            })
+          } else {
+            console.log(res)
+            const totalGameList = res.data
+            commit('SET_TOTALGAMELIST', totalGameList)
+          }
         })
       }
     },
@@ -207,12 +402,12 @@ export default {
     },
 
     logout({ commit, dispatch }) {
-      dispatch('removeToken')
-      commit('SET_USER', {})
-      router.push({ name: 'home' })
-      .error(err => {
-        console.log(err)
-      })
+          dispatch('removeToken')
+          commit('SET_USER', {})
+          router.push({ name: 'home' })
+        .catch(err => {
+          console.log(err.response.data)
+        })
     },
   }
 };

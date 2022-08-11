@@ -16,13 +16,13 @@
           </v-row>
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">300</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{totalGameList.totalCnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">200</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{totalGameList.winCnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">100</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{totalGameList.loseCnt}}</div>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-center">
@@ -33,18 +33,18 @@
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">스쿼트</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">버피테스트</div>
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">달리기</div>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">300</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{exerciseList[0].cnt + exerciseList[1].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">200</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{exerciseList[0].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">100</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{exerciseList[1].cnt}}</div>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-center align-center">
@@ -52,10 +52,10 @@
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">랭킹</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#1</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#{{myRanking.rank}}</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">1250</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{myRanking.score}}</div>
             </v-col>
             <v-col class="text-center" cols="3">
               <v-btn text>
@@ -70,9 +70,31 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'GameInfoBox',
-  
+  computed: {
+    ...mapGetters([
+      'isLoggedIn',
+      'authHeader',
+      'exerciseList',
+      'totalGameList',
+      'getUser',
+      'myRanking'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'fetchExercise',
+      'fetchTotalGame',
+      'fetchMyRanking'
+    ])
+  },
+  created(){
+    this.fetchExercise(),
+    this.fetchTotalGame(),
+    this.fetchMyRanking(this.getUser.no)
+  }
 }
 </script>
 

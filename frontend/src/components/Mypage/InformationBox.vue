@@ -41,7 +41,8 @@ export default {
   computed: {
     ...mapGetters([
       'isLoggedIn',
-      'getUser'
+      'getUser',
+      'authHeader',
     ])
   },
   methods: {
@@ -50,7 +51,9 @@ export default {
     ])
   },
   created(){
-    this.fetchUserInfo()
+    this.fetchUserInfo(),
+    this.fetchExercise(),
+    this.fetchTotalGame()
   }
 }
 </script>

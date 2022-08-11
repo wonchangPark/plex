@@ -4,7 +4,7 @@
       <div class="d-flex flex-column">
 
       <div class="d-flex justify-center">
-        <img src="@/assets/chick.png" alt="chick">
+        <!-- <v-img :src="getUser.img" alt="chick"> -->
       </div>
         <div class="d-flex justify-center align-end">
            <CharacterSelectionModal>
@@ -18,6 +18,7 @@
 <script>
 import ContentBox from "@/components/common/ContentBox.vue"
 import CharacterSelectionModal from "@/components/Mypage/CharacterSelectinoModal.vue"
+import { mapGetters } from 'vuex'
 
 export default {
   name: "CharaterBox",
@@ -28,7 +29,7 @@ export default {
   methods: {
   },
   computed: {
-
+    ...mapGetters(['getUser'])
   }
 }
 </script>

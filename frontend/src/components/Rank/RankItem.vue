@@ -8,7 +8,7 @@
         <div class="white--text ranker-info">{{rankerNick}}</div>
       </v-col>
       <v-col cols="2">
-        <div class="white--text ranker-info"></div>
+        <div class="white--text ranker-info">{{rankerTotalScore}}</div>
       </v-col>
       <v-col cols="2">
         <div class="mr-5 white--text ranker-info">{{rankerRanking}}</div>
