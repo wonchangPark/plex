@@ -25,8 +25,8 @@ class RunningScene extends Scene {
         var goLeftEvent = new Phaser.Events.EventEmitter();
         var goRightEvent = new Phaser.Events.EventEmitter();
 
-        this.LeftGround = this.physics.add.image(300, 300, 'ground')
-        this.RightGround = this.physics.add.image(1300, 300, 'ground')
+        this.WidthScale = this.sys.game.canvas.width / 1600;
+        this.HeightScale = this.sys.game.canvas.height / 512;
 
         this.add.image(800, 256, 'RunningRoom');
         this.grounds = this.physics.add.staticGroup();
