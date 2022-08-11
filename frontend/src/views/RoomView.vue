@@ -102,7 +102,7 @@ import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-// const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+//const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
@@ -184,6 +184,8 @@ export default {
 
       // --- Init a session ---
       this.session = this.OV.initSession();
+
+  
 
       // --- Specify the actions when events take place in the session ---
 
@@ -333,6 +335,9 @@ export default {
       // 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
       this.session.on("signal:gameStart", (event) => {
         this.game.scene.getScene("bootScene").StartScene(1);
+        this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
+
         const data = JSON.parse(event.data);
         this.score1 = data.score1;
         this.score2 = data.score2;
@@ -353,6 +358,7 @@ export default {
 
       window.addEventListener("beforeunload", this.leaveSession);
       //this.game = Game();			//generate phaser game when entering session
+      
     },
 
     sendLeft() {
@@ -393,6 +399,8 @@ export default {
 			// this.$refs.teachable.init()
       // this.init()
 			this.game.scene.getScene('bootScene').StartScene(1);
+      this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
 			this.dataInit()
 			this.session.signal({		// 게임 시작 송신
 				data: JSON.stringify({score1: this.score1, score2: this.score2, personalScore: this.personalScore}),  // Any string (optional)

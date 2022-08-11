@@ -1,11 +1,12 @@
 package com.ssafy.api.controller;
 
-import com.ssafy.db.entity.OAuth;
+import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +19,6 @@ import com.ssafy.api.service.UserService;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.db.entity.User;
-import com.ssafy.db.repository.UserRepositorySupport;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +37,7 @@ public class AuthController {
 	UserService userService;
 
 	@Autowired
-	private RedisTemplate<String, String> redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
 	OAuthRepository oAuthRepository;
@@ -59,7 +59,6 @@ public class AuthController {
 		System.out.println("login start");
 		
 		User user = userService.getUserByUserId(userId);
-		System.out.println("User : "+user);
 		if(user == null) {
 			System.out.println("user == null == 401 error");
 			return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Not Registered",null, null, null));
@@ -71,17 +70,33 @@ public class AuthController {
 			String accessToken = JwtTokenUtil.getAccessToken(userId);
 			String refreshToken = JwtTokenUtil.getRefreshToken(userId); // 이 정보는 userId와 키밸류로 레디스에 들어갈 것.
 			System.out.println(accessToken+ " "+refreshToken);
-			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
-			System.out.println("oAuth : "+oAuth);
-			oAuthRepository.save(oAuth);
+
+			// redis에 accessToken, refreshToken 저장하기
+			HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+			hashOperations.put(userId, "accessToken",accessToken);
+			hashOperations.put(userId, "refreshToken",refreshToken);
+			System.out.println(hashOperations.get(userId, "accessToken"));
+			System.out.println(hashOperations.get(userId, "refreshToken"));
+
+
+//			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
+//			System.out.println("oAuth : "+oAuth);
+//			oAuthRepository.save(oAuth);
 
 			// redis 로 바꿀 때 사용
-//			ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-//			valueOperations.set(userId, refreshToken);
 
 			return ResponseEntity.ok(UserLoginPostRes.of(200, "Success", user, accessToken, refreshToken));
 		}
 		// 유효하지 않는 패스워드인 경우, 로그인 실패로 응답.
 		return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Invalid Password",null, null, null));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(){
+		SsafyUserDetails userDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = userDetails.getUser();
+		HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+		hashOperations.delete(user.getUserId(), "accessToken", "refreshToken");
+		return ResponseEntity.status(200).build();
 	}
 }

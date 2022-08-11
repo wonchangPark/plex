@@ -6,7 +6,7 @@ import com.ssafy.db.entity.User;
 
 public interface RoomUserService {
 
-    void createRoomUser (User user, Room room);
+    void createRoomUser (User user, Room room) throws Exception;
 
     RoomUser getRoomUser (User user, Room room);
 

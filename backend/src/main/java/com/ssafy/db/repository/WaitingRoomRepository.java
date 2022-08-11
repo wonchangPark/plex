@@ -15,20 +15,15 @@ public class WaitingRoomRepository {
 
     // from 부터 to 까지의 대기방을 뽑아온다.
     public List<RoomInfoRes> getCurrentRoomList(int from){
-        System.out.println("repository on "+ from);
 
         // N+1 문제 안일어남
-        List<RoomInfoRes> result = em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
+
+        return em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
                 "from Room r, RoomUser ru " +
                 "where r = ru.room and r.endTime is null " +
                 "group by ru.room " +
                 "having COUNT(ru) <> r.roomSize " +
                 "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).setFirstResult(from).setMaxResults(3).getResultList();
-
-//        for (RoomInfoRes room : result){
-//            System.out.println(room);
-//        }
-        return result;
     }
 
     public int getAvailableRoomCount(){
