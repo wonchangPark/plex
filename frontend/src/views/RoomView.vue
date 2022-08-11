@@ -36,10 +36,14 @@
           </div>
           <div style="heigth: 100%; width: 47%">
             <ContentBox :height="100" :width="100">
-              <ScoreBoard :score1="score1" :score2="score2"></ScoreBoard
-              ><button class="btn btn-lg btn-success" @click="sendStart()">
+              <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
+              <button v-if="!countDown" class="btn btn-lg btn-success" @click="sendStart()">
                 Start
               </button>
+              <button v-if="!countDown" class="btn btn-lg btn-success" @click="restart()">
+                Start
+              </button>
+              <CountDown v-if="countDown" :countDown="countDown"></CountDown>
               <div id='label-container'></div>
               </ContentBox
             >
@@ -95,6 +99,7 @@ import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
+import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
@@ -109,6 +114,7 @@ export default {
     GameResultModal,
     ContentBox,
     ScoreBoard,
+    CountDown,
   },
 
   data() {
@@ -126,8 +132,10 @@ export default {
 
       isHost: false,
       status: 0, // 동작 인식 상태
-      team1: [], // 팀 정보
+      team1: [],
       team2: [],
+      team3: ["han", "kjhTest", "콩"], // 팀 정보
+      team4: ["zzz", "990129", "정예원"],
       personalScore: {}, // 개인별 점수,
       score1: 0, // 팀별 점수
       score2: 0,
@@ -135,10 +143,33 @@ export default {
       gameFinished: false,
       pose1: 0,
       pose2: 0,
+      countDown: 5,
     };
   },
 
   methods: {
+    restart () {
+      this.countDown = 5
+      this.countDownTimer()
+    },
+    countDownTimer () {
+      if (this.countDown > 0) {
+        setTimeout(() => {
+          this.countDown -= 1
+          this.countDownTimer()
+        }, 1000)
+      }
+    },
+    // change(){
+    //   const first = this.subscribers.splice(0, 1, null)
+    //   const second = this.subscribers.splice(1, 1, null)
+    //   const third = this.subscribers.splice(2, 1, null)
+    //   const fouth = this.subscribers.splice(3, 1, null)
+    //   this.subscribers[2] = first
+    //   this.subscribers[3] = second
+    //   this.subscribers[0] = third
+    //   this.subscribers[1] = fouth
+    // },
     dataInit() {
       this.score1 = 0;
       this.score2 = 0;
@@ -655,6 +686,7 @@ export default {
     this.game = Game(); //generate phaser game when entering session
   },
   created() {
+    this.countDownTimer()
     if (this.roomCreate) {
       axios({
         url: API_BASE_URL + "/api/v1/rooms/create-room",
