@@ -15,6 +15,8 @@ export default {
     idFlag: false,
     rankingList: {},
     loginModal: false,
+    userExercise: [],
+    userGameInfo: {},
   },
   getters: {
     isLoggedIn: (state) => !!state.accessToken,
@@ -29,6 +31,8 @@ export default {
       Authorization: "Bearer " + state.accessToken,
       Authorization2: "Bearer " + state.refreshToken,
     }),
+    userExercise: (state) => state.userExercise,
+    userGameInfo: (state) => state.userGameInfo,
   },
 
   mutations: {
@@ -44,6 +48,8 @@ export default {
     SET_REFRESHTOKEN: (state, refreshToken) =>
       (state.refreshToken = refreshToken),
     SET_AUTH_ERROR: (state, error) => (state.authError = error),
+    SET_USER_EXERCISE: (state, exerciseInfo) => state.userExercise = exerciseInfo,
+    SET_GAME_INFO: (state, gameInfo) => state.userGameInfo = gameInfo,
   },
   actions: {
     saveToken({ commit }, { accessToken, refreshToken }) {
@@ -96,6 +102,42 @@ export default {
             console.log(res);
             const rankingList = res.data;
             commit("SET_RANKINGLIST", rankingList);
+          })
+          .catch((err) => {
+            console.error(err.response.data);
+          });
+      }
+    },
+
+    fetchExerciseInfo({ commit, getters }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + "/users/exercise",
+          method: "get",
+          headers: getters.authHeader,
+        })
+          .then((res) => {
+            console.log(res);
+            const exerciseInfo = res.data;
+            commit("SET_USER_EXERCISE", exerciseInfo);
+          })
+          .catch((err) => {
+            console.error(err.response.data);
+          });
+      }
+    },
+
+    fetchGameInfo({ commit, getters }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + "/users/totalgame",
+          method: "get",
+          headers: getters.authHeader,
+        })
+          .then((res) => {
+            console.log(res);
+            const gameInfo = res.data;
+            commit("SET_GAME_INFO", gameInfo);
           })
           .catch((err) => {
             console.error(err.response.data);
