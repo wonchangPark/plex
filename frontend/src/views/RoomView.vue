@@ -156,7 +156,7 @@ export default {
                         this.personalScore[`${event.data}`] += 1;
                         console.log(this.personalScore[`${event.data}`]);
                         console.log(this.personalScore);
-                        if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 3)) {
+                        if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 1)) {
                             this.game.scene.getScene("ropeFightScene").LeftWin();
                             setTimeout(() => (this.gameFinished = true), 1000);
                             setTimeout(() => (this.gameFinished = false), 7000);
@@ -171,7 +171,7 @@ export default {
                 } else {
                     this.score2 += 1;
                     this.personalScore[`${event.data}`] += 1;
-                    if (this.score2 - this.score1 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score2 - this.score1 >= 3)) {
+                    if (this.score2 - this.score1 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score2 - this.score1 >= 1)) {
                         this.game.scene.getScene("ropeFightScene").RightWin();
                         setTimeout(() => (this.gameFinished = true), 1000);
                         setTimeout(() => (this.gameFinished = false), 7000);
