@@ -17,6 +17,7 @@ class RopeFightScene extends Scene {
     nowPosition2 = []
     team1Shake = false;
     team2Shake = false;
+    timeOut = false;
 
     teamName1 = ["", "", ""];
     teamName2 = ["","",""];
@@ -33,10 +34,10 @@ class RopeFightScene extends Scene {
     WidthScale = 1;
     HeightScale = 1;
 
-    leftTime = 60;
+    leftTime = 10;
     timerText;
     timer;
-
+    gameActive = false;
     create() {
 
 
