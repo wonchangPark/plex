@@ -34,7 +34,7 @@ class RopeFightScene extends Scene {
     WidthScale = 1;
     HeightScale = 1;
 
-    leftTime = 10;
+    leftTime = 60;
     timerText;
     timer;
     gameActive = false;

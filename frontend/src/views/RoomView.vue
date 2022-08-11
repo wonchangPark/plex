@@ -318,7 +318,7 @@ export default {
             // this.$refs.teachable.init()
             // this.init()
             this.game.scene.getScene("bootScene").StartScene(1);
-            this.game.scene.getScene('ropeFightScene').leftTime = 10;
+            this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene('ropeFightScene').gameActive = true;
             this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
