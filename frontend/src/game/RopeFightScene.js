@@ -284,8 +284,13 @@ class RopeFightScene extends Scene {
         
         if (this.leftTime >= 0)
             this.timerText.setText(this.leftTime);
-        else
-            this.timerText.setText("연장전!");
+        else {
+            if (this.gameActive)
+                this.timerText.setText("연장전!");
+            else
+                this.timerText.setText("");
+        }
+
     }
 
     onTimerEvent() {
