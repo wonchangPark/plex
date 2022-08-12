@@ -1,6 +1,7 @@
 package com.ssafy.db.entity;
 
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class ScoreHistory {
     private GameHistory gameHistory;
 
     @Column(name = "scorehistory_score")
+    @ColumnDefault("0")
     private Long score;
 
     @Column(name = "scorehistory_teamno")
