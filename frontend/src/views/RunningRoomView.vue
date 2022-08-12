@@ -57,7 +57,7 @@ import UserVideo from "../components/Room/UserVideo.vue";
 import { mapState, mapGetters, mapActions } from "vuex";
 import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
-import GameResultModal from "./GameResultModalView.vue";
+import GameResultModal from "./RunningGameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/RunningScoreBoard.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
