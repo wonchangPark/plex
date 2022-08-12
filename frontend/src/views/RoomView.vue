@@ -43,6 +43,9 @@
               <button v-if="!countDown" class="btn btn-lg btn-success" @click="restart()">
                 Start
               </button>
+              <button v-if="!countDown" class="btn btn-lg btn-success" @click="gameHistory()">
+                Start
+              </button>
               <CountDown v-if="countDown" :countDown="countDown"></CountDown>
               <div id='label-container'></div>
               </ContentBox
@@ -130,6 +133,7 @@ export default {
       videoMute: false, // 영상 중지
       audioMute: false, // 음소거
 
+      roomNo:'',
       isHost: false,
       status: 0, // 동작 인식 상태
       team1: [], // 팀 정보
@@ -565,6 +569,7 @@ export default {
       }).then((res) => {
         console.log(res);
         const token = res.data.token;
+        this.roomNo = res.data.no
         this.session
           .connect(token, this.myUserName)
           .then(() => {
@@ -724,6 +729,7 @@ export default {
         this.myUserName = res.data.host;
         this.joinSession();
         this.connectSession(res.data.token);
+        this.roomNo = res.data.no
         this.isHost = true;
         this.team1.push(res.data.host);
         this.personalScore[`${res.data.host}`] = 0;

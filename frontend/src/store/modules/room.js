@@ -72,5 +72,12 @@ export default {
         console.log(e)
       })
     },
+    setGameHistory({ getters }) {
+      axios({
+        url: API_URL + '/rooms/game?roomNo=2462',
+        method: 'post',
+        headers: getters.authHeader
+      })
+    }
   }
 }
