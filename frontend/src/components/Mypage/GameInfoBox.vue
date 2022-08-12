@@ -3,24 +3,66 @@
     <v-card class="align-center" color="deepblue">
       <v-list-item-content class="align-center justify-center">
         <v-container class="d-flex flex-column justify-center">
-          <v-row class="d-flex mt-2 mb-2">
+          <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <label class="primary--text" for="room-title">방 제목</label>
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">게임</div>
             </v-col>
-            <v-col cols="8">
-              <input id="room-title" type="text"/>
+            <v-col class="text-center" cols="4">
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">승</div>
+            </v-col>
+            <v-col class="text-center" cols="4">
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">패</div>
             </v-col>
           </v-row>
-
-          <v-row class="d-flex">
+          <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="primary--text" style="font-size:1.2rem; font-weight: bold;">비공개</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">300</div>
             </v-col>
-            <v-col cols="8">
-              <v-checkbox class="mt-0 pt-0"></v-checkbox>
+            <v-col class="text-center" cols="4">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">200</div>
+            </v-col>
+            <v-col class="text-center" cols="4">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">100</div>
             </v-col>
           </v-row>
-          <br>
+          <v-row class="d-flex justify-center">
+            <v-col class="text-center" cols="4">
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">운동</div>
+            </v-col>
+            <v-col class="text-center" cols="4">
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">스쿼트</div>
+            </v-col>
+            <v-col class="text-center" cols="4">
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">버피테스트</div>
+            </v-col>
+          </v-row>
+          <v-row class="d-flex justify-center">
+            <v-col class="text-center" cols="4">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">300</div>
+            </v-col>
+            <v-col class="text-center" cols="4">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">200</div>
+            </v-col>
+            <v-col class="text-center" cols="4">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">100</div>
+            </v-col>
+          </v-row>
+          <v-row class="d-flex justify-center align-center">
+            <v-col class="text-center" cols="3">
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">랭킹</div>
+            </v-col>
+            <v-col class="text-center" cols="3">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#1</div>
+            </v-col>
+            <v-col class="text-center" cols="3">
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">1250</div>
+            </v-col>
+            <v-col class="text-center" cols="3">
+              <v-btn text>
+                <router-link to="/rank">전체랭킹보기</router-link>
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-container>
       </v-list-item-content>
     </v-card>
@@ -29,7 +71,8 @@
 
 <script>
 export default {
-  name: 'GameInfoBox'
+  name: 'GameInfoBox',
+  
 }
 </script>
 

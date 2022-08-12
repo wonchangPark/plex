@@ -1,13 +1,15 @@
 <template>
   <div class="navbar d-flex flex-row justify-space-between align-end">
     <div class="router-logo d-flex">
-      <router-link to="/">PLEX</router-link>
+      <router-link to="/">
+        <img class="nav-img" src="@/assets/plex_nav.png" alt="로고">
+      </router-link>
     </div>
 
-    <div class="d-flex">
+    <div class="d-flex"  v-if="isLoggedIn">
     <v-menu bottom rounded offset-y>
       <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
+          <v-btn icon v-on="on" @click="fetchUserInfo">
               <v-avatar color="brown" size="35"> </v-avatar>
           </v-btn>
       </template>
@@ -18,7 +20,7 @@
                   <v-avatar color="white" size="62"> </v-avatar>
                   <br>
                   <div class="menu-name">
-                    <h4 class="white--text">{{ userNav.userNick }}</h4>
+                    <h4 class="white--text">{{ getUser.nick }}</h4>
                   </div>
                   <br>
                   <router-link to="/mypage">
@@ -49,20 +51,23 @@ export default {
   methods: {
     ...mapActions([
       'logout',
-      'fetchNav'
+      'fetchUserInfo'
       ])
   },
   computed: {
     ...mapGetters([
       'isLoggedIn',
-      'userNav'])
+      'getUser'])
   },
-  created() {
-    this.fetchNav()
-  },
+  created(){
+    this.fetchUserInfo()
+  }
 };
 </script>
 <style>
+.nav-img {
+  height: 30px;
+}
 .navbar {
   width: 100%;
   height: 100%;

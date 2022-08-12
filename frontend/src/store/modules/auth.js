@@ -9,18 +9,30 @@ export default {
     user: {},
     token: localStorage.getItem('token') || '' ,
     authError: null,
-    userNav: {}
+    passwordFlag: false,
+    nicknameFlag: false,
+    idFlag: false,
+    rankingList: {},
+    loginModal: false,
   },
   getters:{
     isLoggedIn: state => !!state.token,
+    loginModal: state => state.loginModal,
     getUser: state => state.user,
-    userNav: state => state.userNav,
+    passwordFlag: state => state.passwordFlag,
+    nicknameFlag: state => state.nicknameFlag,
+    idFlag: state => state.idFlag,
+    rankingList: state => state.rankingList,
     authError: state => state.authError,
     authHeader: state => ({ Authorization: 'Bearer ' + state.token })
   },
   mutations: {
     SET_USER: (state, user) => state.user = user,
-    SET_USERNAV: (state, userNav) => state.userNav = userNav,
+    SET_LOGINMODAL: (state, loginModal) => state.loginModal = loginModal,
+    SET_PASSWORDFLAG: (state, passwordFlag) => state.passwordFlag = passwordFlag,
+    SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
+    SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
+    SET_RANKINGLIST: (state, rankingList) => state.rankingList = rankingList,
     SET_TOKEN: (state, token) => state.token = token,
     SET_AUTH_ERROR: (state, error) => state.authError = error
   },
@@ -35,7 +47,7 @@ export default {
       localStorage.setItem('token', '')
     },
 
-    fetchNav({ commit, getters }) {
+    fetchUserInfo({ commit, getters }) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + '/users/me',
@@ -52,7 +64,6 @@ export default {
               totalScore: res.data.totalScore
             }
             commit('SET_USER', user)
-            commit('SET_USERNAV', res.data)
           }
             )
           .catch(err => {
@@ -60,7 +71,25 @@ export default {
           })
       }
     },
-
+    
+    fetchRankingList({ commit, getters }){
+      if (getters.isLoggedIn){
+        axios({
+          url: API_URL + '/users/ranking',
+          method: 'get',
+          headers: getters.authHeader,
+        })
+        .then(res => {
+          console.log(res)
+          const rankingList = res.data
+          commit('SET_RANKINGLIST', rankingList)
+        })
+        .catch(err => {
+          console.error(err.response.data)
+        })
+      }
+    },
+    
     login({ commit, dispatch }, credentials) {
 
       axios({
@@ -84,7 +113,46 @@ export default {
         })
         .catch(err => {
           console.error(err.response.data)
+          commit('SET_LOGINMODAL', true)
           commit('SET_AUTH_ERROR', err.response.data)
+        })
+    },
+
+    passwordCheck({commit,dispatch}, credentials){
+      commit('SET_PASSWORDFLAG')
+      dispatch('signup', credentials)
+    },
+
+    nicknameCheck({ commit }, credentials) {
+      axios({
+        url: API_URL + '/users/nickname/check',
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log(res)
+          commit('SET_NICKNAMEFLAG', true)
+        })
+        .catch(err => {
+          console.error(err.response.data)
+          commit('SET_NICKNAMEFLAG', false)
+
+        })
+    },
+
+    idCheck({ commit }, credentials) {
+      axios({
+        url: API_URL + '/users/id/check',
+        method: 'post',
+        data: credentials
+      })
+        .then(res => {
+          console.log(res)
+          commit('SET_IDFLAG', true)
+        })
+        .catch(err => {
+          console.log(err.response.data)
+          commit('SET_IDFLAG', false)
         })
     },
 

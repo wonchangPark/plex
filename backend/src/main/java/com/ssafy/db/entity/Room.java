@@ -2,6 +2,7 @@ package com.ssafy.db.entity;
 
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 public class Room {
 
     @Id @GeneratedValue
@@ -42,7 +44,8 @@ public class Room {
     private LocalDateTime endTime;
 
     @Column(name = "room_gameno")
-    private Integer gameNo;
+    private int gameNo;
+
 
     @Column(name = "room_isprivate")
     @NotNull
@@ -63,5 +66,11 @@ public class Room {
 
     public static Room createRoom(String name, String code, String host, int roomSize, int gameNo, boolean isPrivate){
         return new Room(name, code, host, roomSize, gameNo, isPrivate);
+    }
+
+    public static Room createRoom(Long roomNo){
+        Room room = new Room();
+        room.setNo(roomNo);
+        return room;
     }
 }

@@ -18,13 +18,15 @@ export default {
     joinInfo : {
       roomCode: '',
       userName: ''
-    }
+    },
+    predictionData: {left:0, right:0},
   },
   getters: {
     roomCreate: state => state.roomCreate,
     roomInfo: state => state.roomInfo,
     roomJoin: state => state.roomJoin,
     joinInfo: state => state.joinInfo,
+    predictionData: state => state.predictionData
   },
   mutations: {
     SET_ROOMCREATE: (state) => {state.roomCreate = true},
@@ -35,6 +37,7 @@ export default {
     SET_ROOMINFO: (state, roomInfo) => {state.roomInfo = roomInfo},
     SET_ROOMJOIN: (state) => {state.roomJoin = true},
     SET_JOININFO: (state, joinInfo) => {state.joinInfo = joinInfo},
+    SET_PREDICTION: (state, predictionData) => {state.predictionData = predictionData}
   },
   actions: {
     setRoomCreate ({ commit }, roomInfo) {
@@ -48,9 +51,12 @@ export default {
       commit('SET_ROOMJOIN')
       const joinInfo = {
           roomCode: roomCode,
-          userName: getters.getUser.userId,
+          userName: getters.getUser.nick,
       }
       commit('SET_JOININFO', joinInfo)
+    },
+    setPrediction({commit}, predictionData) {
+      commit('SET_PREDICTION', predictionData)
     },
     leaveRoom ({ getters }, joinInfo) {
       axios({

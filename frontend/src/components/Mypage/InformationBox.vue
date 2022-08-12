@@ -6,14 +6,8 @@
           <v-col cols="11">
             <label class="primary--text" for="nickname">닉네임</label>
           </v-col>
-          <v-col cols="5">
-            <input id="nickname" :placeholder="user.nickname"/>
-          </v-col>
-          <v-col cols="4">
-            <div class="overlap d-flex align-center secondary--text"> 중복이 아닙니다 </div>
-          </v-col>
-          <v-col cols="2">
-            <v-btn color="primary" elevation="0" class="submit black--text">수정</v-btn>
+          <v-col cols="11">
+            <div class="nickname white--text">{{ getUser.nick }}</div>
           </v-col>
         </v-row>
         <v-row justify="center" align="center">
@@ -24,21 +18,6 @@
             <GameInfoBox></GameInfoBox>
           </v-col>
         </v-row>
-        <v-row justify="center" align="center">
-          <v-col cols="2">
-            <label class="primary--text" for="introducing">랭킹</label>
-          </v-col>
-          <v-col cols="6" justify="center" align="center" class="my-ranking secondary--text">
-            <v-card color="#28363F" flat>
-              <div class="secondary--text">#1 2300</div>
-            </v-card>
-          </v-col>
-          <v-col cols="3">
-            <v-btn text>
-            <router-link to="/rank">전체랭킹보기</router-link>
-            </v-btn>
-          </v-col>
-        </v-row>
       </v-container>
     </ContentBox>
   </div>
@@ -47,27 +26,40 @@
 <script>
 import ContentBox from "@/components/common/ContentBox.vue"
 import GameInfoBox from "@/components/Mypage/GameInfoBox.vue"
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: "InformationBox",
-  component: {
-  },
   components: {
     ContentBox,
     GameInfoBox
   },
   data () {
     return {
-      user: {
-        nickname: '병아리뿅뿅',
-        rank: "#1",
-        score: "2305"
-      }
     }
   },
+  computed: {
+    ...mapGetters([
+      'isLoggedIn',
+      'getUser'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'fetchUserInfo'
+    ])
+  },
+  created(){
+    this.fetchUserInfo()
+  }
 }
 </script>
 
 <style>
+.nickname{
+  font-weight: bold;
+  font-size: 1.5rem;
+}
 .information-box .submit {
   width: 2rem;
   height: 2rem;

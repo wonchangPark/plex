@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomJoinPostReq;
+import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.api.response.RoomCreateRes;
 import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.service.RoomUserService;
@@ -13,6 +14,7 @@ import com.ssafy.api.service.UserService;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.RandomRoomCode;
 import com.ssafy.db.entity.Room;
+import com.ssafy.db.entity.RoomUser;
 import com.ssafy.db.entity.User;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONObject;
@@ -73,10 +75,11 @@ public class RoomController {
 		// Optional data to be passed to other users when this user connects to the
 		// video-call. In this case, a JSON with the value we stored in the HttpSession
 		// object on login
+
 		String serverData = "{\"serverData\": \"" + roomInfo.getHost() + "\"}";
 
 		// Build connectionProperties object with the serverData and the role
-		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).data(serverData).role(role).build();
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role).build();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists
@@ -146,10 +149,11 @@ public class RoomController {
 		// Optional data to be passed to other users when this user connects to the
 		// video-call. In this case, a JSON with the value we stored in the HttpSession
 		// object on login
-		String serverData = "{\"serverData\": \"" + joinInfo.getId() + "\"}";
+//		String serverData = "{\"serverData\": \"" + roomInfo.getHost() + "\"}";
+
 
 		// Build connectionProperties object with the serverData and the role
-		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).data(serverData).role(role).build();
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC).role(role).build();
 
 
 		if (this.mapSessions.get(sessionName) != null) {
@@ -212,5 +216,35 @@ public class RoomController {
 		json.put("exception", e.getClass());
 		return new ResponseEntity<>(json, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
+	@PostMapping("/leave-room")
+	public ResponseEntity<BaseResponseBody> leaveRoom(@RequestBody RoomJoinPostReq joinInfo) {
+		Room room = roomService.getRoomByCode(joinInfo.getCode());
+		User user = userService.getUserByUserId(joinInfo.getId());
+		String host = room.getHost();
+		String id = joinInfo.getId();
+		System.out.println(host);
+		System.out.println(id);
+		if (host.equals(id)) { // 방 나가는 사람이 호스트인 경우
+			System.out.println("inside");
+			roomService.endRoom(room);
+		}
+		RoomUser roomUser = roomUserService.getRoomUser(user, room);
+		roomUserService.deleteRoomUser(roomUser);
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
+
+	@PostMapping("/game")
+	public ResponseEntity<Long> insertGameHistory(@RequestParam long roomNo){
+		long gameHistoryNo = roomService.insertGameHistory(roomNo);
+		return ResponseEntity.status(200).body(gameHistoryNo);
+		// gameHistoryNo를 반환
+	}
+
+	@PostMapping("/score")
+	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq scoreHistoryPostReq){
+		roomService.insertScoreHistory(scoreHistoryPostReq);
+		return ResponseEntity.status(200).build();
+	}
+
 }

@@ -7,7 +7,8 @@
         <img src="@/assets/chick.png" alt="chick">
       </div>
         <div class="d-flex justify-center align-end">
-          <v-btn color="primary" elevation="0" class="submit black--text">캐릭터 변경</v-btn>
+           <CharacterSelectionModal>
+            </CharacterSelectionModal>
         </div> 
       </div>
     </ContentBox>
@@ -16,23 +17,23 @@
 
 <script>
 import ContentBox from "@/components/common/ContentBox.vue"
+import CharacterSelectionModal from "@/components/Mypage/CharacterSelectinoModal.vue"
 
 export default {
   name: "CharaterBox",
   components: {
-    ContentBox
+    ContentBox,
+    CharacterSelectionModal,
+  },
+  methods: {
+  },
+  computed: {
+
   }
 }
 </script>
 
 <style>
-.character-box .submit {
-  width: 10rem;
-  height: 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 5px;
-}
 .character-box img {
   width: 200px;
 }
