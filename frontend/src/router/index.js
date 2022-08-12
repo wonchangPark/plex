@@ -5,7 +5,14 @@ import store from "../store";
 import Home from "@/views/HomeView.vue";
 import Login from "@/views/LoginView.vue";
 import WaitingRoom from "@/views/WaitingRoomView.vue";
+
 import GameRoom from "@/views/RoomView.vue";
+import RunningRoom from "@/views/RunningRoomView.vue";
+
+// import GameRoom from "@/views/RunningRoomView.vue";
+// import RunningRoom from "@/views/RoomView.vue";
+
+
 import Mypage from "@/views/MypageView.vue";
 import SignUp from "@/views/SignupView.vue";
 import Rank from "@/views/RankView.vue";
@@ -52,6 +59,11 @@ const routes = [
         name: "rank",
         component: Rank,
     },
+  {
+    path: "/runningroom",
+    name: "runningroom",
+    component: RunningRoom,
+  },
 ];
 
 const router = new VueRouter({
