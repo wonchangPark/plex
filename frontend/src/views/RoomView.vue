@@ -36,18 +36,22 @@
           </div>
           <div style="heigth: 100%; width: 47%">
             <ContentBox :height="100" :width="100">
-              <ScoreBoard :score1="score1" :score2="score2"></ScoreBoard
-              ><button class="btn btn-lg btn-success" @click="sendStart()">
+              <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
+              <button v-if="!countDown" class="btn btn-lg btn-success" @click="sendStart()">
                 Start
               </button>
+              <button v-if="!countDown" class="btn btn-lg btn-success" @click="restart()">
+                Start
+              </button>
+              <CountDown v-if="countDown" :countDown="countDown"></CountDown>
               <div id='label-container'></div>
               </ContentBox
             >
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              v-if="subscribers[0] !== null"
-              :stream-manager="subscribers[0]"
+              v-if="subscribers[2] !== null"
+              :stream-manager="subscribers[2]"
             />
           </div>
         </div>
@@ -57,14 +61,14 @@
         >
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              v-if="subscribers[1] !== null"
-              :stream-manager="subscribers[1]"
+              v-if="subscribers[0] !== null"
+              :stream-manager="subscribers[0]"
             />
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
             <user-video
-              v-if="subscribers[2] !== null"
-              :stream-manager="subscribers[2]"
+              v-if="subscribers[1] !== null"
+              :stream-manager="subscribers[1]"
             />
           </div>
           <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
@@ -95,6 +99,7 @@ import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
+import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 //const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
@@ -109,6 +114,7 @@ export default {
     GameResultModal,
     ContentBox,
     ScoreBoard,
+    CountDown,
   },
 
   data() {
@@ -128,16 +134,43 @@ export default {
       status: 0, // 동작 인식 상태
       team1: [], // 팀 정보
       team2: [],
+      team3: ["han", "TESTKJH", "콩"], 
+      team4: ["zzz", "990129", "정예원"],
       personalScore: {}, // 개인별 점수,
       score1: 0, // 팀별 점수
       score2: 0,
+      teamNo: 0,
+      teamNo1: 0,
       gameFinished: false,
       pose1: 0,
       pose2: 0,
+      countDown: 5,
     };
   },
 
   methods: {
+    restart () {
+      this.countDown = 5
+      this.countDownTimer()
+    },
+    countDownTimer () {
+      if (this.countDown > 0) {
+        setTimeout(() => {
+          this.countDown -= 1
+          this.countDownTimer()
+        }, 1000)
+      }
+    },
+    // change(){
+    //   const first = this.subscribers.splice(0, 1, null)
+    //   const second = this.subscribers.splice(1, 1, null)
+    //   const third = this.subscribers.splice(2, 1, null)
+    //   const fouth = this.subscribers.splice(3, 1, null)
+    //   this.subscribers[2] = first
+    //   this.subscribers[3] = second
+    //   this.subscribers[0] = third
+    //   this.subscribers[1] = fouth
+    // },
     dataInit() {
       this.score1 = 0;
       this.score2 = 0;
@@ -160,10 +193,27 @@ export default {
       this.session.on("streamCreated", ({ stream }) => {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
-        for (let i = 0; i < 6; i++ ){
-          if (this.subscribers[i] === null) {
-            this.subscribers[i] = subscriber
-            break
+        console.log(subscriber.stream.connection.data)
+        if (this.team3.includes(subscriber.stream.connection.data) && this.teamNo1 === 1) {
+          for (let i = 0; i < 2; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
+          }
+        } else if (this.team4.includes(subscriber.stream.connection.data) && this.teamNo1 === 2) {
+          for (let i = 0; i < 2; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
+          }
+        } else {
+          for (let i = 2; i < 5; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
           }
         }
       });
@@ -259,12 +309,18 @@ export default {
       });
       // 호스트 수신 => 팀원 정보 수신
       this.session.on("signal:host", (event) => {
+        console.log(event.data)
         console.log("호스트 수신"); // Message
         if (!this.isHost) {
           const data = JSON.parse(event.data);
           this.team1 = data.team1;
           this.team2 = data.team2;
           this.personalScore = data.personalScore;
+          if (this.team1.includes(this.myUserName)) {
+            this.teamNo = 1
+          } else {
+            this.teamNo = 2
+          }
         }
         console.log(event.from); // Connection object of the sender
         console.log(event.type); // The type of message
@@ -655,6 +711,7 @@ export default {
     this.game = Game(); //generate phaser game when entering session
   },
   created() {
+    this.countDownTimer()
     if (this.roomCreate) {
       axios({
         url: API_BASE_URL + "/api/v1/rooms/create-room",
@@ -670,12 +727,18 @@ export default {
         this.isHost = true;
         this.team1.push(res.data.host);
         this.personalScore[`${res.data.host}`] = 0;
+        this.teamNo1 = 1;
       });
     } else if (this.roomJoin) {
       this.mySessionId = this.joinInfo.roomCode;
       this.myUserName = this.joinInfo.userName;
       this.joinSession();
       this.getToken(this.mySessionId, this.myUserName);
+      if (this.team3.includes(this.myUserName)) {
+            this.teamNo1 = 1
+          } else {
+            this.teamNo1 = 2
+          }
     } else {
       this.$router.push("/waiting");
     }
