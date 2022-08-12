@@ -22,7 +22,7 @@
                     </div>
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
-                            <ScoreBoard :score1="personalScore[`콩`]" :score2="score2"></ScoreBoard
+                            <ScoreBoard :nameList="Object.keys(this.personalScore)" :scoreList="personalScore"></ScoreBoard
                             ><button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
                             <div id="label-container"></div>
                         </ContentBox>
@@ -59,7 +59,7 @@ import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
-import ScoreBoard from "@/components/Room/ScoreBoard.vue";
+import ScoreBoard from "@/components/Room/RunningScoreBoard.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 //테스트 (오른손/왼손)
