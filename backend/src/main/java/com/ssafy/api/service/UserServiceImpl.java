@@ -1,6 +1,7 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserInfoRes;
 import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.common.exception.UserDuplicateException;
 import com.ssafy.db.repository.JdbcTemplateRepository;
@@ -68,6 +69,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserTotalGameCntRes getMyTotalGameCnt(User user){
 		return jdbcTemplateRepository.getMyTotalGameCnt(user.getNo());
+	}
+
+	@Override
+	public UserInfoRes getUserByUserNick(String nick) {
+		return userRepository.getUserByUserNick(nick);
 	}
 
 }
