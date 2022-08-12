@@ -9,13 +9,13 @@
 module.exports = {
   devServer: {
     https: true,
-    port: 8083,
+    // port: 8083,
     open: true,
-    proxy: {
-      "/api/v1": {
-        target: "https://localhost:8080/",
-      },
-    },
+    // proxy: {
+    //   "/api/v1": {
+    //     target: "https://localhost:8080/",
+    //   },
+    // },
     historyApiFallback: true,
     hot: true,
   },

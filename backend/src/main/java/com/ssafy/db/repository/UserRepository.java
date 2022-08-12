@@ -1,9 +1,7 @@
 package com.ssafy.db.repository;
 
 import com.ssafy.api.response.UserExerciseRes;
-import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.db.entity.User;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -57,9 +55,9 @@ public class UserRepository {
         return em.createQuery("select u from User u", User.class).getResultList();
     }
 
-    public int setMyImage(String image){
-        int result = em.createQuery("update User u set u.img = :img")
-                .setParameter("img", image).executeUpdate();
+    public int setMyImage(User user, String image){
+        int result = em.createQuery("update User u set u.img = :img where u = :user")
+                .setParameter("img", image).setParameter("user",user).executeUpdate();
         em.clear();
         return result; // 반영된 레코드의 수를 반환. 즉 0을 반환하면 반영이 되지 않은 것
     }
