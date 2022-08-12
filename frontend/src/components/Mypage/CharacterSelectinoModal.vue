@@ -19,40 +19,17 @@
           <v-list-item-content class="align-center justify-center">
             <v-container class="d-flex flex-column justify-center">
               <v-row class="d-flex mt-2 mb-2">
+              <div v-for="image in imgList"
+              :key="image.indexOf(image)"
+              :image = image>
                 <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="56">
-                    <v-btn @click="sendGummibear">
-                    <img src="@/assets/profile/gummybear.png" alt="">
+                  <v-avatar color="white" size="100">
+                    <v-btn @click="sendGummibear(image)">
+                    <img :src="require(`@/assets/profile/${image}.png`)" alt="">
                     </v-btn>
                   </v-avatar>
                 </v-col>
-                <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="56">
-                    <img src="@/assets/profile/pudding.png" alt="">
-                  </v-avatar>
-                </v-col>
-                <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="56">
-                    <img src="@/assets/profile/slime.png" alt="">
-                  </v-avatar>
-                </v-col>
-              </v-row>
-              <v-row class="d-flex mt-2 mb-2">
-                <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="56">
-                    <img src="@/assets/profile/stone.png" alt="">
-                  </v-avatar>
-                </v-col>
-                <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="56">
-                    <img src="@/assets/profile/sushi.png" alt="">
-                  </v-avatar>
-                </v-col>
-                <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="56">
-                    <img src="@/assets/profile/whale.png" alt="">
-                  </v-avatar>
-                </v-col>
+              </div>
               </v-row>
               <br>
                 <v-btn color="primary" elevation="0" 
@@ -80,13 +57,14 @@ export default {
       img: {
         image: ''
       },
+      imgList: ['gummybear', 'pudding', 'slime', 'stone', 'sushi', 'whale']
     }),
   methods: {
     closeDialog() {
       this.dialog = false
     },
-    sendGummibear(){
-      this.img.image = "@/assets/profile/gummybear.png"
+    sendGummibear(index){
+      this.img.image = index
       console.log(this.img)
     },
     ...mapActions(['changeImg'])

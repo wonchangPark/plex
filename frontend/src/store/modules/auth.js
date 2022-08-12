@@ -401,13 +401,19 @@ export default {
         })
     },
 
-    logout({ commit, dispatch }) {
-          dispatch('removeToken')
-          commit('SET_USER', {})
-          router.push({ name: 'home' })
-        .catch(err => {
-          console.log(err.response.data)
-        })
+    logout({ commit, getters, dispatch }) {
+      axios({
+        url: API_URL + "/auth/logout",
+        method: "post",
+        headers: getters.authHeader,
+      }).then((res) => {
+        console.log(res);
+        dispatch("removeToken");
+        commit("SET_USER", {});
+        router.push({ name: "home" }).error((err) => {
+          console.log(err);
+        });
+      });
     },
-  }
+  },
 };

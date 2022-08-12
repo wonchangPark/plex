@@ -2,7 +2,11 @@
     <div class="chatting-item d-flex flex-row align-center mr-4 ml-4 mb-1 brown px-2 py-1">
         <div class="d-flex flex-column justify-center align-center mr-2">
             <div>
-                <v-avatar size="25" color="white"></v-avatar>
+                <v-avatar size="25" color="white">
+                    <img
+                  :src="require(`@/assets/profile/${getUser.img}.png`)"
+                  alt="profile">
+                </v-avatar>
             </div>
             <div class="white--text">
                 {{name}}
@@ -15,9 +19,13 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
     name: "ChattingItem",
-    props:["name", "content"]
+    props:["name", "content"],
+    computed: {
+        ...mapGetters(['getUser'])
+    }
 };
 </script>
 
