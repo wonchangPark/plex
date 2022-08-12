@@ -8,7 +8,7 @@
                         <button class="primary" style="width: 70%; height: 45px; font-weight: bold" @click="rankBtn">랭킹 보기</button>
                     </div>
                 </div>
-                <div class="d-flex justify-center align-center" style="flex: 0 0 80%; height: 80%">
+                <div class="d-flex justify-center align-center" style="flex: 1 1 80%; height: 80%">
                     <UserList></UserList>
                 </div>
             </div>

@@ -38,12 +38,13 @@ export default {
     created: function () {
         this.connect();
         this.userName = this.getUser.nick;
-        this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+        // this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     mounted: function () {
         window.addEventListener("beforeunload", () => {
             this.send("exit", this.getUser.nick, "");
         });
+        this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", () => {

@@ -30,35 +30,42 @@ export default {
     idFlag: (state) => state.idFlag,
     rankingList: (state) => state.rankingList,
     authError: (state) => state.authError,
-    authHeader: state => state.authHeader,
+    authHeader: (state) => state.authHeader,
     userExercise: (state) => state.userExercise,
     userGameInfo: (state) => state.userGameInfo,
-    myRanking: state => state.myRanking
+    myRanking: (state) => state.myRanking,
   },
 
   mutations: {
-    SET_USER: (state, user) => state.user = user,
-    SET_LOGINMODAL: (state, loginModal) => state.loginModal = loginModal,
-    SET_PASSWORDFLAG: (state, passwordFlag) => state.passwordFlag = passwordFlag,
-    SET_NICKNAMEFLAG: (state, nicknameFlag) => state.nicknameFlag = nicknameFlag,
-    SET_IDFLAG: (state, idFlag) => state.idFlag = idFlag,
-    SET_RANKINGLIST: (state, rankingList) => state.rankingList = rankingList,
-    SET_MYRANKING: (state, myRanking) => state.myRanking = myRanking,
-    SET_ACCESSTOKEN: (state, accessToken) => state.accessToken = accessToken,
-    SET_REFRESHTOKEN: (state, refreshToken) => state.refreshToken = refreshToken,
-    SET_AUTH_HEADER: (state, authHeader) => state.authHeader = authHeader,
-    SET_AUTH_ERROR: (state, error) => state.authError = error,
-    SET_USER_EXERCISE: (state, exerciseInfo) => state.userExercise = exerciseInfo,
-    SET_GAME_INFO: (state, gameInfo) => state.userGameInfo = gameInfo,
+    SET_USER: (state, user) => (state.user = user),
+    SET_LOGINMODAL: (state, loginModal) => (state.loginModal = loginModal),
+    SET_PASSWORDFLAG: (state, passwordFlag) =>
+      (state.passwordFlag = passwordFlag),
+    SET_NICKNAMEFLAG: (state, nicknameFlag) =>
+      (state.nicknameFlag = nicknameFlag),
+    SET_IDFLAG: (state, idFlag) => (state.idFlag = idFlag),
+    SET_RANKINGLIST: (state, rankingList) => (state.rankingList = rankingList),
+    SET_MYRANKING: (state, myRanking) => (state.myRanking = myRanking),
+    SET_ACCESSTOKEN: (state, accessToken) => (state.accessToken = accessToken),
+    SET_REFRESHTOKEN: (state, refreshToken) =>
+      (state.refreshToken = refreshToken),
+    SET_AUTH_HEADER: (state, authHeader) => (state.authHeader = authHeader),
+    SET_AUTH_ERROR: (state, error) => (state.authError = error),
+    SET_USER_EXERCISE: (state, exerciseInfo) =>
+      (state.userExercise = exerciseInfo),
+    SET_GAME_INFO: (state, gameInfo) => (state.userGameInfo = gameInfo),
   },
   actions: {
-    saveToken({ commit }, {accessToken, refreshToken}) {
-      commit('SET_ACCESSTOKEN', accessToken)
-      commit('SET_REFRESHTOKEN', refreshToken)
-      commit('SET_AUTH_HEADER', ({ Authorization:'Bearer ' + accessToken,
-      Authorization2: 'Bearer ' + refreshToken}))
-      localStorage.setItem('accessToken', accessToken)
-      localStorage.setItem('refreshToken', refreshToken)},
+    saveToken({ commit }, { accessToken, refreshToken }) {
+      commit("SET_ACCESSTOKEN", accessToken);
+      commit("SET_REFRESHTOKEN", refreshToken);
+      commit("SET_AUTH_HEADER", {
+        Authorization: "Bearer " + accessToken,
+        Authorization2: "Bearer " + refreshToken,
+      });
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+    },
 
     removeToken({ commit }) {
       commit("SET_ACCESSTOKEN", "");
@@ -67,8 +74,8 @@ export default {
       localStorage.setItem("refreshToken", "");
     },
 
-    checkAccessToken({dispatch}, {accessToken, refreshToken}){
-      dispatch('saveToken', {accessToken, refreshToken})
+    checkAccessToken({ dispatch }, { accessToken, refreshToken }) {
+      dispatch("saveToken", { accessToken, refreshToken });
     },
 
     fetchUserInfo({ commit, getters, dispatch }) {
@@ -77,210 +84,209 @@ export default {
           url: API_URL + "/users/me",
           method: "get",
           headers: getters.authHeader,
-        })
-        .then(res => {
-          console.log(getters.authHeader)
-          if (res.headers.authorization){
-            const newAccessToken = res.headers.authorization
-            const refreshToken = localStorage.getItem('refreshToken') || ''
-            console.log(newAccessToken)
-            dispatch('saveToken', {newAccessToken, refreshToken})
+        }).then((res) => {
+          console.log(getters.authHeader);
+          if (res.headers.authorization) {
+            const newAccessToken = res.headers.authorization;
+            const refreshToken = localStorage.getItem("refreshToken") || "";
+            console.log(newAccessToken);
+            dispatch("saveToken", { newAccessToken, refreshToken });
             // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
             // Authorization2: 'Bearer ' + refreshToken})
-            console.log('info', getters.authHeader)
+            console.log("info", getters.authHeader);
             axios({
-              url: API_URL + '/users/me',
-              method: 'get',
-              headers: getters.authHeader
+              url: API_URL + "/users/me",
+              method: "get",
+              headers: getters.authHeader,
             })
-            .then(res => {
-              console.log(res)
-              const user = {
-                no: res.data.no,
-                userId: res.data.userId,
-                nick: res.data.nick,
-                email: res.data.email,
-                totalScore: res.data.totalScore,
-                img: res.data.img
-              }
-              commit('SET_USER', user)
-            })
-            .catch(err => {
-              console.err(err.response.data)
-            })
+              .then((res) => {
+                console.log(res);
+                const user = {
+                  no: res.data.no,
+                  userId: res.data.userId,
+                  nick: res.data.nick,
+                  email: res.data.email,
+                  totalScore: res.data.totalScore,
+                  img: res.data.img,
+                };
+                commit("SET_USER", user);
+              })
+              .catch((err) => {
+                console.err(err.response.data);
+              });
           } else {
-            console.log('user', res.data)
+            console.log("user", res.data);
             const user = {
               no: res.data.no,
               userId: res.data.userId,
               nick: res.data.nick,
               email: res.data.email,
               totalScore: res.data.totalScore,
-              img: res.data.img
+              img: res.data.img,
+            };
+            commit("SET_USER", user);
+          }
+        });
+      }
+    },
+
+    fetchRankingList({ commit, getters, dispatch }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + "/rank",
+          method: "get",
+          headers: getters.authHeader,
+        })
+          .then((res) => {
+            console.log(getters.authHeader);
+            if (res.headers.authorization) {
+              const newAccessToken = res.headers.authorization;
+              const refreshToken = localStorage.getItem("refreshToken") || "";
+              dispatch("checkAccessToken", { newAccessToken, refreshToken });
+              console.log(newAccessToken);
+              console.log(getters.authHeader);
+              axios({
+                url: API_URL + "/rank",
+                method: "get",
+                headers: getters.authHeader,
+              })
+                .then((res) => {
+                  console.log(res);
+                  const rankingList = res.data;
+                  commit("SET_RANKINGLIST", rankingList);
+                })
+                .catch((err) => {
+                  console.err(err.response.data);
+                });
+            } else {
+              console.log(res);
+              const rankingList = res.data;
+              commit("SET_RANKINGLIST", rankingList);
             }
-            commit('SET_USER', user)
-          }
-        })
-      }
-    },
-    
-    fetchRankingList({ commit, getters, dispatch }){
-      if (getters.isLoggedIn){
-        axios({
-          url: API_URL + '/rank',
-          method: 'get',
-          headers: getters.authHeader
-        })
-        .then(res => {
-          console.log(getters.authHeader)
-          if (res.headers.authorization){
-            const newAccessToken = res.headers.authorization
-            const refreshToken = localStorage.getItem('refreshToken') || ''
-            dispatch('checkAccessToken', {newAccessToken, refreshToken})
-            console.log(newAccessToken)
-            console.log(getters.authHeader)
-            axios({
-              url: API_URL + '/rank',
-              method: 'get',
-              headers: getters.authHeader
-            })
-            .then(res => {
-              console.log(res)
-              const rankingList = res.data
-              commit('SET_RANKINGLIST', rankingList)
-            })
-            .catch(err => {
-              console.err(err.response.data)
-            })
-          } else {
-            console.log(res)
-            const rankingList = res.data
-            commit('SET_RANKINGLIST', rankingList)
-          }
-        })
-      .catch(err => {
-        console.error(err.response.data)
-      })
+          })
+          .catch((err) => {
+            console.error(err.response.data);
+          });
       }
     },
 
-    fetchMyRanking({ commit, getters, dispatch }, no){
-      if (getters.isLoggedIn){
-        axios({
-          url: API_URL + '/rank/' + no,
-          method: 'get',
-          headers: getters.authHeader
-        })
-        .then(res => {
-          console.log(getters.authHeader)
-          if (res.headers.authorization){
-            const newAccessToken = res.headers.authorization
-            const refreshToken = localStorage.getItem('refreshToken') || ''
-            dispatch('checkAccessToken', {newAccessToken, refreshToken})
-            console.log(newAccessToken)
-            console.log(getters.authHeader)
-            axios({
-              url: API_URL + '/rank/' + no,
-              method: 'get',
-              headers: getters.authHeader
-            })
-            .then(res => {
-              console.log('myranking', res)
-              const myRanking = res.data
-              commit('SET_MYRANKING', myRanking)
-            })
-            .catch(err => {
-              console.err(err.response.data)
-            })
-          } else {
-            console.log('myranking', res)
-            const myRanking = res.data
-            commit('SET_MYRANKING', myRanking)
-          }
-        })
-      .catch(err => {
-        console.error(err.response.data)
-      })
-      }
-    },
-
-    fetchExerciseInfo({getters, commit, dispatch}){
+    fetchMyRanking({ commit, getters, dispatch }, no) {
       if (getters.isLoggedIn) {
         axios({
-          url: API_URL + '/users/exercise',
-          method: 'get',
-          headers: getters.authHeader
+          url: API_URL + "/rank/" + no,
+          method: "get",
+          headers: getters.authHeader,
         })
-        .then(res => {
-          if (res.headers.authorization) {
-            const newAccessToken = res.headers.authorization
-            const refreshToken = localStorage.getItem('refreshToken') || ''
-            console.log(newAccessToken)
-            dispatch('checkAccessToken', {newAccessToken, refreshToken})
-            console.log(newAccessToken)
-            commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
-            Authorization2: 'Bearer ' + refreshToken})
-            axios({
-              url: API_URL + '/users/exercise',
-              method: 'get',
-              headers: getters.authHeader
-            })
-            .then(res => {
-              console.log('ex', res)
-              const exerciseInfo = res.data
-              commit('SET_USER_EXERCISE', exerciseInfo)
-            })
-            .catch(err => {
-              console.log(err.response.data)
-            })
-          } else {
-            console.log(res)
-            const exerciseInfo = res.data
-            commit('SET_USER_EXERCISE', exerciseInfo)
-          }
-        })
+          .then((res) => {
+            console.log(getters.authHeader);
+            if (res.headers.authorization) {
+              const newAccessToken = res.headers.authorization;
+              const refreshToken = localStorage.getItem("refreshToken") || "";
+              dispatch("checkAccessToken", { newAccessToken, refreshToken });
+              console.log(newAccessToken);
+              console.log(getters.authHeader);
+              axios({
+                url: API_URL + "/rank/" + no,
+                method: "get",
+                headers: getters.authHeader,
+              })
+                .then((res) => {
+                  console.log("myranking", res);
+                  const myRanking = res.data;
+                  commit("SET_MYRANKING", myRanking);
+                })
+                .catch((err) => {
+                  console.err(err.response.data);
+                });
+            } else {
+              console.log("myranking", res);
+              const myRanking = res.data;
+              commit("SET_MYRANKING", myRanking);
+            }
+          })
+          .catch((err) => {
+            console.error(err.response.data);
+          });
       }
     },
 
-    fetchGameInfo({getters, commit, dispatch}){
+    fetchExerciseInfo({ getters, commit, dispatch }) {
       if (getters.isLoggedIn) {
         axios({
-          url: API_URL + '/users/totalgame',
-          method: 'get',
-          headers: getters.authHeader
-        })
-        .then(res => {
+          url: API_URL + "/users/exercise",
+          method: "get",
+          headers: getters.authHeader,
+        }).then((res) => {
           if (res.headers.authorization) {
-            const newAccessToken = res.headers.authorization
-            const refreshToken = localStorage.getItem('refreshToken') || ''
-            console.log(newAccessToken)
-            dispatch('checkAccessToken', {newAccessToken, refreshToken})
-            console.log(newAccessToken)
-            commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
-            Authorization2: 'Bearer ' + refreshToken})
+            const newAccessToken = res.headers.authorization;
+            const refreshToken = localStorage.getItem("refreshToken") || "";
+            console.log(newAccessToken);
+            dispatch("checkAccessToken", { newAccessToken, refreshToken });
+            console.log(newAccessToken);
+            commit("SET_AUTH_HEADER", {
+              Authorization: "Bearer " + newAccessToken,
+              Authorization2: "Bearer " + refreshToken,
+            });
             axios({
-              url: API_URL + '/users/totalgame',
-              method: 'get',
-              headers: getters.authHeader
+              url: API_URL + "/users/exercise",
+              method: "get",
+              headers: getters.authHeader,
             })
-            .then(res => {
-              console.log('tot', res)
-              const gameInfo = res.data
-              commit('SET_GAME_INFO', gameInfo)
-            })
-            .catch(err => {
-              console.err(err.response.data)
-            })
+              .then((res) => {
+                console.log("ex", res);
+                const exerciseInfo = res.data;
+                commit("SET_USER_EXERCISE", exerciseInfo);
+              })
+              .catch((err) => {
+                console.log(err.response.data);
+              });
           } else {
-            console.log(res)
-            const gameInfo = res.data
-            commit('SET_GAME_INFO', gameInfo)
+            console.log(res);
+            const exerciseInfo = res.data;
+            commit("SET_USER_EXERCISE", exerciseInfo);
           }
-        })
+        });
       }
     },
 
-
+    fetchGameInfo({ getters, commit, dispatch }) {
+      if (getters.isLoggedIn) {
+        axios({
+          url: API_URL + "/users/totalgame",
+          method: "get",
+          headers: getters.authHeader,
+        }).then((res) => {
+          if (res.headers.authorization) {
+            const newAccessToken = res.headers.authorization;
+            const refreshToken = localStorage.getItem("refreshToken") || "";
+            console.log(newAccessToken);
+            dispatch("checkAccessToken", { newAccessToken, refreshToken });
+            console.log(newAccessToken);
+            commit("SET_AUTH_HEADER", {
+              Authorization: "Bearer " + newAccessToken,
+              Authorization2: "Bearer " + refreshToken,
+            });
+            axios({
+              url: API_URL + "/users/totalgame",
+              method: "get",
+              headers: getters.authHeader,
+            })
+              .then((res) => {
+                console.log("tot", res);
+                const gameInfo = res.data;
+                commit("SET_GAME_INFO", gameInfo);
+              })
+              .catch((err) => {
+                console.err(err.response.data);
+              });
+          } else {
+            console.log(res);
+            const gameInfo = res.data;
+            commit("SET_GAME_INFO", gameInfo);
+          }
+        });
+      }
+    },
 
     changeImg({ getters }, img) {
       if (getters.isLoggedIn) {
@@ -374,7 +380,7 @@ export default {
 
     signup({ commit }, credentials) {
       axios({
-        url: API_URL + "/users",
+        url: API_URL + "/users/register",
         method: "post",
         data: credentials,
       })
