@@ -18,6 +18,8 @@ public interface UserService {
 
 	User getUserByUserId(String userId);
 
+	User getUserByNick(String nick);
+
 	List<User> getRankingList();
 
 	void setMyImage(String image);
