@@ -1,76 +1,54 @@
-import axios from 'axios'
-import { API_BASE_URL } from '@/config';
+import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
+import router from '@/router';
 
-const API_URL = API_BASE_URL + '/api/v1';
+const room = {
+    namespaced: true,
+    state: {
+        room: {},
+        roomJoin: false,
+    },
+    getters: {},
+    mutations: {
+        SET_ROOM: (state, room) => {
+            state.room = room;
+        },
+    },
+    actions: {
+        roomCreate({ rootState, commit }, roomInfo) {
+            createRoomApi(
+                { token: rootState.auth.token, roomInfo },
+                ({ data }) => {
+                    commit("SET_ROOM", data);
+                    router.push("/waiting/"+ data.token);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        },
+        leaveRoom({ rootState }, joinInfo) {
+            leaveRoomApi(
+                { token: rootState.auth.token, joinInfo },
+                ({ data }) => {
+                    console.log(data);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        },
+        joinRoom({ rootState, commit }, mySessionId, userName) {
+            setRoomUserApi(
+                { token: rootState.auth.token, mySessionId, userName },
+                ({ data }) => {
+                    commit("SET_ROOM", data);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+        },
+    },
+};
 
-export default {
-  namespaced: false,
-  state: {
-    roomCreate : false,
-    roomInfo : {
-      name: '',
-      host: '',
-      roomSize: '',
-      gameNo: 1,
-      isPrivate: false,
-    },
-    roomJoin : false,
-    joinInfo : {
-      roomCode: '',
-      userName: ''
-    },
-    predictionData: {left:0, right:0},
-  },
-  getters: {
-    roomCreate: state => state.roomCreate,
-    roomInfo: state => state.roomInfo,
-    roomJoin: state => state.roomJoin,
-    joinInfo: state => state.joinInfo,
-    predictionData: state => state.predictionData
-  },
-  mutations: {
-    SET_ROOMCREATE: (state) => {state.roomCreate = true},
-    SET_ROOMCLOSE: (state) => {
-      state.roomCreate = false
-      state.roomJoin = false
-    },
-    SET_ROOMINFO: (state, roomInfo) => {state.roomInfo = roomInfo},
-    SET_ROOMJOIN: (state) => {state.roomJoin = true},
-    SET_JOININFO: (state, joinInfo) => {state.joinInfo = joinInfo},
-    SET_PREDICTION: (state, predictionData) => {state.predictionData = predictionData}
-  },
-  actions: {
-    setRoomCreate ({ commit }, roomInfo) {
-      commit('SET_ROOMCREATE')
-      commit('SET_ROOMINFO', roomInfo)
-    },
-    setRoomClose ({ commit }) {
-      commit('SET_ROOMCLOSE')
-    },
-    setRoomJoin ({ commit, getters }, roomCode) {
-      commit('SET_ROOMJOIN')
-      const joinInfo = {
-          roomCode: roomCode,
-          userName: getters.getUser.nick,
-      }
-      commit('SET_JOININFO', joinInfo)
-    },
-    setPrediction({commit}, predictionData) {
-      commit('SET_PREDICTION', predictionData)
-    },
-    leaveRoom ({ getters }, joinInfo) {
-      axios({
-        url: API_URL + '/rooms/leave-room',
-        method: 'post',
-        data: joinInfo,
-        headers: getters.authHeader
-      })
-      .then( (res) => {
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-    },
-  }
-}
+export default room;

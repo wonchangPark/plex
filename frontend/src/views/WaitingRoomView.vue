@@ -24,7 +24,7 @@
         </div>
         <div
           class="d-flex justify-center align-center"
-          style="flex: 0 0 80%; height: 80%"
+          style="flex: 1 1 80%; height: 80%"
         >
           <UserList></UserList>
         </div>
@@ -65,7 +65,7 @@ import ChattingList from "@/components/WaitingRoom/ChattingList.vue"
 import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue"
 import UserData from "@/components/WaitingRoom/UserData.vue"
 
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "WaitingRoomView",
@@ -83,8 +83,8 @@ export default {
 </script>
 <style scoped>
 #waiting-room {
-  width: 100%;
-  height: 100%;
-  display: flex;
+    width: 100%;
+    height: 100%;
+    display: flex;
 }
 </style>

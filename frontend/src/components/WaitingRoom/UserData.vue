@@ -3,16 +3,16 @@
   <v-container >
     <v-row>
       <v-col>
-        <DataBox :number="userGameInfo.totalCnt" string="게임"></DataBox>
+        <DataBox :number="userGameInfo.totalCnt ? userGameInfo.totalCnt : 0" string="게임"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userGameInfo.winCnt" string="승"></DataBox>
+        <DataBox :number="userGameInfo.winCnt ? userGameInfo.winCnt : 0" string="승"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userGameInfo.loseCnt" string="패"></DataBox>
+        <DataBox :number="userGameInfo.loseCnt ? userGameInfo.loseCnt : 0" string="패"></DataBox>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="userExercise.length">
       <v-col>
         <DataBox :number="userExercise[0].cnt + userExercise[1].cnt" string="운동"></DataBox>
       </v-col>
