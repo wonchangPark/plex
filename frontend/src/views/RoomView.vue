@@ -57,13 +57,13 @@ import UserVideo from "../components/Room/UserVideo.vue";
 import { mapState, mapGetters, mapActions } from "vuex";
 import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
-import GameResultModal from "./GameResultModalView.vue";
+import GameResultModal from "./RunningGameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-//const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
-const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+//const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 export default {
