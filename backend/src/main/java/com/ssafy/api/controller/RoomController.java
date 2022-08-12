@@ -61,7 +61,7 @@ public class RoomController {
 	@Transactional
 	public ResponseEntity<?> createRoom(@RequestBody RoomCreatePostReq roomInfo) {
 		String code = RandomRoomCode.generateRandomCode();
-		System.out.println(code);
+		System.out.println(roomInfo.getName() + roomInfo.getHost() + roomInfo.getIsPrivate());
 		Room room = roomService.createRoom(roomInfo, code);
 		User user = userService.getUserByUserId(roomInfo.getHost());
 		roomUserService.createRoomUser(user, room);

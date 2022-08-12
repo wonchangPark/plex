@@ -1,9 +1,13 @@
 package com.ssafy.api.controller;
 
+import com.ssafy.vo.RoomSocketVo;
 import com.ssafy.vo.SocketVO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.converter.SimpleMessageConverter;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +18,12 @@ import java.util.HashSet;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/ws")
 public class ChatController {
-    List<String> userList = new ArrayList<>();
     HashSet<String> userSet = new HashSet<>();
+
+    private final SimpMessagingTemplate template;
 
     @MessageMapping("/receive")
     @SendTo("/send")
@@ -37,6 +43,11 @@ public class ChatController {
             result = new SocketVO(userName, content, type);
         }
         return result;
+    }
+
+    @MessageMapping("/room")
+    public void roomSocketHandler(RoomSocketVo socketVo){
+        template.convertAndSend("/send/"+socketVo.getRoomId(), socketVo);
     }
 
     @RequestMapping("/users")
