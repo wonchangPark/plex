@@ -64,7 +64,11 @@ public class RoomController {
 		System.out.println(roomInfo.getName() + roomInfo.getHost() + roomInfo.getIsPrivate());
 		Room room = roomService.createRoom(roomInfo, code);
 		User user = userService.getUserByUserId(roomInfo.getHost());
-		roomUserService.createRoomUser(user, room);
+		try {
+			roomUserService.createRoomUser(user, room);
+		} catch (Exception e) {
+			return ResponseEntity.status(403).build();
+		}
 
 		// The video-call to connect
 		String sessionName = code;
@@ -134,9 +138,12 @@ public class RoomController {
 	public ResponseEntity<?> getToken(@RequestBody RoomJoinPostReq joinInfo)
 			throws ParseException {
 		Room room = roomService.getRoomByCode(joinInfo.getCode());
-		System.out.println(room);
 		User user = userService.getUserByUserId(joinInfo.getId());
-		roomUserService.createRoomUser(user, room);
+		try {
+			roomUserService.createRoomUser(user, room);
+		} catch (Exception e) {
+			return ResponseEntity.status(403).build();
+		}
 
 		System.out.println("Getting a token from OpenVidu Server | {sessionName}=" + joinInfo.getCode());
 

@@ -25,8 +25,8 @@ public class UserRes extends BaseResponseBody{
 	String nick;
 	@ApiModelProperty(name="user_email", example="ssafy@naver.com")
 	String email;
-	@ApiModelProperty(name="user_totalscore", example="1100")
-	Long totalScore;
+	@ApiModelProperty(name="user_img", example="@/assets/aaa.png")
+	String img;
 	
 	public static UserRes of(Integer statusCode, String message, User user) {
 		UserRes res = new UserRes();
@@ -36,7 +36,7 @@ public class UserRes extends BaseResponseBody{
 		res.setUserId(user.getUserId());
 		res.setNick(user.getNick());
 		res.setEmail(user.getEmail());
-		res.setTotalScore(user.getTotalScore());
+		res.setImg(user.getImg());
 		return res;
 	}
 }

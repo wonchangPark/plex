@@ -53,12 +53,9 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByUserId(userId); // 없다면 null이 들어감
 	}
 
-	@Override
-	public List<User> getRankingList(){
-		return userRepository.getRankingList();
-	}
 
 	@Override
+	@Transactional
 	public void setMyImage(String image){
 		userRepository.setMyImage(image);
 	}

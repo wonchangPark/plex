@@ -16,13 +16,13 @@
           </v-row>
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">300</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userGameInfo.totalCnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">200</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userGameInfo.winCnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">100</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userGameInfo.loseCnt}}</div>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-center">
@@ -33,29 +33,32 @@
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">스쿼트</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">버피테스트</div>
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">달리기</div>
             </v-col>
           </v-row>
-          <v-row class="d-flex justify-center">
+          <!-- <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">300</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0" >0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else >{{userExercise[0].cnt + userExercise[1].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">200</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else >{{userExercise[0].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">100</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0" >0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userExercise[1].cnt}}</div>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row class="d-flex justify-center align-center">
             <v-col class="text-center" cols="3">
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">랭킹</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#1</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#0</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">1250</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">0</div>
             </v-col>
             <v-col class="text-center" cols="3">
               <v-btn text>
@@ -70,9 +73,30 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'GameInfoBox',
-  
+  computed: {
+    ...mapGetters([
+      'isLoggedIn',
+      'authHeader',
+      'userExercise',
+      'userGameInfo',
+      'getUser',
+      'myRanking'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'fetchExerciseInfo',
+      'fetchGameInfo',
+      'fetchMyRanking'
+    ])
+  },
+  created(){
+    this.fetchExerciseInfo(),
+    this.fetchGameInfo()
+  }
 }
 </script>
 

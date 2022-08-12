@@ -64,6 +64,11 @@ const routes = [
     name: "runningroom",
     component: RunningRoom,
   },
+  {
+    path: "/runningroom",
+    name: "runningroom",
+    component: RunningRoom,
+  },
 ];
 
 const router = new VueRouter({

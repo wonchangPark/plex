@@ -28,6 +28,7 @@
     "vuetify": "^2.6.0",
     "vuetify-loader": "^1.7.0",
     "vuex": "^3.6.2",
+    "vuex-persistedstate": "^4.1.0",
     "webstomp-client": "^1.2.6",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.71"

@@ -1,6 +1,7 @@
 package com.ssafy.db.entity;
 
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class ScoreHistory {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "scorehistory_no")
     private Long no;
 
@@ -22,6 +23,7 @@ public class ScoreHistory {
     private GameHistory gameHistory;
 
     @Column(name = "scorehistory_score")
+    @ColumnDefault("0")
     private Long score;
 
     @Column(name = "scorehistory_teamno")

@@ -18,8 +18,6 @@ public interface UserService {
 
 	User getUserByUserId(String userId);
 
-	List<User> getRankingList();
-
 	void setMyImage(String image);
 
 	List<UserExerciseRes> getMyTotalExercise(User user);

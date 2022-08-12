@@ -37,9 +37,9 @@ const roomStore = {
     },
     actions: {
         getRooms: ({ commit, rootState }, page) => {
-            console.log({ page, token: rootState.auth.token });
+            console.log({ page, accessToken: rootState.auth.accessToken });
             rooms(
-                { page, token: rootState.auth.token },
+                { page, accessToken: rootState.auth.accessToken, refreshToken: rootState.auth.refreshToken},
                 ({ data }) => {
                     console.log(data);
                     commit("SET_ROOMS", data);

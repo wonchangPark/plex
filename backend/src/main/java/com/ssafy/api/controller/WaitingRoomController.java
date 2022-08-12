@@ -33,8 +33,8 @@ public class WaitingRoomController {
     public ResponseEntity<HashMap<String, Object>> getAvailableRoomList(@PathVariable @ApiParam(value = "현재 방페이지", required = true) int page){
         System.out.println("controller on");
         int lastPage = (int) Math.ceil(waitingRoomService.getAvailableRoomCount()/3.0);
-        if(page > lastPage)
-            page = lastPage;
+        if(lastPage == 0) page = 1;
+        else if(page > lastPage) page = lastPage;
         HashMap<String, Object> map = new HashMap<>();
         map.put("rooms", waitingRoomService.getAvailableRoomList(page));
         map.put("lastPage", lastPage);

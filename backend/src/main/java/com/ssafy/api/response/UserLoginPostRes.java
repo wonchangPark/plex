@@ -25,8 +25,8 @@ public class UserLoginPostRes extends BaseResponseBody{
 	String nick;
 	@ApiModelProperty(name="user_email", example="ssafy@naver.com")
 	String email;
-	@ApiModelProperty(name="user_totalscore", example="1100")
-	Long totalScore;
+	@ApiModelProperty(name="user_img", example="@/assets/aaa.png")
+	String img;
 	@ApiModelProperty(name="JWT 인증 토큰", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN...")
 	String accessToken;
 	String refreshToken;
@@ -39,7 +39,7 @@ public class UserLoginPostRes extends BaseResponseBody{
 		res.setUserId(user.getUserId());
 		res.setNick(user.getNick());
 		res.setEmail(user.getEmail());
-		res.setTotalScore(user.getTotalScore());
+		res.setImg(user.getImg());
 		res.setAccessToken(accessToken);
 		res.setRefreshToken(refreshToken);
 		return res;
