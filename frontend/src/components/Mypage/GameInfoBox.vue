@@ -16,13 +16,13 @@
           </v-row>
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{totalGameList.totalCnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userGameInfo.totalCnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{totalGameList.winCnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userGameInfo.winCnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{totalGameList.loseCnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userGameInfo.loseCnt}}</div>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-center">
@@ -36,26 +36,29 @@
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">달리기</div>
             </v-col>
           </v-row>
-          <v-row class="d-flex justify-center">
+          <!-- <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{exerciseList[0].cnt + exerciseList[1].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0" >0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else >{{userExercise[0].cnt + userExercise[1].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{exerciseList[0].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else >{{userExercise[0].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{exerciseList[1].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0" >0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{userExercise[1].cnt}}</div>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row class="d-flex justify-center align-center">
             <v-col class="text-center" cols="3">
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">랭킹</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#{{myRanking.rank}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#0</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">{{myRanking.score}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">0</div>
             </v-col>
             <v-col class="text-center" cols="3">
               <v-btn text>
@@ -77,23 +80,22 @@ export default {
     ...mapGetters([
       'isLoggedIn',
       'authHeader',
-      'exerciseList',
-      'totalGameList',
+      'userExercise',
+      'userGameInfo',
       'getUser',
       'myRanking'
     ])
   },
   methods: {
     ...mapActions([
-      'fetchExercise',
-      'fetchTotalGame',
+      'fetchExerciseInfo',
+      'fetchGameInfo',
       'fetchMyRanking'
     ])
   },
   created(){
-    this.fetchExercise(),
-    this.fetchTotalGame(),
-    this.fetchMyRanking(this.getUser.no)
+    this.fetchExerciseInfo(),
+    this.fetchGameInfo()
   }
 }
 </script>

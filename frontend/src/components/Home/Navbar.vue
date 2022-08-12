@@ -11,9 +11,8 @@
       <template v-slot:activator="{ on }">
           <v-btn icon v-on="on" @click="fetchUserInfo">
               <v-avatar color="white" size="35">
-                <img
-                  :src="require(`@/assets/profile/${getUser.img}.png`)"
-                  alt="profile">
+                <img v-if="getUser.img" :src="require(`@/assets/profile/${getUser.img}.png`)" alt="profile">
+                <img v-else src="@/assets/profile/test.png" alt="chick">
               </v-avatar>
           </v-btn>
       </template>
@@ -21,11 +20,10 @@
       <v-card color="brown" width="15vw">
           <v-list-item-content class="justify-center">
               <div class="mx-auto text-center">
-                  <v-avatar color="white" size="62">
-                    <img
-                      :src="require(`@/assets/profile/${getUser.img}.png`)"
-                      alt="profile">
-                  </v-avatar>
+                <v-avatar color="white" size="50">
+                <img v-if="this.getUser.img" :src="require(`@/assets/profile/${getUser.img}.png`)" alt="profile">
+                <img v-else src="@/assets/profile/test.png" alt="chick">
+              </v-avatar>
                   <br>
                   <div class="menu-name">
                     <h4 class="white--text">{{ getUser.nick }}</h4>
@@ -47,20 +45,21 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'NavBar',
   components: {
     },
   data () {
       return {
-        dialog: false,
+        dialog: false
       }
   },
   methods: {
     ...mapActions([
       'logout',
       'fetchUserInfo'
-      ])
+      ]),
   },
   computed: {
     ...mapGetters([

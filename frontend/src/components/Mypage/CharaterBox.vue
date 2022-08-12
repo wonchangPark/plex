@@ -1,10 +1,11 @@
 <template>
   <div class="character-box d-flex justify-center">
-    <ContentBox :height="50" :width="100">
+    <ContentBox :height="100" :width="100">
       <div class="d-flex flex-column">
 
-      <div class="d-flex justify-center align-self-center" style="width: 80%; height: 80%;">
-        <img :src="require(`@/assets/profile/${getUser.img}.png`)" alt="chick">
+      <div class="d-flex justify-center align-self-center" style="height: 80%; width: 80%;">
+        <img v-if="getUser.img" :src="require(`@/assets/profile/${getUser.img}.png`)" alt="profile">
+        <img v-else src="@/assets/profile/test.png" alt="chick">
       </div>
         <div class="d-flex justify-center">
            <CharacterSelectionModal>
@@ -28,7 +29,6 @@ export default {
   },
   data(){
     return {
-      imgName: String(this.getUser.img)
     }
   },
   computed: {
@@ -44,7 +44,7 @@ export default {
 </script>
 
 <style>
-.character-box img {
+/* .character-box img {
   width: 200px;
-}
+} */
 </style>

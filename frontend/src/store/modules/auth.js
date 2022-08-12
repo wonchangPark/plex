@@ -35,6 +35,7 @@ export default {
     userGameInfo: (state) => state.userGameInfo,
     myRanking: state => state.myRanking
   },
+
   mutations: {
     SET_USER: (state, user) => state.user = user,
     SET_LOGINMODAL: (state, loginModal) => state.loginModal = loginModal,
@@ -69,16 +70,6 @@ export default {
     checkAccessToken({dispatch}, {accessToken, refreshToken}){
       dispatch('saveToken', {accessToken, refreshToken})
     },
-    // checkAuthorization(){
-    //   axios({
-    //     headers: getters.authHeader
-    //   })
-    //   .then(res => {})
-    //   .catch(err => {
-    //     console.log(err.response.data)
-    //     commit('SET_AUTH_ERROR', err.response.data)
-    //   })
-    // },
 
     fetchUserInfo({ commit, getters, dispatch }) {
       if (getters.isLoggedIn) {
@@ -147,8 +138,6 @@ export default {
             const refreshToken = localStorage.getItem('refreshToken') || ''
             dispatch('checkAccessToken', {newAccessToken, refreshToken})
             console.log(newAccessToken)
-            // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
-            // Authorization2: 'Bearer ' + refreshToken})
             console.log(getters.authHeader)
             axios({
               url: API_URL + '/rank',
@@ -189,8 +178,6 @@ export default {
             const refreshToken = localStorage.getItem('refreshToken') || ''
             dispatch('checkAccessToken', {newAccessToken, refreshToken})
             console.log(newAccessToken)
-            // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
-            // Authorization2: 'Bearer ' + refreshToken})
             console.log(getters.authHeader)
             axios({
               url: API_URL + '/rank/' + no,
@@ -217,7 +204,7 @@ export default {
       }
     },
 
-    fetchExercise({getters, commit, dispatch}){
+    fetchExerciseInfo({getters, commit, dispatch}){
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + '/users/exercise',
@@ -240,22 +227,22 @@ export default {
             })
             .then(res => {
               console.log('ex', res)
-              const exerciseList = res.data
-              commit('SET_EXERCISELIST', exerciseList)
+              const exerciseInfo = res.data
+              commit('SET_USER_EXERCISE', exerciseInfo)
             })
             .catch(err => {
               console.log(err.response.data)
             })
           } else {
             console.log(res)
-            const exerciseList = res.data
-            commit('SET_EXERCISELIST', exerciseList)
+            const exerciseInfo = res.data
+            commit('SET_USER_EXERCISE', exerciseInfo)
           }
         })
       }
     },
 
-    fetchTotalGame({getters, commit, dispatch}){
+    fetchGameInfo({getters, commit, dispatch}){
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + '/users/totalgame',
@@ -278,57 +265,22 @@ export default {
             })
             .then(res => {
               console.log('tot', res)
-              const totalGameList = res.data
-              commit('SET_TOTALGAMELIST', totalGameList)
+              const gameInfo = res.data
+              commit('SET_GAME_INFO', gameInfo)
             })
             .catch(err => {
               console.err(err.response.data)
             })
           } else {
             console.log(res)
-            const totalGameList = res.data
-            commit('SET_TOTALGAMELIST', totalGameList)
+            const gameInfo = res.data
+            commit('SET_GAME_INFO', gameInfo)
           }
         })
       }
     },
 
 
-    fetchExerciseInfo({ commit, getters }) {
-      if (getters.isLoggedIn) {
-        axios({
-          url: API_URL + "/users/exercise",
-          method: "get",
-          headers: getters.authHeader,
-        })
-          .then((res) => {
-            console.log(res);
-            const exerciseInfo = res.data;
-            commit("SET_USER_EXERCISE", exerciseInfo);
-          })
-          .catch((err) => {
-            console.error(err.response.data);
-          });
-      }
-    },
-
-    fetchGameInfo({ commit, getters }) {
-      if (getters.isLoggedIn) {
-        axios({
-          url: API_URL + "/users/totalgame",
-          method: "get",
-          headers: getters.authHeader,
-        })
-          .then((res) => {
-            console.log(res);
-            const gameInfo = res.data;
-            commit("SET_GAME_INFO", gameInfo);
-          })
-          .catch((err) => {
-            console.error(err.response.data);
-          });
-      }
-    },
 
     changeImg({ getters }, img) {
       if (getters.isLoggedIn) {
