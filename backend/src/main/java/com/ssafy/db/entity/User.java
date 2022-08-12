@@ -47,9 +47,6 @@ public class User {
     @Column(name = "user_image")
     private String img;
 
-    @Column(name = "user_totalscore")
-    private Long totalScore;
-
     protected User() {
 
     }

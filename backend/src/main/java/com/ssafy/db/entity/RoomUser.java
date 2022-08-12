@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 public class RoomUser {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roomuser_no")
     private Long no;
 
