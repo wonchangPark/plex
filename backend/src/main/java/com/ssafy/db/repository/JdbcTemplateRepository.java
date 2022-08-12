@@ -70,6 +70,7 @@ public class JdbcTemplateRepository {
                 "where user_no = ? " +
                 "group by sh.user_no";
         List<UserTotalGameCntRes> list = jdbcTemplate.query(query, userTotalGameCntResRowMapper(), userNo);
+        if(list.isEmpty()) return new UserTotalGameCntRes(0L,0L,0L);
         return list.get(0);
     }
 
