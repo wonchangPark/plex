@@ -24,7 +24,7 @@
         </div>
         <div
           class="d-flex justify-center align-center"
-          style="flex: 0 0 80%; height: 80%"
+          style="flex: 1 1 80%; height: 80%"
         >
           <UserList></UserList>
         </div>
