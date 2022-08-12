@@ -60,8 +60,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             // 로그인
             filterChain.doFilter(request, response);
             return;
-        } else if (request.getMethod().equals("POST") && path.contains("/users")) {
+        } else if (request.getMethod().equals("POST") && path.contains("/users/register")) {
             // 회원가입
+            filterChain.doFilter(request, response);
+            return;
+        } else if(request.getMethod().equals("POST") && path.contains("/check")){
             filterChain.doFilter(request, response);
             return;
         } else if (path.contains("/ws")) {

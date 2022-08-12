@@ -56,8 +56,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public void setMyImage(String image){
-		userRepository.setMyImage(image);
+	public void setMyImage(User user, String image){
+		userRepository.setMyImage(user, image);
 	}
 
 	@Override
