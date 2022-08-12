@@ -29,8 +29,8 @@ export default {
 #v-app {
     background-image: url(./assets/castle.jpg);
     margin: 0;
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     background-size: cover;
 }
 
