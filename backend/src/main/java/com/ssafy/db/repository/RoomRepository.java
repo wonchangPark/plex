@@ -58,7 +58,7 @@ public class RoomRepository {
     }
 
     public Long getGameNo(long roomNo){
-        List<GameHistory> list = em.createQuery("select gh from GameHistory gh where gh.room = :roomNo", GameHistory.class)
+        List<GameHistory> list = em.createQuery("select gh from GameHistory gh where gh.room.no = :roomNo", GameHistory.class)
                 .setParameter("roomNo", roomNo).setMaxResults(1).getResultList();
         return list.get(0).getNo();
     }
