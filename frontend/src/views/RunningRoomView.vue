@@ -62,8 +62,14 @@ import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
+//테스트 (오른손/왼손)
 //const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
-const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+
+// 스쿼트
+//const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+
+//런지
+const URL = "https://teachablemachine.withgoogle.com/models/jU1Vcn59o/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 let gameEnd = false;
 
