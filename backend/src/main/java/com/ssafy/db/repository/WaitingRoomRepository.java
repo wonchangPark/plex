@@ -17,7 +17,6 @@ public class WaitingRoomRepository {
     public List<RoomInfoRes> getCurrentRoomList(int from){
 
         // N+1 문제 안일어남
-
         return em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
                 "from Room r, RoomUser ru " +
                 "where r = ru.room and r.endTime is null " +
