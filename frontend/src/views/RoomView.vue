@@ -134,8 +134,8 @@ export default {
       status: 0, // 동작 인식 상태
       team1: [], // 팀 정보
       team2: [],
-      team3: ["han", "TESTKJH", "콩"], 
-      team4: ["zzz", "990129", "정예원"],
+      team3: ["han", "TESTKJH", "대충살어"], 
+      team4: ["zzz", "990129", "콩"],
       personalScore: {}, // 개인별 점수,
       score1: 0, // 팀별 점수
       score2: 0,
