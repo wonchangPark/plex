@@ -16,10 +16,11 @@ const room = {
     actions: {
         roomCreate({ rootState, commit }, roomInfo) {
             createRoomApi(
-                { token: rootState.auth.token, roomInfo },
+                { headers: rootState.auth.authHeader, roomInfo },
                 ({ data }) => {
+                    console.log(data);
                     commit("SET_ROOM", data);
-                    router.push("/waiting/"+ data.token);
+                    router.push("/waiting/"+ data.code);
                 },
                 (error) => {
                     console.log(error);
