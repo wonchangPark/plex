@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class GameHistory {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gamehistory_no")
     private Long no;
 

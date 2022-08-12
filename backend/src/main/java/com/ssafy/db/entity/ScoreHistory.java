@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class ScoreHistory {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "scorehistory_no")
     private Long no;
 
