@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-main>
-            <div id="v-app" class="no-scrollbars">
+            <div id="v-app">
                 <v-container id="v-container">
                     <div id="header">
                         <Navbar></Navbar>

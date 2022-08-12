@@ -35,6 +35,7 @@
                 <v-btn color="primary" elevation="0" 
                 class="page-btn black--text align-self-center" 
                 style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"
+                @submit.prevent="closeDialog"
                 type="submit"> 
                 캐릭터 변경 </v-btn>
             </v-container>

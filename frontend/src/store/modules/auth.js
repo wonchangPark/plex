@@ -296,13 +296,6 @@ export default {
           .catch((err) => {
             console.error(err.response.data);
           });
-        //   axios.post(API_URL+'/users/image', {imgData: img, headers: getters.authHeader})
-        //   .then((req) => {
-        //     console.log(req)
-        //   })
-        //   .catch(err => {
-        //     console.error(err.response.data)
-        //   })
       }
     },
 
