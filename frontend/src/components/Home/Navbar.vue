@@ -45,7 +45,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-
 export default {
   name: 'NavBar',
   components: {
