@@ -11,7 +11,8 @@ import RunningRoom from "@/views/RunningRoomView.vue";
 
 // import GameRoom from "@/views/RunningRoomView.vue";
 // import RunningRoom from "@/views/RoomView.vue";
-
+import RoomList from "@/components/WaitingRoom/RoomList.vue";
+import RoomUserList from "@/components/WaitingRoom/RoomUserList.vue";
 
 import Mypage from "@/views/MypageView.vue";
 import SignUp from "@/views/SignupView.vue";
@@ -32,11 +33,10 @@ const routes = [
     },
     {
         path: "/waiting",
-        name: "waiting",
         component: WaitingRoom,
         children: [
-            { path: "", name: "RoomList", component: () => import("@/components/WaitingRoom/RoomList.vue") },
-            { path: ":roomId", name: "RoomUserList", component: () => import("@/components/WaitingRoom/RoomUserList.vue") },
+            { path: "", name: "waiting", component: RoomList },
+            { path: ":roomId", name: "RoomUserList", component: RoomUserList },
         ],
     },
     {
@@ -59,16 +59,11 @@ const routes = [
         name: "rank",
         component: Rank,
     },
-  {
-    path: "/runningroom",
-    name: "runningroom",
-    component: RunningRoom,
-  },
-  {
-    path: "/runningroom",
-    name: "runningroom",
-    component: RunningRoom,
-  },
+    {
+        path: "/runningroom",
+        name: "runningroom",
+        component: RunningRoom,
+    },
 ];
 
 const router = new VueRouter({
