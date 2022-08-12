@@ -1,5 +1,5 @@
 <template>
-    <content-box :height="90" :width="90">
+    <content-box :height="100" :width="100">
         <div class="d-flex flex-row" style="width: 100%; height: 100%">
             <div class="d-flex flex-column" style="width: 75%; height: 100%">
                 <div class="room-user-grid-wrap">

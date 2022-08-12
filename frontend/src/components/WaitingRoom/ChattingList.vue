@@ -1,5 +1,5 @@
 <template>
-    <ContentBox class="chatting-list" :height="90" :width="80">
+    <ContentBox class="chatting-list" :height="90" :width="100">
         <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
             <div class="d-flex flex-column" style="height: 87%; width: 100%">
                 <div class="d-flex flex-column chatting-list-box" ref="chattingListBox">
