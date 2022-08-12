@@ -7,6 +7,11 @@
                     <div id="Main" class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo animate__heartBeat">{{WhoWins()}}</div>
                     <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">
                         <div class="d-flex flex-column align-center">
+                            <br>
+                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="player">{{ idx + 1 }}</div>
+                            <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
+                        </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="d-flex flex-column align-center">
                             NICKNAME
                             <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="player in allScore" v-bind:key="player">{{ player.name }}</div>
                             <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
