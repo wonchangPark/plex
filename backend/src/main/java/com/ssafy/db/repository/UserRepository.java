@@ -57,12 +57,6 @@ public class UserRepository {
         return em.createQuery("select u from User u", User.class).getResultList();
     }
 
-    public List<User> getRankingList() {
-        return em.createQuery(
-                "select u from User u order by u.totalScore", User.class
-        ).getResultList();
-    }
-
     public int setMyImage(String image){
         int result = em.createQuery("update User u set u.img = :img")
                 .setParameter("img", image).executeUpdate();
