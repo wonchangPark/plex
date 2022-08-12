@@ -33,7 +33,6 @@ public class WaitingRoomServiceImpl implements WaitingRoomService{
 
     @Override
     public List<RoomInfoRes> getAvailableRoomList(int page) {
-        System.out.println("service on");
         int from = (page-1) * NUMPERPAGEFORROOM;
         return waitingRoomRepository.getCurrentRoomList(from);
     }

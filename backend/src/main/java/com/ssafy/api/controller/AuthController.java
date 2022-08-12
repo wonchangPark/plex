@@ -1,10 +1,12 @@
 package com.ssafy.api.controller;
 
+import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.db.repository.OAuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,6 +75,8 @@ public class AuthController {
 			HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
 			hashOperations.put(userId, "accessToken",accessToken);
 			hashOperations.put(userId, "refreshToken",refreshToken);
+			System.out.println(hashOperations.get(userId, "accessToken"));
+			System.out.println(hashOperations.get(userId, "refreshToken"));
 
 
 //			OAuth oAuth = new OAuth(userId, accessToken, refreshToken); // db에 저장
@@ -87,5 +91,13 @@ public class AuthController {
 		return ResponseEntity.status(401).body(UserLoginPostRes.of(401, "Invalid Password",null, null, null));
 	}
 
-	
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(){
+		SsafyUserDetails userDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = userDetails.getUser();
+		HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+		hashOperations.delete(user.getUserId(), "accessToken", "refreshToken");
+		return ResponseEntity.status(200).build();
+	}
+
 }

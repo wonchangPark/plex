@@ -12,17 +12,14 @@ module.exports = {
     port: 8083,
     open: true,
     proxy: {
-      '/api/v1': {
-        target: 'https://localhost:8080/'
-      }
+      "/api/v1": {
+        target: "https://localhost:8080/",
+      },
     },
     historyApiFallback: true,
-    hot: true
+    hot: true,
   },
-  transpileDependencies: [
-    'element-plus',
-    'vuetify'
-  ],
+  transpileDependencies: ["element-plus", "vuetify"],
   lintOnSave: false,
-  outputDir: '../backend/src/main/resources/dist'
-}
+  outputDir: "../backend/src/main/resources/dist",
+};

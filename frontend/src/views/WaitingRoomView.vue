@@ -40,7 +40,18 @@
           class="d-flex justify-center align-center"
           style="flex: 1 1 45%; height: 45%"
         >
-          <ChattingList></ChattingList>
+          <div
+            class="d-flex justify-center align-center"
+            style="flex: 1 1 45%; height: 90%"
+          >
+            <UserData></UserData>
+          </div>
+          <div
+            class="d-flex justify-center align-center"
+            style="flex: 1 1 45%; height: 90%"
+          >
+            <ChattingList></ChattingList>
+          </div>
         </div>
       </div>
     </div>
@@ -52,12 +63,13 @@ import UserList from "@/components/WaitingRoom/UserList.vue"
 import RoomList from "@/components/WaitingRoom/RoomList.vue"
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue"
 import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue"
+import UserData from "@/components/WaitingRoom/UserData.vue"
 
 import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "WaitingRoomView",
-  components: { UserList, RoomList, ChattingList, CreateRoomDialog },
+  components: { UserList, RoomList, ChattingList, CreateRoomDialog, UserData },
   methods: {
     ...mapActions(['setRoomCreate']),
     rankBtn() {
