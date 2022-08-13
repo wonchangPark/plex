@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import {Scene} from 'phaser';
 import Player from '../assets/test_player.png';
 import Player2 from '../assets/chick.png';
@@ -498,5 +498,4 @@ class BootScene extends Scene {
     }
 }
 
->>>>>>> origin/myData
 export default BootScene;
