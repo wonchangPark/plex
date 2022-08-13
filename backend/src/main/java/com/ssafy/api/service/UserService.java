@@ -22,9 +22,7 @@ public interface UserService {
 
 	User getUserByNick(String nick);
 
-	List<User> getRankingList();
-
-	void setMyImage(String image);
+	void setMyImage(User user, String image);
 
 	List<UserExerciseRes> getMyTotalExercise(User user);
 

@@ -56,10 +56,9 @@ const room = {
         },
         leaveRoom({ rootState, commit }, joinInfo) {
             leaveRoomApi(
-                { headers: rootState.auth.authHeader, joinInfo},
+                { headers: rootState.auth.authHeader, joinInfo },
                 () => {
-                    commit("INIT_ROOM");
-                    commit("INIT_USERS");
+                    commit("DELETE_USER", joinInfo.id);
                 },
                 (error) => {
                     console.log(error);
@@ -68,7 +67,7 @@ const room = {
         },
         joinRoom({ rootState, commit }, roomCode) {
             setRoomUserApi(
-                { headers: rootState.auth.authHeader, code: roomCode, id: rootState.auth.user.userId },
+                { headers: rootState.auth.authHeader, code: roomCode, id: rootState.auth.user.nick },
                 ({ data }) => {
                     commit("SET_ROOM", data);
                     router.push("/waiting/" + data.code);

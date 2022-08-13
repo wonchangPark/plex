@@ -23,8 +23,6 @@ function setRoomUserApi({ headers, code, id }, success, fail) {
 }
 
 function leaveRoomApi({ headers, joinInfo }, success, fail) {
-    console.log("JoinInfo:");
-    console.log(joinInfo);
     api.post("/api/v1/rooms/leave-room", joinInfo, { headers }).then(success).catch(fail);
 }
 

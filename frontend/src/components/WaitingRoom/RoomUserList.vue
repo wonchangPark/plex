@@ -7,7 +7,7 @@
                 </div>
             </div>
             <div class="d-flex align-center" style="width: 25%; height: 100%">
-                <RoomUserControl></RoomUserControl>
+                <RoomUserControl :stompClient="stompClient"></RoomUserControl>
             </div>
         </div>
     </content-box>
@@ -47,7 +47,7 @@ export default {
         }, {});
     },
     methods: {
-        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS"]),
+        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_UESRS"]),
         ...mapActions(room, ["leaveRoom"]),
         connect() {
             const serverURL = API_BASE_URL + "/api/v1/ws";
@@ -101,6 +101,8 @@ export default {
                 },
             };
             this.send(msg);
+            this.INIT_ROOM();
+            this.INIT_UESRS();
         },
         send(msg) {
             if (this.stompClient && this.stompClient.connected) {
@@ -112,7 +114,6 @@ export default {
                 if (type === "Enter") {
                     this.ADD_USER(user);
                 } else if (type === "Leave") {
-                    this.DELETE_USER(user.nick);
                     let joinInfo = {
                         code: this.room.code,
                         id: user.nick,
