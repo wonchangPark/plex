@@ -19,8 +19,11 @@ public interface UserService {
 
 	User getUserByUserId(String userId);
 
-	@Transactional
-	void setMyImage(User user, String image);
+	User getUserByNick(String nick);
+
+	List<User> getRankingList();
+
+	void setMyImage(String image);
 
 	List<UserExerciseRes> getMyTotalExercise(User user);
 

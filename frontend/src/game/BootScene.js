@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {Scene} from 'phaser';
 import Player from '../assets/test_player.png';
 import Player2 from '../assets/chick.png';
@@ -484,6 +485,8 @@ class BootScene extends Scene {
             this.scene.stop("waitingScene");
             this.scene.stop("runningScene");
             this.scene.stop("ropFightScene");
+            this.scene.stop("runningScene");
+            this.scene.stop("ropFightScene");
             this.scene.start("ropeFightScene");
         }
         else if (idx == 1){
@@ -495,4 +498,5 @@ class BootScene extends Scene {
     }
 }
 
+>>>>>>> origin/myData
 export default BootScene;
