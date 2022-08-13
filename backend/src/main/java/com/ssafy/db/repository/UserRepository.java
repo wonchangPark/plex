@@ -1,6 +1,7 @@
 package com.ssafy.db.repository;
 
 import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserInfoRes;
 import com.ssafy.db.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -69,4 +70,14 @@ public class UserRepository {
                 "group by gc.no", UserExerciseRes.class).setParameter("user", user).getResultList();
     }
 
+    public UserInfoRes getUserByUserNick(String nick) {
+        UserInfoRes userInfoRes = null;
+        try{
+            userInfoRes = em.createQuery("select new com.ssafy.api.response.UserInfoRes(u.no, u.img) " +
+                            "from User u " +
+                            "where u.nick = :nick", UserInfoRes.class)
+                    .setParameter("nick",nick).getSingleResult();
+        } catch (NoResultException ignored){}
+        return userInfoRes;
+    }
 }
