@@ -290,60 +290,60 @@ export default {
       
     },
 
-        sendLeft() {
-            if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
-                this.score1 += 1;
-                this.personalScore[`${event.data}`] += 1;
+    sendLeft() {
+        if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
+            this.score1 += 1;
+            this.personalScore[`${event.data}`] += 1;
 
-                if (this.score1 - this.score2 >= 10) {
-                    this.game.scene.getScene("ropeFightScene").LeftWin();
-                    setTimeout(() => (this.gameFinished = true), 1000);
-                    setTimeout(() => (this.gameFinished = false), 7000);
-                } else {
-                    if (this.score1 > this.score2 + 7) this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
-                    else this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
-                }
+            if (this.score1 - this.score2 >= 10) {
+                this.game.scene.getScene("ropeFightScene").LeftWin();
+                setTimeout(() => (this.gameFinished = true), 1000);
+                setTimeout(() => (this.gameFinished = false), 7000);
+            } else {
+                if (this.score1 > this.score2 + 7) this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
+                else this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
             }
-        },
-        sendRight() {
-            if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
-                this.score2 += 1;
-                this.personalScore[`${event.data}`] += 1;
-                if (this.score2 - this.score1 >= 10) {
-                    this.game.scene.getScene("ropeFightScene").RightWin();
-                    setTimeout(() => (this.gameFinished = true), 1000);
-                    setTimeout(() => (this.gameFinished = false), 7000);
-                } else {
-                    if (this.score2 > this.score1 + 7) this.game.scene.getScene("ropeFightScene").goRightHandler(1);
-                    else this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
-                    //this.game.scene.getScene('ropeFightScene').goRightHandler();
-                }
+        }
+    },
+    sendRight() {
+        if (this.score1 - this.score2 < 10 && this.score1 - this.score2 > -10) {
+            this.score2 += 1;
+            this.personalScore[`${event.data}`] += 1;
+            if (this.score2 - this.score1 >= 10) {
+                this.game.scene.getScene("ropeFightScene").RightWin();
+                setTimeout(() => (this.gameFinished = true), 1000);
+                setTimeout(() => (this.gameFinished = false), 7000);
+            } else {
+                if (this.score2 > this.score1 + 7) this.game.scene.getScene("ropeFightScene").goRightHandler(1);
+                else this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
+                //this.game.scene.getScene('ropeFightScene').goRightHandler();
             }
-        },
-        sendStart() {
-            console.log("게임시작");
-            // console.log(this.$refs.teachable)
-            // this.$refs.teachable.init()
-            // this.init()
-            this.game.scene.getScene("bootScene").StartScene(0);
-            this.game.scene.getScene('ropeFightScene').leftTime = 60;
-            this.game.scene.getScene('ropeFightScene').gameActive = true;
-            this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+        }
+    },
+    sendStart() {
+        console.log("게임시작");
+        // console.log(this.$refs.teachable)
+        // this.$refs.teachable.init()
+        // this.init()
+        this.game.scene.getScene("bootScene").StartScene(0);
+        this.game.scene.getScene('ropeFightScene').leftTime = 60;
+        this.game.scene.getScene('ropeFightScene').gameActive = true;
+        this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
-            this.dataInit();
-            this.session
-                .signal({
-                    // 게임 시작 송신
-                    data: JSON.stringify({ score1: this.score1, score2: this.score2, personalScore: this.personalScore }), // Any string (optional)
-                    to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-                    type: "gameStart", // The type of message (optional)
-                })
-                .then(() => {
-                    console.log("Message successfully sent");
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+        this.dataInit();
+        this.session
+            .signal({
+                // 게임 시작 송신
+                data: JSON.stringify({ score1: this.score1, score2: this.score2, personalScore: this.personalScore }), // Any string (optional)
+                to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+                type: "gameStart", // The type of message (optional)
+            })
+            .then(() => {
+                console.log("Message successfully sent");
+            })
+            .catch((error) => {
+                console.error(error);
+            });
         },
 
         sendScore() {
