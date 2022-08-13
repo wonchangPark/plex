@@ -21,20 +21,22 @@
         <div v-if="gameType[0] === true" class="primary--text d-flex justify-space-around align-center" style="height: 10%; width: 100%">
             <div style="font-size: 1vw">팀 선택</div>
             <button :class="[team[0] ? 'button-border' : '']" class="team-button" style="background: white" @click="teamEvent(0)"></button>
-            <button :class="[team[1] ? 'button-border' : '']" class="team-button" style="background: #92B6D8" @click="teamEvent(1)"></button>
+            <button :class="[team[1] ? 'button-border' : '']" class="team-button" style="background: #92b6d8" @click="teamEvent(1)"></button>
             <button :class="[team[2] ? 'button-border' : '']" class="team-button" style="background: red" @click="teamEvent(2)"></button>
         </div>
         <div v-if="gameType[1] === true" class="primary--text d-flex justify-space-around align-center" style="height: 10%; width: 100%">
             <div style="font-size: 1vw">개인전</div>
         </div>
         <div class="d-flex flex-column justify-space-around align-center" style="height: 30%; width: 100%">
-            <button class="primary" style="width: 90%; height: 35%; border-radius: 3px">게임시작</button>
+            <button class="primary" style="width: 90%; height: 35%; border-radius: 3px" @click="startEvent">게임시작</button>
             <button class="primary" style="width: 90%; height: 35%; border-radius: 3px">나가기</button>
         </div>
     </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+const room = "room";
 export default {
     name: "RoomUserControl",
     data() {
@@ -43,6 +45,7 @@ export default {
             team: [false, false, false],
         };
     },
+    props: ["stompClient"],
     methods: {
         gameTypeEvent(num) {
             for (let i = 0; i < this.gameType.length; i++) this.gameType[i] = false;
@@ -53,6 +56,22 @@ export default {
             this.team.splice(num, 1, true);
             console.log(this.team);
         },
+        send(msg) {
+            if (this.stompClient && this.stompClient.connected) {
+                this.stompClient.send("/room", JSON.stringify(msg), {});
+            }
+        },
+        startEvent() {
+            let msg = {
+                type: "Start",
+                roomId: this.room.code,
+                users: this.users,
+            };
+            this.send(msg);
+        },
+    },
+    computed: {
+        ...mapState(room, ["users", "room"]),
     },
 };
 </script>

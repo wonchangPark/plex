@@ -3,11 +3,13 @@ package com.ssafy.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class RoomSocketVo {
     private String type;
-    private String userName;
     private String roomId;
-    private String content;
+    private UserVo user;
+    private List<UserVo> users;
 }

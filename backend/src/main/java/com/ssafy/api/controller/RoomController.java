@@ -63,7 +63,7 @@ public class RoomController {
 		String code = RandomRoomCode.generateRandomCode();
 		System.out.println(roomInfo.getName() + roomInfo.getHost() + roomInfo.getIsPrivate());
 		Room room = roomService.createRoom(roomInfo, code);
-		User user = userService.getUserByUserId(roomInfo.getHost());
+		User user = userService.getUserByNick(roomInfo.getHost());
 		try {
 			roomUserService.createRoomUser(user, room);
 		} catch (Exception e) {
@@ -138,7 +138,7 @@ public class RoomController {
 	public ResponseEntity<?> getToken(@RequestBody RoomJoinPostReq joinInfo)
 			throws ParseException {
 		Room room = roomService.getRoomByCode(joinInfo.getCode());
-		User user = userService.getUserByUserId(joinInfo.getId());
+		User user = userService.getUserByNick(joinInfo.getId());
 		try {
 			roomUserService.createRoomUser(user, room);
 		} catch (Exception e) {
@@ -227,7 +227,7 @@ public class RoomController {
 	@PostMapping("/leave-room")
 	public ResponseEntity<BaseResponseBody> leaveRoom(@RequestBody RoomJoinPostReq joinInfo) {
 		Room room = roomService.getRoomByCode(joinInfo.getCode());
-		User user = userService.getUserByUserId(joinInfo.getId());
+		User user = userService.getUserByNick(joinInfo.getId());
 		String host = room.getHost();
 		String id = joinInfo.getId();
 		System.out.println(host);

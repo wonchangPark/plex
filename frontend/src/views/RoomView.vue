@@ -91,7 +91,7 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [null, null, null, null, null],
-			game: undefined,
+	game: undefined,
       mySessionId: "",
       myUserName: "",
       videoMute: false, // 영상 중지

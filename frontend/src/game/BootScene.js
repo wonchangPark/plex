@@ -1,3 +1,4 @@
+
 import {Scene} from 'phaser';
 import Player from '../assets/test_player.png';
 import Player2 from '../assets/chick.png';
@@ -482,6 +483,8 @@ class BootScene extends Scene {
     StartScene(idx) {  
         if (idx == 0){
             this.scene.stop("waitingScene");
+            this.scene.stop("runningScene");
+            this.scene.stop("ropFightScene");
             this.scene.stop("runningScene");
             this.scene.stop("ropFightScene");
             this.scene.start("ropeFightScene");
