@@ -52,6 +52,7 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
+    @Transactional
     public void insertScoreHistory(ScoreHistoryPostReq scoreHistoryPostReq){
         long userNo = scoreHistoryPostReq.getUserNo();
         long gameHistoryNo = scoreHistoryPostReq.getGameHistoryNo();

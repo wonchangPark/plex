@@ -105,8 +105,8 @@ import ScoreBoard from "@/components/Room/ScoreBoard.vue";
 import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-//const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
-const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+// const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 export default {
@@ -153,6 +153,19 @@ export default {
   },
 
   methods: {
+    gameHistory(){
+      const roomNo = this.roomNo
+      const score = {
+        exerciseNum: 1,
+        gameNo: 1,
+        score: (this.win ? 100 : 0 ) + this.personalScore[`${this.myUserName}`] * 10,
+        teamNo: this.teamNo,
+        win: this.win, 
+        gameHistoryNo: this.gameNo,
+        userNo: this.getUser.no
+      }
+      this.setGameHistory({roomNo, score})
+    },
     restart () {
       this.countDown = 5
       this.countDownTimer()
@@ -699,18 +712,23 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(["setRoomClose", "leaveRoom"]),
+    ...mapActions(["setRoomClose", "leaveRoom", "setGameHistory", "setGameScore"]),
   },
 
   computed: {
     ...mapGetters([
+      "getUser",
       "roomCreate",
       "roomInfo",
       "roomJoin",
       "joinInfo",
       "authHeader",
+      "gameNo",
     ]),
     ...mapState(["room"]),
+    win () {
+      return (this.score1 > this.score2 ? 1: 2) === this.teamNo ? true: false
+    },
   },
   mounted() {
     this.game = Game(); //generate phaser game when entering session

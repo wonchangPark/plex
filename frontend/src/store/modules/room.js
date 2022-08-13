@@ -20,13 +20,15 @@ export default {
       userName: ''
     },
     predictionData: {left:0, right:0},
+    gameNo: '',
   },
   getters: {
     roomCreate: state => state.roomCreate,
     roomInfo: state => state.roomInfo,
     roomJoin: state => state.roomJoin,
     joinInfo: state => state.joinInfo,
-    predictionData: state => state.predictionData
+    predictionData: state => state.predictionData,
+    gameNo: state => state.gameNo
   },
   mutations: {
     SET_ROOMCREATE: (state) => {state.roomCreate = true},
@@ -37,7 +39,8 @@ export default {
     SET_ROOMINFO: (state, roomInfo) => {state.roomInfo = roomInfo},
     SET_ROOMJOIN: (state) => {state.roomJoin = true},
     SET_JOININFO: (state, joinInfo) => {state.joinInfo = joinInfo},
-    SET_PREDICTION: (state, predictionData) => {state.predictionData = predictionData}
+    SET_PREDICTION: (state, predictionData) => {state.predictionData = predictionData},
+    SET_GAMENO: (state, gameNo) => {state.gameNo = gameNo}
   },
   actions: {
     setRoomCreate ({ commit }, roomInfo) {
@@ -72,11 +75,33 @@ export default {
         console.log(e)
       })
     },
-    setGameHistory({ getters }) {
+    setGameHistory({ dispatch, getters }, { roomNo, score }) {
       axios({
-        url: API_URL + '/rooms/game?roomNo=2462',
+        url: API_URL + `/rooms/game?roomNo=${roomNo}`,
         method: 'post',
         headers: getters.authHeader
+      })
+      .then( (res) => {
+        console.log(res)
+        score.gameHistoryNo = res.data
+        dispatch('setGameScore', score)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+    },
+    setGameScore({ getters }, score) {
+      axios({
+        url: API_URL + '/rooms/score',
+        method: 'post',
+        data: score,
+        headers: getters.authHeader
+      })
+      .then( (res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.log(e)
       })
     }
   }
