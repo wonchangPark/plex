@@ -15,19 +15,17 @@ function connectUsers({ accessToken, refreshToken }, success, fail) {
 }
 
 function createRoomApi({ headers, roomInfo }, success, fail) {
-    api.post(`/api/v1/rooms/create-room`,  roomInfo , { headers }).then(success).catch(fail);
+    api.post(`/api/v1/rooms/create-room`, roomInfo, { headers }).then(success).catch(fail);
 }
 
-function setRoomUserApi({ token, mySessionId, myUserName }, success, fail) {
-    api.post("/api/v1/rooms/get-token", { headers: { Authorization: "Bearer " + token }, data: { code: mySessionId, id: myUserName } })
-        .then(success)
-        .catch(fail);
+function setRoomUserApi({ headers, code, id }, success, fail) {
+    api.post("/api/v1/rooms/get-token", { code, id }, { headers }).then(success).catch(fail);
 }
 
-function leaveRoomApi({ token, joinInfo }, success, fail) {
-    api.post("/api/v1/rooms/leave-room", { headers: { Authorization: "Bearer " + token }, data: joinInfo })
-        .then(success)
-        .catch(fail);
+function leaveRoomApi({ headers, joinInfo }, success, fail) {
+    console.log("JoinInfo:");
+    console.log(joinInfo);
+    api.post("/api/v1/rooms/leave-room", joinInfo, { headers }).then(success).catch(fail);
 }
 
 export { rooms, connectUsers, createRoomApi, setRoomUserApi, leaveRoomApi };
