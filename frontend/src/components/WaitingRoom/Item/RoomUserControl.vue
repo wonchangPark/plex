@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 const room = "room";
 export default {
     name: "RoomUserControl",
@@ -45,8 +45,9 @@ export default {
             team: [false, false, false],
         };
     },
-    props: ["stompClient"],
+    props: ["stompClient", "isHost"],
     methods: {
+        ...mapMutations(room, ["SET_ROOMJOIN"]),
         gameTypeEvent(num) {
             for (let i = 0; i < this.gameType.length; i++) this.gameType[i] = false;
             this.gameType.splice(num, 1, true);
@@ -62,16 +63,20 @@ export default {
             }
         },
         startEvent() {
-            let msg = {
-                type: "Start",
-                roomId: this.room.code,
-                users: this.users,
-            };
-            this.send(msg);
+            if (this.isHost) {
+                let msg = {
+                    type: "Start",
+                    roomId: this.room.code,
+                    users: this.users,
+                };
+                this.send(msg);
+                this.SET_ROOMJOIN()
+                this.$router.push('/room')
+            }
         },
     },
     computed: {
-        ...mapState(room, ["users", "room"]),
+        ...mapState(room, ["users", "room", "roomJoin"]),
     },
 };
 </script>

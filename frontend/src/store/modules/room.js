@@ -8,7 +8,9 @@ const room = {
         roomJoin: false,
         users: [],
     },
-    getters: {},
+    getters: {
+        roomJoin: state => state.roomJoin
+    },
     mutations: {
         SET_ROOM: (state, room) => {
             state.room = room;
@@ -32,6 +34,10 @@ const room = {
         INIT_ROOM: (state) => {
             state.room = {};
         },
+        SET_ROOMJOIN: (state) => {state.roomJoin = true},
+        SET_ROOMCLOSE: (state) => {
+            state.roomJoin = false
+          },
     },
     actions: {
         roomCreate({ rootState, commit }, roomInfo) {

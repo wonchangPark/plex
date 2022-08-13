@@ -22,21 +22,22 @@
                     </div>
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
-                            <ScoreBoard :score1="score1" :score2="score2"></ScoreBoard
-                            ><button class="btn btn-lg btn-success" @click="sendStart()">Start</button>
+                            <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
+                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="sendStart()">Start</button>
+                            <CountDown v-if="countDown" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" :signal="signal[0]" />
+                        <user-video v-if="subscribers[2] !== null" :stream-manager="subscribers[2]" :signal="signal[0]" />
                     </div>
                 </div>
                 <div class="d-flex flex-row justify-space-between" style="height: 48%; width: 100%%">
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[1] !== null" :stream-manager="subscribers[1]" :signal="signal[1]" />
+                        <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" :signal="signal[1]" />
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[2] !== null" :stream-manager="subscribers[2]" :signal="signal[2]" />
+                        <user-video v-if="subscribers[1] !== null" :stream-manager="subscribers[1]" :signal="signal[2]" />
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
                         <user-video v-if="subscribers[3] !== null" :stream-manager="subscribers[3]" :signal="signal[3]" />
@@ -60,19 +61,21 @@ import Game from "../game/game.js";
 import GameResultModal from "./GameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
 import ScoreBoard from "@/components/Room/ScoreBoard.vue";
+import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 //테스트 (오른손/왼손)
-//const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+// const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
 
 //런지
 //const URL = "https://teachablemachine.withgoogle.com/models/jU1Vcn59o/";
 
 
 let model, webcam, ctx, labelContainer, maxPredictions;
+const room = "room";
 
 export default {
   name: "App",
@@ -82,37 +85,49 @@ export default {
     GameResultModal,
     ContentBox,
     ScoreBoard,
+    CountDown,
   },
 
   data() {
     return {
-      OV: undefined,
-      session: undefined,
-      mainStreamManager: undefined,
-      publisher: undefined,
-      subscribers: [null, null, null, null, null],
-	game: undefined,
-      mySessionId: "",
-      myUserName: "",
-      videoMute: false, // 영상 중지
-      audioMute: false, // 음소거
+        OV: undefined,
+        session: undefined,
+        mainStreamManager: undefined,
+        publisher: undefined,
+        subscribers: [null, null, null, null, null],
+        game: undefined,
+        mySessionId: "",
+        myUserName: "",
+        videoMute: false, // 영상 중지
+        audioMute: false, // 음소거
 
-            isHost: false,
-            status: 0, // 동작 인식 상태
-            team1: [], // 팀 정보
-            team2: [],
-            personalScore: {}, // 개인별 점수,
-            score1: 0, // 팀별 점수
-            score2: 0,
-      teamNo: 0,
-            gameFinished: false,
-            pose1: 0,
-            pose2: 0,
-            signal: [0, 0, 0, 0, 0],
+        user: {},
+
+        isHost: false,
+        status: 0, // 동작 인식 상태
+        team1: [], // 팀 정보
+        team2: [],
+        personalScore: {}, // 개인별 점수,
+        score1: 0, // 팀별 점수
+        score2: 0,
+        teamNo: 0,
+        gameFinished: false,
+        pose1: 0, // teachable machine 동작인식 값
+        pose2: 0,
+        signal: [0, 0, 0, 0, 0],
+        countDown: 0,
         };
     },
 
   methods: {
+    countDownTimer () {
+      if (this.countDown > 0) {
+        setTimeout(() => {
+          this.countDown -= 1
+          this.countDownTimer()
+        }, 1000)
+      }
+    },
     dataInit() {
       this.score1 = 0;
       this.score2 = 0;
@@ -121,172 +136,188 @@ export default {
       }
     },
     joinSession() {
-      // --- Get an OpenVidu object ---
-      this.OV = new OpenVidu();
+        // --- Get an OpenVidu object ---
+        this.OV = new OpenVidu();
 
-      // --- Init a session ---
-      this.session = this.OV.initSession();
+        // --- Init a session ---
+        this.session = this.OV.initSession();
 
-      this.game.scene.getScene("waitingScene").gameCategory = 0;
+        // this.game.scene.getScene("waitingScene").gameCategory = 0;
 
-      // --- Specify the actions when events take place in the session ---
+        // --- Specify the actions when events take place in the session ---
 
-      // On every new Stream received...
-      this.session.on("streamCreated", ({ stream }) => {
+        // On every new Stream received...
+        this.session.on("streamCreated", ({ stream }) => {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
         console.log(subscriber.stream.connection.data)
-        for (let i = 0; i < 6; i++ ){
-          if (this.subscribers[i] === null) {
-            this.subscribers[i] = subscriber
-            break
+         if (this.team3.includes(subscriber.stream.connection.data) && this.teamNo1 === 1) {
+          for (let i = 0; i < 2; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
+          }
+        } else if (this.team4.includes(subscriber.stream.connection.data) && this.teamNo1 === 2) {
+          for (let i = 0; i < 2; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
+          }
+        } else {
+          for (let i = 2; i < 5; i++ ){
+            if (this.subscribers[i] === null) {
+              this.subscribers[i] = subscriber
+              break
+            }
           }
         }
       });
 
-      // On every Stream destroyed...
-      this.session.on("streamDestroyed", ({ stream }) => {
+        // On every Stream destroyed...
+        this.session.on("streamDestroyed", ({ stream }) => {
         const index = this.subscribers.indexOf(stream.streamManager, 0);
-          this.subscribers[index] = null
-      });
+            this.subscribers[index] = null
+        });
 
-      // On every asynchronous exception...
-      this.session.on("exception", ({ exception }) => {
+        // On every asynchronous exception...
+        this.session.on("exception", ({ exception }) => {
         console.warn(exception);
-      });
+        });
 
-            // 운동 점수 수신
-            this.session.on("signal:score", (event) => {
-                console.log(event.data); // Message
-                if (this.game.scene.getScene("ropeFightScene").gameActive) {
-                    if (this.team1.includes(event.data)) {
-                        this.score1 += 1;
-                        this.personalScore[`${event.data}`] += 1;
-                        console.log(this.personalScore[`${event.data}`]);
-                        console.log(this.personalScore);
-                        if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 1)) {
-                            this.game.scene.getScene("ropeFightScene").LeftWin();
-                            setTimeout(() => (this.gameFinished = true), 1000);
-                            setTimeout(() => (this.gameFinished = false), 7000);
-                            this.game.scene.getScene("ropeFightScene").gameActive = false;
-                        } else {
-                            if (this.score1 > this.score2 + 7)
-                                this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
-                            else 
-                                this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
-                        }
-                    //this.game.scene.getScene('ropeFightScene').goLeftHandler();
-                } else {
-                    this.score2 += 1;
+        // 운동 점수 수신
+        this.session.on("signal:score", (event) => {
+            console.log(event.data); // Message
+            if (this.game.scene.getScene("ropeFightScene").gameActive) {
+                if (this.team1.includes(event.data)) {
+                    this.score1 += 1;
                     this.personalScore[`${event.data}`] += 1;
-                    if (this.score2 - this.score1 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score2 - this.score1 >= 1)) {
-                        this.game.scene.getScene("ropeFightScene").RightWin();
+                    console.log(this.personalScore[`${event.data}`]);
+                    console.log(this.personalScore);
+                    if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 1)) {
+                        this.game.scene.getScene("ropeFightScene").LeftWin();
                         setTimeout(() => (this.gameFinished = true), 1000);
                         setTimeout(() => (this.gameFinished = false), 7000);
                         this.game.scene.getScene("ropeFightScene").gameActive = false;
                     } else {
-                        if (this.score2 > this.score1 + 7)
-                            this.game.scene.getScene("ropeFightScene").goRightHandler(1);
-                        else
-                            this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
-                            //this.game.scene.getScene('ropeFightScene').goRightHandler();
+                        if (this.score1 > this.score2 + 7)
+                            this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
+                        else 
+                            this.game.scene.getScene("ropeFightScene").goLeftHandler(-1);
                     }
-                    //this.game.scene.getScene('ropeFightScene').goRightHandler();
-                }}
-                let userNick = event.data;
-                let idx = null;
-                for (let i = 0; i < this.subscribers.length; i++) {
-                    if (this.subscribers[i] !== null && this.subscribers[i].stream.connection.data === userNick) {
-                        idx = i;
-                        break;
-                    }
+                //this.game.scene.getScene('ropeFightScene').goLeftHandler();
+            } else {
+                this.score2 += 1;
+                this.personalScore[`${event.data}`] += 1;
+                if (this.score2 - this.score1 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score2 - this.score1 >= 1)) {
+                    this.game.scene.getScene("ropeFightScene").RightWin();
+                    setTimeout(() => (this.gameFinished = true), 1000);
+                    setTimeout(() => (this.gameFinished = false), 7000);
+                    this.game.scene.getScene("ropeFightScene").gameActive = false;
+                } else {
+                    if (this.score2 > this.score1 + 7)
+                        this.game.scene.getScene("ropeFightScene").goRightHandler(1);
+                    else
+                        this.game.scene.getScene("ropeFightScene").goRightHandler(-1);
+                        //this.game.scene.getScene('ropeFightScene').goRightHandler();
                 }
-                if (idx !== null) this.signal[idx]++;
-                //this.personalScore[`${event.data}`] += 1
-                console.log(event.from); // Connection object of the sender
-                console.log(event.type); // The type of message
-            });
-            // 참가자 입장 수신
-            this.session.on("signal:memberJoin", (event) => {
-                console.log(event.data); // Message
-                console.log("참가자 입장");
-                if (this.isHost) {
-                    if (this.team1.length < 3) {
-                        this.team1.push(event.data);
-                    } else {
-                        this.team2.push(event.data);
-                    }
-                    this.personalScore[`${event.data}`] = 0;
-                    this.sendTeamInfo();
+                //this.game.scene.getScene('ropeFightScene').goRightHandler();
+            }}
+            let userNick = event.data;
+            let idx = null;
+            for (let i = 0; i < this.subscribers.length; i++) {
+                if (this.subscribers[i] !== null && this.subscribers[i].stream.connection.data === userNick) {
+                    idx = i;
+                    break;
                 }
+            }
+            if (idx !== null) this.signal[idx]++;
+            //this.personalScore[`${event.data}`] += 1
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
             });
-            // 참가자 퇴장 수신
-            this.session.on("signal:memberLeave", (event) => {
-                console.log(event.data); // Message
-                console.log("참가자 퇴장");
-                if (this.isHost) {
-                    const id1 = this.team1.indexOf(`${event.data}`);
-                    const id2 = this.team2.indexOf(`${event.data}`);
-                    if (id1 !== -1) {
-                        this.team1.splice(id1, 1);
-                    } else {
-                        this.team2.splice(id2, 1);
-                    }
-                    delete this.personalScore[`${event.data}`];
-                    this.sendTeamInfo();
+        // 참가자 입장 수신
+        this.session.on("signal:memberJoin", (event) => {
+            console.log(event.data); // Message
+            console.log("참가자 입장");
+            if (this.isHost) {
+                if (this.team1.length < 3) {
+                    this.team1.push(event.data);
+                } else {
+                    this.team2.push(event.data);
                 }
-            });
-            // 호스트 수신 => 팀원 정보 수신
-            this.session.on("signal:host", (event) => {
-        console.log(event.data)
-                console.log("호스트 수신"); // Message
-                if (!this.isHost) {
-                    const data = JSON.parse(event.data);
-                    this.team1 = data.team1;
-                    this.team2 = data.team2;
-                    this.personalScore = data.personalScore;
-          if (this.team1.includes(this.userName)) {
+                this.personalScore[`${event.data}`] = 0;
+                this.sendTeamInfo();
+            }
+        });
+        // 참가자 퇴장 수신
+        this.session.on("signal:memberLeave", (event) => {
+            console.log(event.data); // Message
+            console.log("참가자 퇴장");
+            if (this.isHost) {
+                const id1 = this.team1.indexOf(`${event.data}`);
+                const id2 = this.team2.indexOf(`${event.data}`);
+            if (id1 !== -1) {
+                this.team1.splice(id1, 1);
+            } else {
+                this.team2.splice(id2, 1);
+            }
+            delete this.personalScore[`${event.data}`];
+            this.sendTeamInfo();
+            }
+        });
+        // 호스트 수신 => 팀원 정보 수신
+        this.session.on("signal:host", (event) => {
+            console.log(event.data)
+            console.log("호스트 수신"); // Message
+            if (!this.isHost) {
+                const data = JSON.parse(event.data);
+                this.team1 = data.team1;
+                this.team2 = data.team2;
+                this.personalScore = data.personalScore;
+            if (this.team1.includes(this.userName)) {
             this.teamNo = 1
-          } else {
+            } else {
             this.teamNo = 2
-          }
-                }
-                console.log(event.from); // Connection object of the sender
-                console.log(event.type); // The type of message
-            });
-            // 호스트 퇴장 수신 => 호스트 퇴장시 모든 유저 퇴장
-            this.session.on("signal:hostLeave", (event) => {
-                console.log("호스트 퇴장 수신"); // Message
-                console.log(event.from); // Connection object of the sender
-                console.log(event.type); // The type of message
-                this.leaveSession();
-            });
-            // 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
-            this.session.on("signal:gameStart", (event) => {
-                this.game.scene.getScene("bootScene").StartScene(0);
-                this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+            }
+            }
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+        });
+        // 호스트 퇴장 수신 => 호스트 퇴장시 모든 유저 퇴장
+        this.session.on("signal:hostLeave", (event) => {
+            console.log("호스트 퇴장 수신"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            this.leaveSession();
+        });
+        // 게임 시작 수신 => 호스트가 게임 시작 누르면 각 유저 게임 시작
+        this.session.on("signal:gameStart", (event) => {
+            this.countDown = 5
+            this.countDownTimer()
+            this.game.scene.getScene("bootScene").StartScene(0);
+            this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+            const data = JSON.parse(event.data);
+            this.score1 = data.score1;
+            this.score2 = data.score2;
+            this.personalScore = data.personalScore;
+            console.log("게임 시작 수신"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+        });
 
+        // --- Connect to the session with a valid user token ---
 
-        const data = JSON.parse(event.data);
-        this.score1 = data.score1;
-        this.score2 = data.score2;
-        this.personalScore = data.personalScore;
-        console.log("게임 시작 수신"); // Message
-        console.log(event.from); // Connection object of the sender
-        console.log(event.type); // The type of message
-      });
+        // 'getToken' method is simulating what your server-side should do.
+        // 'token' parameter should be retrieved and returned by your own backend
 
-      // --- Connect to the session with a valid user token ---
+        // this.getToken(this.mySessionId, this.myUserName)
 
-      // 'getToken' method is simulating what your server-side should do.
-      // 'token' parameter should be retrieved and returned by your own backend
+        this.init()
 
-      // this.getToken(this.mySessionId, this.myUserName)
-
-      this.init()
-
-      window.addEventListener("beforeunload", this.leaveSession);
-      //this.game = Game();			//generate phaser game when entering session
+        window.addEventListener("beforeunload", this.leaveSession);
+        //this.game = Game();			//generate phaser game when entering session
       
     },
 
@@ -321,6 +352,8 @@ export default {
         }
     },
     sendStart() {
+        this.countDown = 5
+        this.countDownTimer()
         console.log("게임시작");
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
@@ -346,50 +379,50 @@ export default {
             });
         },
 
-        sendScore() {
-            this.session
-                .signal({
-                    // 운동 점수 송신
-                    data: this.myUserName, // Any string (optional)
-                    to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-                    type: "score", // The type of message (optional)
-                })
-                .then(() => {
-                    console.log("Message successfully sent");
-                })
-                .catch((error) => {
-                    console.error(error);
+    sendScore() {
+        this.session
+            .signal({
+                // 운동 점수 송신
+                data: this.myUserName, // Any string (optional)
+                to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+                type: "score", // The type of message (optional)
+            })
+            .then(() => {
+                console.log("Message successfully sent");
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    },
+
+    connectSession(token) {
+        this.session
+            .connect(token, this.myUserName)
+            .then(() => {
+                // --- Get your own camera stream with the desired properties ---
+
+                let publisher = this.OV.initPublisher(undefined, {
+                    audioSource: undefined, // The source of audio. If undefined default microphone
+                    videoSource: undefined, // The source of video. If undefined default webcam
+                    publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+                    publishVideo: true, // Whether you want to start publishing with your video enabled or not
+                    resolution: "640x480", // The resolution of your video
+                    frameRate: 30, // The frame rate of your video
+                    insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+                    mirror: true, // Whether to mirror your local video or not
                 });
-        },
 
-        connectSession(token) {
-            this.session
-                .connect(token, this.myUserName)
-                .then(() => {
-                    // --- Get your own camera stream with the desired properties ---
+                this.mainStreamManager = publisher;
+                console.log(this.mainStreamManager);
+                this.publisher = publisher;
 
-                    let publisher = this.OV.initPublisher(undefined, {
-                        audioSource: undefined, // The source of audio. If undefined default microphone
-                        videoSource: undefined, // The source of video. If undefined default webcam
-                        publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
-                        publishVideo: true, // Whether you want to start publishing with your video enabled or not
-                        resolution: "640x480", // The resolution of your video
-                        frameRate: 30, // The frame rate of your video
-                        insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-                        mirror: true, // Whether to mirror your local video or not
-                    });
+                // --- Publish your stream ---
 
-                    this.mainStreamManager = publisher;
-                    console.log(this.mainStreamManager);
-                    this.publisher = publisher;
-
-                    // --- Publish your stream ---
-
-                    this.session.publish(this.publisher);
-                })
-                .catch((error) => {
-                    console.log("There was an error connecting to the session:", error.code, error.message);
-                });
+                this.session.publish(this.publisher);
+            })
+            .catch((error) => {
+                console.log("There was an error connecting to the session:", error.code, error.message);
+            });
         },
 
         leaveSession() {
@@ -625,42 +658,25 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(["setRoomClose", "leaveRoom"]),
+    ...mapActions(room, ["leaveRoom"]),
   },
 
     computed: {
-        ...mapGetters(["roomCreate", "roomInfo", "roomJoin", "joinInfo", "authHeader"]),
-        ...mapState(["room"]),
+        ...mapGetters(room, ["roomJoin"]),
+        ...mapGetters(["getUser"]),
+        ...mapState(room, ["room", "users"]),
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
     },
     created() {
-        if (this.roomCreate) {
-            axios({
-                url: API_BASE_URL + "/api/v1/rooms/create-room",
-                method: "post",
-                data: this.roomInfo,
-                headers: this.authHeader,
-            }).then((res) => {
-                console.log(res.data);
-                this.mySessionId = res.data.code;
-                this.myUserName = res.data.host;
-                this.joinSession();
-                this.connectSession(res.data.token);
-                this.isHost = true;
-                this.team1.push(res.data.host);
-                this.personalScore[`${res.data.host}`] = 0;
-        this.teamNo = 1;
-            });
-        } else if (this.roomJoin) {
-            this.mySessionId = this.joinInfo.roomCode;
-            this.myUserName = this.joinInfo.userName;
-            this.joinSession();
-            this.getToken(this.mySessionId, this.myUserName);
-        } else {
-            this.$router.push("/waiting");
-        }
+        this.myUserName = this.getUser.nick
+        if (this.roomJoin) {
+            console.log("왜 안되")
+            this.joinSession()
+            this.connectSession(this.room.token)
+            this.user = this.users.filter((user) => user.nick = this.myUserName)
+        };
     },
     beforeDestroy() {
         console.log("destroy");
