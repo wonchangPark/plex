@@ -1,5 +1,5 @@
 <template>
-    <ContentBox class="chatting-list" :height="90" :width="80">
+    <ContentBox class="chatting-list" :height="90" :width="100">
         <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
             <div class="d-flex flex-column" style="height: 87%; width: 100%">
                 <div class="d-flex flex-column chatting-list-box" ref="chattingListBox">
@@ -41,19 +41,11 @@ export default {
         // this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     mounted: function () {
-        window.addEventListener("beforeunload", () => {
-            this.send("exit", this.getUser.nick, "");
-        });
         this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     beforeDestroy: function () {
-        window.removeEventListener("beforeunload", () => {
-            this.send("exit", this.getUser.nick, "");
-        });
-        this.send("exit", this.userName, "");
-        this.stompClient.disconnect(() => {
-            console.log("소켓 연결 해제");
-        }, {});
+        window.removeEventListener("beforeunload", this.exit);
+        this.exit();
     },
     methods: {
         ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
@@ -62,7 +54,7 @@ export default {
             const serverURL = API_BASE_URL + "/api/v1/ws";
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
-            console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+            //console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
             this.stompClient.connect(
                 {},
                 (frame) => {
@@ -72,10 +64,11 @@ export default {
                     // 서버의 메시지 전송 endpoint를 구독합니다.
                     // 이런형태를 pub sub 구조라고 합니다.
                     this.stompClient.subscribe("/send", (res) => {
-                        console.log("구독으로 받은 메시지 입니다.", res.body);
+                        //console.log("구독으로 받은 메시지 입니다.", res.body);
                         // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
                         this.receive(JSON.parse(res.body));
                     });
+                    window.addEventListener("beforeunload", this.exit);
                     this.send("enter", this.getUser.nick, "");
                 },
                 (error) => {
@@ -86,7 +79,7 @@ export default {
             );
         },
         send(type, userName, content) {
-            console.log("Send Message:" + content);
+            //console.log("Send Message:" + content);
             if (this.stompClient && this.stompClient.connected) {
                 const msg = {
                     type,
@@ -109,6 +102,12 @@ export default {
             this.message = "";
 
             this.getConnectUsers();
+        },
+        exit() {
+            this.send("exit", this.getUser.nick, "");
+            this.stompClient.disconnect(() => {
+                console.log("소켓 연결 해제");
+            }, {});
         },
     },
     computed: {

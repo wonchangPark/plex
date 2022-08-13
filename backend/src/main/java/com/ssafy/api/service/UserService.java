@@ -2,6 +2,7 @@ package com.ssafy.api.service;
 
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserInfoRes;
 import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.common.exception.UserDuplicateException;
 import com.ssafy.db.entity.User;
@@ -19,10 +20,13 @@ public interface UserService {
 
 	User getUserByUserId(String userId);
 
-	@Transactional
+	User getUserByNick(String nick);
+
 	void setMyImage(User user, String image);
 
 	List<UserExerciseRes> getMyTotalExercise(User user);
 
 	UserTotalGameCntRes getMyTotalGameCnt(User user);
+
+	UserInfoRes getUserByUserNick(String nick);
 }

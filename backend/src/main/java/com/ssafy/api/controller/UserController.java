@@ -2,6 +2,7 @@ package com.ssafy.api.controller;
 
 import com.ssafy.api.request.ImgPostReq;
 import com.ssafy.api.response.UserExerciseRes;
+import com.ssafy.api.response.UserInfoRes;
 import com.ssafy.api.response.UserTotalGameCntRes;
 import com.ssafy.common.exception.UserDuplicateException;
 import com.ssafy.db.repository.UserRepository;
@@ -138,6 +139,13 @@ public class UserController {
 //		return ResponseEntity.ok(userService.getRankingList());
 //	}
 
+	@GetMapping("/image")
+	public ResponseEntity<UserInfoRes> getUserImage(@RequestParam String nick){
+		UserInfoRes userInfoRes = userService.getUserByUserNick(nick);
+		return ResponseEntity.status(200).body(userInfoRes);
+
+	}
+
 	@PostMapping("/image")
 	public void setMyImage(@RequestBody(required = false)ImgPostReq imgInfo){
 		SsafyUserDetails details = (SsafyUserDetails)(SecurityContextHolder.getContext().getAuthentication().getDetails());
@@ -160,5 +168,6 @@ public class UserController {
 		UserTotalGameCntRes userTotalGameCntRes = userService.getMyTotalGameCnt(user);
 		return ResponseEntity.status(200).body(userTotalGameCntRes);
 	}
+
 
 }
