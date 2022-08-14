@@ -91,7 +91,7 @@ export default {
       videoMute: false, // 영상 중지
       audioMute: false, // 음소거
       
-            music: require("../assets/audio/runningAudio.mp3"),
+            music: require("../assets/audio/ropeFightAudio.mp3"),
             bgm: undefined,
             isHost: false,
             status: 0, // 동작 인식 상태
