@@ -88,6 +88,7 @@ export default {
 			game: undefined,
       mySessionId: "",
       myUserName: "",
+      runningMusic: require("../assets/audio/runningAudio.mp3"),
       videoMute: false, // 영상 중지
       audioMute: false, // 음소거
 

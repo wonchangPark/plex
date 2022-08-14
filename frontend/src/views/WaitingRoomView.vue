@@ -58,6 +58,11 @@ import { mapActions, mapGetters } from "vuex"
 export default {
   name: "WaitingRoomView",
   components: { UserList, RoomList, ChattingList, CreateRoomDialog },
+  data() {
+    return {
+      waitingMusic: require("../assets/audio/watingAudio.mp3"),
+    }
+  },
   methods: {
     ...mapActions(['setRoomCreate']),
     ...mapActions(['fetchWaitingRoomPage']),

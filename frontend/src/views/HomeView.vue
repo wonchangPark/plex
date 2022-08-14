@@ -20,6 +20,12 @@
 export default {
   name: "HomeView",
 
+  data() {
+    return {
+      homeMusic: require("../assets/audio/homeAudio.mp3"),
+    }
+  },
+
   components: {
 
   },
