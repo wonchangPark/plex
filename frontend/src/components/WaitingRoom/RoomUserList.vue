@@ -103,6 +103,7 @@ export default {
             this.send(msg);
             // this.INIT_ROOM();
             // this.INIT_USERS();
+            // router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
         },
         send(msg) {
             if (this.stompClient && this.stompClient.connected) {

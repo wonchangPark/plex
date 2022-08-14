@@ -30,10 +30,14 @@ export default {
     idFlag: (state) => state.idFlag,
     rankingList: (state) => state.rankingList,
     authError: (state) => state.authError,
-    authHeader: (state) => state.authHeader,
+    // authHeader: (state) => state.authHeader,
     userExercise: (state) => state.userExercise,
     userGameInfo: (state) => state.userGameInfo,
     myRanking: (state) => state.myRanking,
+    authHeader: (state) =>  ({
+      Authorization: "Bearer " + state.accessToken,
+      Authorization2: "Bearer " + state.refreshToken,
+    }),
   },
 
   mutations: {
