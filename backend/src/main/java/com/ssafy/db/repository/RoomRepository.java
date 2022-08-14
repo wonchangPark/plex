@@ -1,9 +1,6 @@
 package com.ssafy.db.repository;
 
-import com.ssafy.db.entity.GameHistory;
-import com.ssafy.db.entity.Room;
-import com.ssafy.db.entity.ScoreHistory;
-import com.ssafy.db.entity.User;
+import com.ssafy.db.entity.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -104,8 +101,9 @@ public class RoomRepository {
 
     public boolean isAlreadyInRoom(User user) {
         try{
-//            em.createQuery("select ")
-
+            em.createQuery("select ru from RoomUser ru, Room r " +
+                    "where ru.user = :user and ru.room = r and r.endTime is null", RoomUser.class)
+                    .setParameter("user", user).getSingleResult();
             return true;
         } catch (NoResultException e){
             return false;
