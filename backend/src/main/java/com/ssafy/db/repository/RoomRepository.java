@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -75,5 +74,41 @@ public class RoomRepository {
 
     public void saveScoreHistory(ScoreHistory scoreHistory) {
         em.persist(scoreHistory);
+    }
+
+    public boolean isHost(User user, Long roomNo) {
+        Room room = null;
+        try{
+            room = em.createQuery("select r from Room r where r.no = :roomNo and r.host = :userNick", Room.class)
+                    .setParameter("roomNo", roomNo).setParameter("userNick", user.getNick()).getSingleResult();
+        } catch (NoResultException e){
+            return false;
+        }
+        return true;
+    }
+
+    public void endGame(Long gameHistoryNo) {
+        em.createQuery("update GameHistory gh set gh.endTime = current_timestamp where gh.no = :gameHistoryNo")
+                .setParameter("gameHistoryNo", gameHistoryNo).executeUpdate();
+    }
+
+    public boolean isGaming(Room room){
+        try{
+            em.createQuery("select gh from GameHistory gh where gh.room = :room and gh.endTime is null",GameHistory.class)
+                    .setParameter("room", room).getSingleResult();
+            return true;
+        } catch (NoResultException e){
+            return false;
+        }
+    }
+
+    public boolean isAlreadyInRoom(User user) {
+        try{
+//            em.createQuery("select ")
+
+            return true;
+        } catch (NoResultException e){
+            return false;
+        }
     }
 }

@@ -40,6 +40,7 @@ public class RoomUserServiceImpl implements RoomUserService {
     @Transactional
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     public void deleteRoomUser (RoomUser roomUser) {
+        roomUserRepository.findRoomUserByRoomUser(roomUser);
         roomUserRepository.delete(roomUser);
     }
 }
