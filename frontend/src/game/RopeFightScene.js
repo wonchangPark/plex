@@ -48,7 +48,6 @@ class RopeFightScene extends Scene {
 
         this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
         
-
         // 화면 비율
         this.WidthScale = this.sys.game.canvas.width / 1600;
         this.HeightScale = this.sys.game.canvas.height / 512;

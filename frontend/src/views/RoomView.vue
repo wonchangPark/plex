@@ -88,6 +88,7 @@ export default {
       myUserName: "",
       videoMute: false, // 영상 중지
       audioMute: false, // 음소거
+      music: require("../assets/audio/runningAudio.mp3"),
 
             isHost: false,
             status: 0, // 동작 인식 상태
@@ -317,6 +318,8 @@ export default {
             // console.log(this.$refs.teachable)
             // this.$refs.teachable.init()
             // this.init()
+            const sound = new Audio(this.music);
+            sound.play();
             this.game.scene.getScene("bootScene").StartScene(0);
             this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene('ropeFightScene').gameActive = true;

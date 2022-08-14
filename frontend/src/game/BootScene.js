@@ -145,6 +145,11 @@ class BootScene extends Scene {
         this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
 
         
+
+        /*this.load.audio('runningAudio', [
+            '../assets/audio/runningAudio.mp3'
+        ]);*/
+
         this.load.rexImageURI('player', Player);
         this.load.rexImageURI('player2', Player2);
         this.load.rexImageURI('rope', Rope);
