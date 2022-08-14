@@ -1,5 +1,6 @@
 package com.ssafy.db.repository;
 
+import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
 import com.ssafy.db.entity.ScoreHistory;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,8 +53,8 @@ public class RoomRepository {
         return null;
     }
 
-    public void saveGameHistory(Room room){
-        em.persist(GameHistory.createGameHistory(room));
+    public void saveGameHistory(Room room, GameHistoryReq gameHistoryReq){
+        em.persist(GameHistory.createGameHistory(room, gameHistoryReq));
     }
 
     public Long getGameNo(long roomNo){

@@ -45,7 +45,13 @@ public class RoomUserRepository {
         return roomUser;
     }
 
+    public RoomUser findRoomUserByRoomUser(RoomUser roomUser){
+        RoomUser roomUser1 = em.find(RoomUser.class, roomUser.getNo());
+        System.out.println(roomUser1);
+        return roomUser1;
+    }
+
     public void delete(RoomUser roomUser) {
-        em.remove(roomUser);
+        em.remove(em.contains(roomUser) ? roomUser : em.merge(roomUser));
     }
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomJoinPostReq;
 import com.ssafy.api.request.ScoreHistoryPostReq;
@@ -242,8 +243,8 @@ public class RoomController {
 	}
 
 	@PostMapping("/game")
-	public ResponseEntity<Long> insertGameHistory(@RequestParam long roomNo){
-		long gameHistoryNo = roomService.insertGameHistory(roomNo);
+	public ResponseEntity<Long> insertGameHistory(@RequestBody GameHistoryReq gameHistoryReq){
+		Long gameHistoryNo = roomService.insertGameHistory(gameHistoryReq);
 		return ResponseEntity.status(200).body(gameHistoryNo);
 		// gameHistoryNo를 반환
 	}

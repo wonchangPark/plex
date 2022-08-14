@@ -1,6 +1,6 @@
 package com.ssafy.db.entity;
 
-import lombok.Cleanup;
+import com.ssafy.api.request.GameHistoryReq;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -27,13 +27,14 @@ public class GameHistory {
     private Room room;
 
     protected GameHistory(){}
-    protected GameHistory(Room room){
-        this.startTime = LocalDateTime.now();
+    protected GameHistory(Room room, LocalDateTime startTime){
+        this.startTime = startTime;
+        this.endTime = LocalDateTime.now();
         this.room = room;
     }
 
-    public static GameHistory createGameHistory(Room room){
-        return new GameHistory(room);
+    public static GameHistory createGameHistory(Room room, GameHistoryReq gameHistoryReq){
+        return new GameHistory(room, gameHistoryReq.getStartTime());
     }
 
 }

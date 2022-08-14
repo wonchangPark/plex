@@ -1,5 +1,6 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.db.entity.Room;
@@ -11,7 +12,7 @@ public interface RoomService {
 
     void endRoom(Room room);
 
-    long insertGameHistory(long roomNo);
+    long insertGameHistory(GameHistoryReq gameHistoryReq);
 
     void insertScoreHistory(ScoreHistoryPostReq scoreHistoryPostReq);
 }

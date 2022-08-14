@@ -1,5 +1,6 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.db.entity.GameHistory;
@@ -44,10 +45,11 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public long insertGameHistory(long roomNo) {
+    public long insertGameHistory(GameHistoryReq gameHistoryReq) {
 
+        Long roomNo = gameHistoryReq.getRoomNo();
         Room room = roomRepository.findByNo(roomNo);
-        roomRepository.saveGameHistory(room);
+        roomRepository.saveGameHistory(room, gameHistoryReq);
         return roomRepository.getGameNo(roomNo);
     }
 
