@@ -1,6 +1,5 @@
 package com.ssafy.api.service;
 
-import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.db.entity.GameHistory;
@@ -45,15 +44,15 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public long insertGameHistory(GameHistoryReq gameHistoryReq) {
+    public long insertGameHistory(Long roomNo) {
 
-        Long roomNo = gameHistoryReq.getRoomNo();
         Room room = roomRepository.findByNo(roomNo);
-        roomRepository.saveGameHistory(room, gameHistoryReq);
+        roomRepository.saveGameHistory(room);
         return roomRepository.getGameNo(roomNo);
     }
 
     @Override
+    @Transactional
     public void insertScoreHistory(ScoreHistoryPostReq scoreHistoryPostReq){
         long userNo = scoreHistoryPostReq.getUserNo();
         long gameHistoryNo = scoreHistoryPostReq.getGameHistoryNo();
@@ -61,6 +60,22 @@ public class RoomServiceImpl implements RoomService{
         GameHistory gameHistory = roomRepository.getGameHistoryByNo(gameHistoryNo);
         ScoreHistory scoreHistory = ScoreHistory.createScoreHistory(user, gameHistory, scoreHistoryPostReq.getScore(), scoreHistoryPostReq.getTeamNo(), scoreHistoryPostReq.isWin(), scoreHistoryPostReq.getExerciseNum(), scoreHistoryPostReq.getGameNo() );
         roomRepository.saveScoreHistory(scoreHistory);
+    }
+
+    @Override
+    public boolean isHost(User user, Long roomNo) {
+        return roomRepository.isHost(user, roomNo);
+    }
+
+    @Override
+    @Transactional
+    public void endGame(Long gameHistoryNo) {
+        roomRepository.endGame(gameHistoryNo);
+    }
+
+    @Override
+    public boolean isGaming(Room room) {
+        return roomRepository.isGaming(room);
     }
 
 }

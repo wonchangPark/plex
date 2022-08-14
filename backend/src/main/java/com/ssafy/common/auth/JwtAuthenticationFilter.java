@@ -97,7 +97,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } catch (ReIssuanceAccessTokenException ex) {
             System.out.println("인가 토큰 재발급");
 //            filterChain.doFilter(request, response);
-
             return;
         } catch (JwtTokenException ex) {
             ex.printStackTrace();
@@ -142,7 +141,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 hashOperations.delete(userId, "accessToken", "refreshToken");
                 throw new JwtTokenException("thats not exact token");
             }
-            System.out.println("h3");
             JwtTokenUtil.accessHandleError(accessToken); // 이곳에서 토큰 만료 여부가 체크됨
 
             // jwt 토큰에 포함된 계정 정보(userId) 통해 실제 디비에 해당 정보의 계정이 있는지 조회.
@@ -183,6 +181,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 //                out.flush();
 //                out.close();
                 response.setHeader("Authorization", newAccessToken);
+                response.setStatus(405);
                 throw new ReIssuanceAccessTokenException("인가토큰 재발급");
 
             } catch (TokenExpiredException ex) {

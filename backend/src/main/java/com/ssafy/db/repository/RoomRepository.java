@@ -1,6 +1,5 @@
 package com.ssafy.db.repository;
 
-import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.db.entity.GameHistory;
 import com.ssafy.db.entity.Room;
 import com.ssafy.db.entity.ScoreHistory;
@@ -53,8 +52,8 @@ public class RoomRepository {
         return null;
     }
 
-    public void saveGameHistory(Room room, GameHistoryReq gameHistoryReq){
-        em.persist(GameHistory.createGameHistory(room, gameHistoryReq));
+    public void saveGameHistory(Room room){
+        em.persist(GameHistory.createGameHistory(room));
     }
 
     public Long getGameNo(long roomNo){
@@ -75,5 +74,31 @@ public class RoomRepository {
 
     public void saveScoreHistory(ScoreHistory scoreHistory) {
         em.persist(scoreHistory);
+    }
+
+    public boolean isHost(User user, Long roomNo) {
+        Room room = null;
+        try{
+            room = em.createQuery("select r from Room r where r.no = :roomNo and r.host = :userNick", Room.class)
+                    .setParameter("roomNo", roomNo).setParameter("userNick", user.getNick()).getSingleResult();
+        } catch (NoResultException e){
+            return false;
+        }
+        return true;
+    }
+
+    public void endGame(Long gameHistoryNo) {
+        em.createQuery("update GameHistory gh set gh.endTime = current_timestamp where gh.no = :gameHistoryNo")
+                .setParameter("gameHistoryNo", gameHistoryNo).executeUpdate();
+    }
+
+    public boolean isGaming(Room room){
+        try{
+            em.createQuery("select gh from GameHistory gh where gh.room = :room and gh.endTime is null",GameHistory.class)
+                    .setParameter("room", room).getSingleResult();
+            return true;
+        } catch (NoResultException e){
+            return false;
+        }
     }
 }

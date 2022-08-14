@@ -13,4 +13,5 @@ public class ScoreHistoryPostReq {
     boolean win;
     long gameHistoryNo;
     long userNo;
+    long roomNo;
 }

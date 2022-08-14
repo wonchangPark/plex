@@ -1,17 +1,15 @@
 package com.ssafy.api.controller;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.ssafy.api.request.GameHistoryReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomJoinPostReq;
 import com.ssafy.api.request.ScoreHistoryPostReq;
 import com.ssafy.api.response.RoomCreateRes;
-import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.service.RoomUserService;
 import com.ssafy.api.service.UserService;
+import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.RandomRoomCode;
 import com.ssafy.db.entity.Room;
@@ -19,19 +17,17 @@ import com.ssafy.db.entity.RoomUser;
 import com.ssafy.db.entity.User;
 import io.openvidu.java.client.*;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.ssafy.api.service.RoomService;
 
 import io.swagger.annotations.Api;
-
-import javax.servlet.http.HttpSession;
 
 @Api(value = "방 관리 API", tags = {"Room"})
 @RestController
@@ -64,7 +60,8 @@ public class RoomController {
 		String code = RandomRoomCode.generateRandomCode();
 		System.out.println(roomInfo.getName() + roomInfo.getHost() + roomInfo.getIsPrivate());
 		Room room = roomService.createRoom(roomInfo, code);
-		User user = userService.getUserByNick(roomInfo.getHost());
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
 		try {
 			roomUserService.createRoomUser(user, room);
 		} catch (Exception e) {
@@ -139,7 +136,10 @@ public class RoomController {
 	public ResponseEntity<?> getToken(@RequestBody RoomJoinPostReq joinInfo)
 			throws ParseException {
 		Room room = roomService.getRoomByCode(joinInfo.getCode());
-		User user = userService.getUserByNick(joinInfo.getId());
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
+		if(room == null || user == null) return ResponseEntity.status(403).build();
+		if(roomService.isGaming(room)) return ResponseEntity.status(407).build(); // 게임중이므로 못들어감
 		try {
 			roomUserService.createRoomUser(user, room);
 		} catch (Exception e) {
@@ -217,6 +217,8 @@ public class RoomController {
 		}
 	}
 
+
+
 	private ResponseEntity<JSONObject> getErrorResponse(Exception e) {
 		JSONObject json = new JSONObject();
 		json.put("cause", e.getCause());
@@ -228,7 +230,8 @@ public class RoomController {
 	@PostMapping("/leave-room")
 	public ResponseEntity<BaseResponseBody> leaveRoom(@RequestBody RoomJoinPostReq joinInfo) {
 		Room room = roomService.getRoomByCode(joinInfo.getCode());
-		User user = userService.getUserByNick(joinInfo.getId());
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
 		String host = room.getHost();
 		String id = joinInfo.getId();
 		System.out.println(host);
@@ -243,14 +246,29 @@ public class RoomController {
 	}
 
 	@PostMapping("/game")
-	public ResponseEntity<Long> insertGameHistory(@RequestBody GameHistoryReq gameHistoryReq){
-		Long gameHistoryNo = roomService.insertGameHistory(gameHistoryReq);
+	public ResponseEntity<Long> startGame(@RequestParam Long roomNo){
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
+		if(!roomService.isHost(user, roomNo)) return ResponseEntity.status(406).build();
+		Long gameHistoryNo = roomService.insertGameHistory(roomNo);
 		return ResponseEntity.status(200).body(gameHistoryNo);
 		// gameHistoryNo를 반환
 	}
 
+	@PostMapping("/gameend")
+	public ResponseEntity<Void> endGame(@RequestParam Long roomNo, @RequestParam Long gameHistoryNo){
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
+		if(!roomService.isHost(user, roomNo)) return ResponseEntity.status(406).build();
+		roomService.endGame(gameHistoryNo);
+		return ResponseEntity.status(200).build();
+	}
+
 	@PostMapping("/score")
 	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq scoreHistoryPostReq){
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
+		if(!roomService.isHost(user, scoreHistoryPostReq.getRoomNo())) return ResponseEntity.status(406).build();
 		roomService.insertScoreHistory(scoreHistoryPostReq);
 		return ResponseEntity.status(200).build();
 	}
