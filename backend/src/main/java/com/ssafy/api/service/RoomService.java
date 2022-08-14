@@ -21,4 +21,6 @@ public interface RoomService {
     void endGame(Long gameHistoryNo);
 
     boolean isGaming(Room room);
+
+    boolean isAlreadyInRoom(User user);
 }

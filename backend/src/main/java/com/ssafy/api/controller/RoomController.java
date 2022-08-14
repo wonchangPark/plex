@@ -140,6 +140,7 @@ public class RoomController {
 		User user = ssafyUserDetails.getUser();
 		if(room == null || user == null) return ResponseEntity.status(403).build();
 		if(roomService.isGaming(room)) return ResponseEntity.status(407).build(); // 게임중이므로 못들어감
+		if(roomService.isAlreadyInRoom(user)) return ResponseEntity.status(406).build(); // 이미 대기방에 있음
 		try {
 			roomUserService.createRoomUser(user, room);
 		} catch (Exception e) {

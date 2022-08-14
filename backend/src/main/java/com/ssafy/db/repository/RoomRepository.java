@@ -101,4 +101,14 @@ public class RoomRepository {
             return false;
         }
     }
+
+    public boolean isAlreadyInRoom(User user) {
+        try{
+//            em.createQuery("select ")
+
+            return true;
+        } catch (NoResultException e){
+            return false;
+        }
+    }
 }

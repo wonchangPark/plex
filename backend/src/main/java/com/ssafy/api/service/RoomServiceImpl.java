@@ -78,4 +78,9 @@ public class RoomServiceImpl implements RoomService{
         return roomRepository.isGaming(room);
     }
 
+    @Override
+    public boolean isAlreadyInRoom(User user) {
+        return roomRepository.isAlreadyInRoom(user);
+    }
+
 }
