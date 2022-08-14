@@ -21,6 +21,8 @@ import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { API_BASE_URL } from "@/config";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+import axios from "axios";
+
 const room = "room";
 export default {
     components: { ContentBox, RoomUserItem, RoomUserControl },
@@ -55,7 +57,7 @@ export default {
             this.stompClient = Stomp.over(socket);
             console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
             this.stompClient.connect(
-                {},
+                this.authHeader,
                 (frame) => {
                     // 소켓 연결 성공
                     this.connected = true;
@@ -90,6 +92,7 @@ export default {
             );
         },
         exitRoom() {
+            alert("확인");
             let msg = {
                 type: "Leave",
                 roomId: this.room.code,
@@ -101,6 +104,16 @@ export default {
                 },
             };
             this.send(msg);
+            let joinInfo = {
+                code: this.room.code,
+                id: this.getUser.nick,
+            };
+            let headers = this.authHeader;
+            axios.post("https://localhost:8080/api/v1/rooms/leave-room", joinInfo, headers);
+            this.stompClient.disconnect(() => {
+                console.log("소켓 연결 해제");
+            }, {});
+
             this.INIT_ROOM();
             this.INIT_UESRS();
         },
@@ -114,11 +127,7 @@ export default {
                 if (type === "Enter") {
                     this.ADD_USER(user);
                 } else if (type === "Leave") {
-                    let joinInfo = {
-                        code: this.room.code,
-                        id: user.nick,
-                    };
-                    this.leaveRoom(joinInfo);
+                    this.DELETE_USER(user.nick);
                 }
             } else {
                 if (type === "Sync") {
@@ -129,7 +138,7 @@ export default {
     },
     computed: {
         ...mapState(room, ["room", "users"]),
-        ...mapGetters(["getUser"]),
+        ...mapGetters(["getUser", "authHeader"]),
     },
     watch: {
         users() {
