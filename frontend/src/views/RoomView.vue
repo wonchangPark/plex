@@ -105,6 +105,7 @@ export default {
             pose1: 0,
             pose2: 0,
             signal: [0, 0, 0, 0, 0],
+            ropeFightTimer: undefined,
         };
     },
 
@@ -164,6 +165,8 @@ export default {
                         console.log(this.personalScore);
                         if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 1)) {
                             this.game.scene.getScene("ropeFightScene").LeftWin();
+                            if (this.ropeFightTimer != undefined)
+                                clearInterval(this.ropeFightTimer);
                             setTimeout(() => (this.gameFinished = true), 1000);
                             setTimeout(() => (this.gameFinished = false), 7000);
                             this.game.scene.getScene("ropeFightScene").gameActive = false;
@@ -330,6 +333,7 @@ export default {
             this.game.scene.getScene('ropeFightScene').gameActive = true;
             this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
 
+
             this.dataInit();
             this.session
                 .signal({
@@ -344,6 +348,8 @@ export default {
                 .catch((error) => {
                     console.error(error);
                 });
+            if (this.game.scene.getScene("ropeFightScene").gameActive)
+                setInterval(()=>(this.game.scene.getScene("ropeFightScene").onTimerEvent()), 1000);
         },
 
         sendScore() {
@@ -629,7 +635,8 @@ export default {
   },
 
     beforeRouteLeave(to, from, next) {
-        this.bgm.pause();
+        if (this.bgm != undefined)
+            this.bgm.pause();
         next();
     },
 

@@ -36,7 +36,7 @@ class RopeFightScene extends Scene {
 
     leftTime = 60;
     timerText;
-    timer;
+    //timer;
     gameActive = false;
     create() {
 
@@ -46,7 +46,7 @@ class RopeFightScene extends Scene {
         var goLeftEvent = new Phaser.Events.EventEmitter();
         var goRightEvent = new Phaser.Events.EventEmitter();
 
-        this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
+        //this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
         
         // 화면 비율
         this.WidthScale = this.sys.game.canvas.width / 1600;
@@ -59,7 +59,7 @@ class RopeFightScene extends Scene {
         this.LeftDesk = this.add.image(800*this.WidthScale, 260*this.WidthScale, 'DeskLeft').setScale(this.WidthScale);
 
 
-        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#660000').setScale(4*this.WidthScale);
+        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "60", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#660000').setScale(4*this.WidthScale);
 
 
         outEvent.on('Out', this.outHandler, this);
@@ -281,6 +281,19 @@ class RopeFightScene extends Scene {
             }
         }
         
+        /*if (this.leftTime >= 0)
+            this.timerText.setText(this.leftTime);
+        else {
+            if (this.gameActive)
+                this.timerText.setText("연장전!");
+            else
+                this.timerText.setText("");
+        }*/
+
+    }
+
+    onTimerEvent() {
+        this.leftTime--;
         if (this.leftTime >= 0)
             this.timerText.setText(this.leftTime);
         else {
@@ -289,11 +302,6 @@ class RopeFightScene extends Scene {
             else
                 this.timerText.setText("");
         }
-
-    }
-
-    onTimerEvent() {
-        this.leftTime--;
         //console.log(this.leftTime);
     }
 

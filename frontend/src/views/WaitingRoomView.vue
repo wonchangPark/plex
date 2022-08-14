@@ -60,7 +60,7 @@ export default {
   components: { UserList, RoomList, ChattingList, CreateRoomDialog },
   data() {
     return {
-      waitingMusic: require("../assets/audio/watingAudio.mp3"),
+      waitingMusic: require("../assets/audio/waitingAudio.mp3"),
     }
   },
   methods: {
