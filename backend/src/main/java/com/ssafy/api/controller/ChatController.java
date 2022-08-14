@@ -47,6 +47,9 @@ public class ChatController {
 
     @MessageMapping("/room")
     public void roomSocketHandler(RoomSocketVo socketVo){
+        if(socketVo.getType().equals("Enter")){
+
+        };
         template.convertAndSend("/send/"+socketVo.getRoomId(), socketVo);
     }
 
@@ -55,4 +58,7 @@ public class ChatController {
     public List<String> getUserList(){
         return new ArrayList<>(userSet);
     }
+
+
+
 }

@@ -18,6 +18,7 @@ import com.ssafy.common.exception.ReIssuanceAccessTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -67,7 +68,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } else if(request.getMethod().equals("POST") && path.contains("/check")){
             filterChain.doFilter(request, response);
             return;
-        } else if (path.contains("/ws")) {
+        }
+        else if (path.contains("/ws")) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -56,7 +56,7 @@ export default {
             this.stompClient = Stomp.over(socket);
             //console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
             this.stompClient.connect(
-                {},
+                this.authHeader,
                 (frame) => {
                     // 소켓 연결 성공
                     this.connected = true;
@@ -112,7 +112,7 @@ export default {
     },
     computed: {
         ...mapState(["token", "auth"]),
-        ...mapGetters(["getUser"]),
+        ...mapGetters(["getUser","authHeader"]),
     },
     updated() {
         if (Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5) {
