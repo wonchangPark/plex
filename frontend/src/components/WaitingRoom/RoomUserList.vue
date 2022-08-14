@@ -3,11 +3,19 @@
         <div class="d-flex flex-row" style="width: 100%; height: 100%">
             <div class="d-flex flex-column" style="width: 75%; height: 100%">
                 <div class="room-user-grid-wrap">
-                    <RoomUserItem v-for="(item, index) in users" :key="index" :nick="item.nick" :height="80" :width="80"></RoomUserItem>
+                    <RoomUserItem
+                        
+                        v-for="(item, index) in users"
+                        :key="index"
+                        :nick="item.nick"
+                        :height="80"
+                        :width="80"
+                        :team="item.team"
+                    ></RoomUserItem>
                 </div>
             </div>
             <div class="d-flex align-center" style="width: 25%; height: 100%">
-                <RoomUserControl :stompClient="stompClient"></RoomUserControl>
+                <RoomUserControl :isHost="isHost" :gameType="gameType" :stompClient="stompClient"></RoomUserControl>
             </div>
         </div>
     </content-box>
@@ -20,8 +28,7 @@ import RoomUserControl from "./Item/RoomUserControl.vue";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { API_BASE_URL } from "@/config";
-import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
-import axios from "axios";
+import { mapGetters, mapMutations, mapState } from "vuex";
 
 const room = "room";
 export default {
@@ -35,6 +42,7 @@ export default {
             connected: false,
             isHost: null,
             sendVo: {},
+            gameType: 0,
         };
     },
     created: function () {
@@ -49,8 +57,7 @@ export default {
         }, {});
     },
     methods: {
-        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_UESRS"]),
-        ...mapActions(room, ["leaveRoom"]),
+        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_UESRS", "UPDATE_USER"]),
         connect() {
             const serverURL = API_BASE_URL + "/api/v1/ws";
             let socket = new SockJS(serverURL);
@@ -74,6 +81,7 @@ export default {
                         let msg = {
                             type: "Enter",
                             roomId: this.room.code,
+                            gameType: 0,
                             user: {
                                 userId: this.getUser.userId,
                                 nick: this.getUser.nick,
@@ -92,7 +100,6 @@ export default {
             );
         },
         exitRoom() {
-            alert("확인");
             let msg = {
                 type: "Leave",
                 roomId: this.room.code,
@@ -100,39 +107,46 @@ export default {
                     userId: this.getUser.userId,
                     nick: this.getUser.nick,
                     team: 0,
-                    isHost: false,
+                    host: false,
                 },
             };
             this.send(msg);
-            let joinInfo = {
-                code: this.room.code,
-                id: this.getUser.nick,
-            };
-            let headers = this.authHeader;
-            axios.post("https://localhost:8080/api/v1/rooms/leave-room", joinInfo, headers);
             this.stompClient.disconnect(() => {
                 console.log("소켓 연결 해제");
             }, {});
-
-            this.INIT_ROOM();
-            this.INIT_UESRS();
         },
         send(msg) {
             if (this.stompClient && this.stompClient.connected) {
                 this.stompClient.send("/room", JSON.stringify(msg), {});
             }
         },
-        receive({ type, user, users }) {
+        receive({ type, user, users, gameType }) {
             if (this.isHost) {
                 if (type === "Enter") {
                     this.ADD_USER(user);
                 } else if (type === "Leave") {
                     this.DELETE_USER(user.nick);
+                } else if (type === "ChangeGame") {
+                    this.gameType = gameType;
+                } else if (type === "ChangeTeam") {
+                    this.UPDATE_USER(user);
                 }
             } else {
                 if (type === "Sync") {
                     this.SET_USERS(users);
+                    if (gameType !== undefined) this.gameType = gameType;
                 }
+            }
+        },
+        sync() {
+            if (this.isHost) {
+                let msg = {
+                    type: "Sync",
+                    gameType: this.gameType,
+                    roomId: this.room.code,
+                    users: this.users,
+                };
+                this.send(msg);
             }
         },
     },
@@ -142,14 +156,10 @@ export default {
     },
     watch: {
         users() {
-            if (this.isHost) {
-                let msg = {
-                    type: "Sync",
-                    roomId: this.room.code,
-                    users: this.users,
-                };
-                this.send(msg);
-            }
+            this.sync();
+        },
+        gameType() {
+            this.sync();
         },
     },
 };
@@ -163,4 +173,7 @@ export default {
     width: 100%;
     height: 100%;
 }
+
+
+
 </style>

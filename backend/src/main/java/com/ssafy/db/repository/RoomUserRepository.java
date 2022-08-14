@@ -46,6 +46,7 @@ public class RoomUserRepository {
     }
 
     public void delete(RoomUser roomUser) {
-        em.remove(roomUser);
+        em.remove(em.contains(roomUser) ? roomUser : em.merge(roomUser));
     }
+
 }

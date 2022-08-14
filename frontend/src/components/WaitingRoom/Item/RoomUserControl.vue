@@ -1,60 +1,75 @@
 <template>
     <div class="d-flex flex-column align-center justify-space-around" style="width: 100%; height: 90%">
-        <div class="d-flex justify-center align-center primary--text" style="height: 30%; width: 100%; font-size: 4vw">4/6</div>
+        <div class="d-flex justify-center align-center primary--text" style="height: 30%; width: 100%; font-size: 4vw">{{ this.users.length }}/6</div>
         <div class="primary--text d-flex flex-column align-center" style="height: 30%; width: 100%">
             <div class="d-flex justify-center" style="height: 30%; width: 100%; font-size: 1vw">게임 종류</div>
             <div class="d-flex flex-row justify-space-around align-center" style="height: 70%; width: 100%">
                 <button
                     class="rope-icon"
-                    :class="[gameType[0] ? 'button-border' : '']"
+                    :class="[gameType == 0 ? 'button-border' : '']"
                     style="width: 30%; height: 80%; border-radius: 3px"
                     @click="gameTypeEvent(0)"
                 ></button>
                 <button
                     class="run-icon"
-                    :class="[gameType[1] ? 'button-border' : '']"
+                    :class="[gameType == 1 ? 'button-border' : '']"
                     style="width: 30%; height: 80%; border-radius: 3px"
                     @click="gameTypeEvent(1)"
                 ></button>
             </div>
         </div>
-        <div v-if="gameType[0] === true" class="primary--text d-flex justify-space-around align-center" style="height: 10%; width: 100%">
+        <div v-if="gameType === 0" class="primary--text d-flex justify-space-around align-center" style="height: 10%; width: 100%">
             <div style="font-size: 1vw">팀 선택</div>
-            <button :class="[team[0] ? 'button-border' : '']" class="team-button" style="background: white" @click="teamEvent(0)"></button>
-            <button :class="[team[1] ? 'button-border' : '']" class="team-button" style="background: #92b6d8" @click="teamEvent(1)"></button>
-            <button :class="[team[2] ? 'button-border' : '']" class="team-button" style="background: red" @click="teamEvent(2)"></button>
+            <button :class="[team == 0 ? 'button-border' : '']" class="team-button" style="background: white" @click="teamEvent(0)"></button>
+            <button :class="[team == 1 ? 'button-border' : '']" class="team-button" style="background: #92b6d8" @click="teamEvent(1)"></button>
+            <button :class="[team == 2 ? 'button-border' : '']" class="team-button" style="background: #ff6161" @click="teamEvent(2)"></button>
         </div>
-        <div v-if="gameType[1] === true" class="primary--text d-flex justify-space-around align-center" style="height: 10%; width: 100%">
+        <div v-if="gameType === 1" class="primary--text d-flex justify-space-around align-center" style="height: 10%; width: 100%">
             <div style="font-size: 1vw">개인전</div>
         </div>
         <div class="d-flex flex-column justify-space-around align-center" style="height: 30%; width: 100%">
-            <button class="primary" style="width: 90%; height: 35%; border-radius: 3px" @click="startEvent">게임시작</button>
+            <button v-if="isHost" class="primary" style="width: 90%; height: 35%; border-radius: 3px" @click="startEvent">게임시작</button>
             <button class="primary" style="width: 90%; height: 35%; border-radius: 3px">나가기</button>
         </div>
     </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 const room = "room";
 export default {
     name: "RoomUserControl",
     data() {
         return {
-            gameType: [true, false],
-            team: [false, false, false],
+            team: 0,
         };
     },
-    props: ["stompClient"],
+    props: ["stompClient", "isHost", "gameType"],
     methods: {
         gameTypeEvent(num) {
-            for (let i = 0; i < this.gameType.length; i++) this.gameType[i] = false;
-            this.gameType.splice(num, 1, true);
+            if (this.isHost) {
+                let msg = {
+                    type: "ChangeGame",
+                    gameType: num,
+                    roomId: this.room.code,
+                    users: this.users,
+                };
+                this.send(msg);
+            }
         },
         teamEvent(num) {
-            for (let i = 0; i < this.team.length; i++) this.team[i] = false;
-            this.team.splice(num, 1, true);
-            console.log(this.team);
+            this.team = num;
+            let msg = {
+                type: "ChangeTeam",
+                roomId: this.room.code,
+                user: {
+                    userId: this.getUser.userId,
+                    nick: this.getUser.nick,
+                    team: num,
+                    host: this.isHost,
+                },
+            };
+            this.send(msg);
         },
         send(msg) {
             if (this.stompClient && this.stompClient.connected) {
@@ -72,6 +87,7 @@ export default {
     },
     computed: {
         ...mapState(room, ["users", "room"]),
+        ...mapGetters(["getUser"]),
     },
 };
 </script>

@@ -32,6 +32,14 @@ const room = {
         INIT_ROOM: (state) => {
             state.room = {};
         },
+        UPDATE_USER: (state, user) => {
+            state.users = state.users.map((item) => {
+                console.log(item);
+                console.log(user);
+                if (item.nick === user.nick) return user;
+                return item;
+            });
+        },
     },
     actions: {
         roomCreate({ rootState, commit }, roomInfo) {
@@ -43,8 +51,8 @@ const room = {
                     let user = {
                         nick: rootState.auth.user.nick,
                         team: 0,
-                        isHost: true,
-                        token: data.token,
+                        host: true,
+                        userId: rootState.auth.user.userId,
                     };
                     commit("INIT_HOST", user);
                     router.push("/waiting/" + data.code);
