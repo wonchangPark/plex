@@ -76,6 +76,8 @@ export default {
     ScoreBoard,
   },
 
+  
+
   data() {
     return {
       OV: undefined,
@@ -88,8 +90,9 @@ export default {
       myUserName: "",
       videoMute: false, // 영상 중지
       audioMute: false, // 음소거
-      music: require("../assets/audio/runningAudio.mp3"),
-
+      
+            music: require("../assets/audio/runningAudio.mp3"),
+            bgm: undefined,
             isHost: false,
             status: 0, // 동작 인식 상태
             team1: [], // 팀 정보
@@ -104,6 +107,8 @@ export default {
             signal: [0, 0, 0, 0, 0],
         };
     },
+
+    
 
   methods: {
     dataInit() {
@@ -318,8 +323,8 @@ export default {
             // console.log(this.$refs.teachable)
             // this.$refs.teachable.init()
             // this.init()
-            const sound = new Audio(this.music);
-            sound.play();
+            this.bgm = new Audio(this.music);
+            this.bgm.play();
             this.game.scene.getScene("bootScene").StartScene(0);
             this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene('ropeFightScene').gameActive = true;
@@ -622,6 +627,11 @@ export default {
 
     ...mapActions(["setRoomClose", "leaveRoom"]),
   },
+
+    beforeRouteLeave(to, from, next) {
+        this.bgm.pause();
+        next();
+    },
 
     computed: {
         ...mapGetters(["roomCreate", "roomInfo", "roomJoin", "joinInfo", "authHeader"]),
