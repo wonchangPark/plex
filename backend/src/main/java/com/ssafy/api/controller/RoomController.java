@@ -10,6 +10,7 @@ import com.ssafy.api.response.RoomCreateRes;
 import com.ssafy.api.service.RoomUserService;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
+import com.ssafy.common.exception.NoMoreSpaceForRoomException;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.RandomRoomCode;
 import com.ssafy.db.entity.Room;
@@ -138,13 +139,15 @@ public class RoomController {
 		Room room = roomService.getRoomByCode(joinInfo.getCode());
 		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		User user = ssafyUserDetails.getUser();
-		if(room == null || user == null) return ResponseEntity.status(403).build();
+		if(room == null || user == null) return ResponseEntity.status(404).build();
 		if(roomService.isGaming(room)) return ResponseEntity.status(407).build(); // 게임중이므로 못들어감
-		if(roomService.isAlreadyInRoom(user)) return ResponseEntity.status(406).build(); // 이미 대기방에 있음
+		//if(roomService.isAlreadyInRoom(user)) return ResponseEntity.status(406).build(); // 이미 대기방에 있음
 		try {
 			roomUserService.createRoomUser(user, room);
-		} catch (Exception e) {
+		} catch (NoMoreSpaceForRoomException e) {
 			return ResponseEntity.status(403).build();
+		} catch (Exception e){
+			return ResponseEntity.status(404).build();
 		}
 
 		System.out.println("Getting a token from OpenVidu Server | {sessionName}=" + joinInfo.getCode());

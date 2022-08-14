@@ -82,6 +82,9 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    if(error.response.status == 403){
+                        alert("이미 인원이 다 차있어 입장 불가능합니다.")
+                    }
                 }
             );
         },
