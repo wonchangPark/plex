@@ -18,6 +18,8 @@ public class RankingRes implements Comparable<RankingRes>{
 	private Long userNo;
 	private String userNick;
 
+	private String userImage;
+
 	private Long score;
 	private Long rank;
 
@@ -36,6 +38,14 @@ public class RankingRes implements Comparable<RankingRes>{
 		this.userNo = userNo;
 		this.userNick = userNick;
 		this.score = score;
+	}
+
+	public RankingRes(Long userNo, String userNick, String userImage, Long score, Long rank) {
+		this.userNo = userNo;
+		this.userNick = userNick;
+		this.userImage = userImage;
+		this.score = score;
+		this.rank = rank;
 	}
 
 	@Override
