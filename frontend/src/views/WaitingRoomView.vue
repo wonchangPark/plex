@@ -41,6 +41,12 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
     name: "WaitingRoomView",
+    data() {
+        return {
+            homeMusic: require("../assets/audio/homeAudio.mp3"),
+            musicOn: undefined,
+        }
+    },
     components: { UserList, ChattingList, CreateRoomDialog, UserData },
     methods: {
         ...mapActions(["setRoomCreate"]),
@@ -50,6 +56,19 @@ export default {
     },
     computed: {
         ...mapGetters(["roompage"]),
+    },
+    mounted() {
+        this.musicOn = new Audio(this.homeMusic);
+        this.musicOn.play();
+        this.musicOn.volume = 0.4;
+        this.musicOn.loop = true;
+        
+    },
+
+    beforeRouteLeave(to, from, next) {
+        if (this.musicOn != undefined)
+            this.musicOn.pause();
+        next();
     },
 };
 </script>
