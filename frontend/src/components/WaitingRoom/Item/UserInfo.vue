@@ -1,8 +1,13 @@
 <template>
   <div class="d-flex user-info flex-row justify-left align-center">
-    <v-avatar class="mr-4 ml-4" color="white" size="45">
+    <v-avatar class="mr-4 ml-4" color="white" size="45" @keydown="fetchimg(nick)">
       <img
-        :src="require(`@/assets/profile/${getUser.img}.png`)"
+        v-if="currentUserImage.userImage === undefined || currentUserImage.userImage === null"
+        src="@/assets/profile/test.png"
+        alt="chick">
+      <img
+          v-else
+        :src="require(`@/assets/profile/${currentUserImage.userImage}.png`)"
         alt="profile">
     </v-avatar>
     <div class="white--text font">{{nick}}</div>
@@ -10,13 +15,20 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
+
 export default {
     name: "UserInfo",
     props:["nick"],
     computed: {
-      ...mapGetters(['getUser'])
-    }
+      ...mapGetters(['currentUserImage'])
+    },
+    methods: {
+      ...mapActions(['fetchImg'])
+    },
+    created(){
+      this.fetchImg(this.nick)
+    },
 };
 </script>
 

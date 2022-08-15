@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app @click="check()">
         <v-main>
             <div id="v-app">
                 <v-container id="v-container">
@@ -16,13 +16,24 @@
 </template>
 
 <script>
+// import axios from 'axios';
 import Navbar from "./components/Home/Navbar.vue";
+// import { API_BASE_URL } from "@/config";
+// import store from "@/store";
+// import router from "@/router";
+
+
+// const API_URL = API_BASE_URL + "/api/v1";
+
+
 export default {
     name: "App",
     components: { Navbar },
     data: () => ({
         //
-    })
+    }),
+    
+    
 };
 </script>
 <style>

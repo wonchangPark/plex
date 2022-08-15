@@ -137,6 +137,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if (!accessToken.replace(JwtTokenUtil.TOKEN_PREFIX,"").equals(redisAccessToken) || !refreshToken.replace(JwtTokenUtil.TOKEN_PREFIX, "").equals(redisRefreshToken)) {
                 // redis에서 가져온 토큰들이 없거나
                 // 두 개의 토큰중 안맞는 토큰이 있으므로 둘 다 만료 시키고 401로 로그인을 다시하라고 알리기
+                System.out.println(accessToken);
+                System.out.println(refreshToken);
+                System.out.println(redisAccessToken);
+                System.out.println(redisRefreshToken);
                 hashOperations.delete(userId, "accessToken", "refreshToken");
                 throw new JwtTokenException("thats not exact token");
             }
@@ -181,6 +185,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 //                out.flush();
 //                out.close();
                 response.setHeader("Authorization", newAccessToken);
+                response.setStatus(405);
                 throw new ReIssuanceAccessTokenException("인가토큰 재발급");
 
             } catch (TokenExpiredException ex) {

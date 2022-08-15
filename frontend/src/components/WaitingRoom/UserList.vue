@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState} from 'vuex';
 import ContentBox from "../common/ContentBox.vue";
 import UserInfo from "./Item/UserInfo.vue";
 const RoomStore = "roomStore";
@@ -28,7 +28,7 @@ export default {
         ...mapState(RoomStore, ["connectUsers"])
     },
     methods:{
-        ...mapActions(RoomStore, ["getConnectUsers"])
+        ...mapActions(RoomStore, ["getConnectUsers"]),
     }
 };
 </script>

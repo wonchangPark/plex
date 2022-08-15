@@ -1,16 +1,17 @@
-import axios from "axios";
+import axios from "@/axios";
 import router from "@/router";
 import { API_BASE_URL } from "@/config";
+import {refresh} from '@/api/error'
+import store from "@/store"
 
 const API_URL = API_BASE_URL + "/api/v1";
 
 export default {
   state: {
     user: {},
-    accessToken: localStorage.getItem("accessToken") || "",
-    refreshToken: localStorage.getItem("refreshToken") || "",
+    accessToken: null,
+    refreshToken: null,
     authError: null,
-    authHeader: null,
     passwordFlag: false,
     nicknameFlag: false,
     idFlag: false,
@@ -19,6 +20,7 @@ export default {
     myRanking: {},
     userExercise: [],
     userGameInfo: {},
+    currentUserImage: {},
   },
 
   getters: {
@@ -30,10 +32,14 @@ export default {
     idFlag: (state) => state.idFlag,
     rankingList: (state) => state.rankingList,
     authError: (state) => state.authError,
-    authHeader: (state) => state.authHeader,
+    authHeader: (state) =>  ({
+      Authorization: "Bearer " + state.accessToken,
+      Authorization2: "Bearer " + state.refreshToken,
+    }),
     userExercise: (state) => state.userExercise,
     userGameInfo: (state) => state.userGameInfo,
     myRanking: (state) => state.myRanking,
+    currentUserImage: (state) => state.currentUserImage
   },
 
   mutations: {
@@ -47,14 +53,15 @@ export default {
     SET_RANKINGLIST: (state, rankingList) => (state.rankingList = rankingList),
     SET_MYRANKING: (state, myRanking) => (state.myRanking = myRanking),
     SET_ACCESSTOKEN: (state, accessToken) => (state.accessToken = accessToken),
-    SET_REFRESHTOKEN: (state, refreshToken) =>
-      (state.refreshToken = refreshToken),
+    SET_REFRESHTOKEN: (state, refreshToken) => (state.refreshToken = refreshToken),
     SET_AUTH_HEADER: (state, authHeader) => (state.authHeader = authHeader),
     SET_AUTH_ERROR: (state, error) => (state.authError = error),
     SET_USER_EXERCISE: (state, exerciseInfo) =>
       (state.userExercise = exerciseInfo),
     SET_GAME_INFO: (state, gameInfo) => (state.userGameInfo = gameInfo),
+    SET_CURRENT_USER_IMAGE: (state, currentUserImage) => (state.currentUserImage = currentUserImage)
   },
+
   actions: {
     saveToken({ commit }, { accessToken, refreshToken }) {
       commit("SET_ACCESSTOKEN", accessToken);
@@ -62,7 +69,7 @@ export default {
       commit("SET_AUTH_HEADER", {
         Authorization: "Bearer " + accessToken,
         Authorization2: "Bearer " + refreshToken,
-      });
+      })
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
     },
@@ -74,47 +81,15 @@ export default {
       localStorage.setItem("refreshToken", "");
     },
 
-    checkAccessToken({ dispatch }, { accessToken, refreshToken }) {
-      dispatch("saveToken", { accessToken, refreshToken });
-    },
-
-    fetchUserInfo({ commit, getters, dispatch }) {
+    fetchUserInfo({ commit, getters, dispatch}) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + "/users/me",
           method: "get",
           headers: getters.authHeader,
-        }).then((res) => {
-          console.log(getters.authHeader);
-          if (res.headers.authorization) {
-            const newAccessToken = res.headers.authorization;
-            const refreshToken = localStorage.getItem("refreshToken") || "";
-            console.log(newAccessToken);
-            dispatch("saveToken", { newAccessToken, refreshToken });
-            // commit('SET_AUTH_HEADER', { Authorization:'Bearer ' + newAccessToken,
-            // Authorization2: 'Bearer ' + refreshToken})
-            console.log("info", getters.authHeader);
-            axios({
-              url: API_URL + "/users/me",
-              method: "get",
-              headers: getters.authHeader,
-            })
-              .then((res) => {
-                console.log(res);
-                const user = {
-                  no: res.data.no,
-                  userId: res.data.userId,
-                  nick: res.data.nick,
-                  email: res.data.email,
-                  totalScore: res.data.totalScore,
-                  img: res.data.img,
-                };
-                commit("SET_USER", user);
-              })
-              .catch((err) => {
-                console.err(err.response.data);
-              });
-          } else {
+        })
+
+        .then((res) => {
             console.log("user", res.data);
             const user = {
               no: res.data.no,
@@ -125,170 +100,89 @@ export default {
               img: res.data.img,
             };
             commit("SET_USER", user);
-          }
-        });
-      }
-    },
-
-    fetchRankingList({ commit, getters, dispatch }) {
-      if (getters.isLoggedIn) {
-        axios({
-          url: API_URL + "/rank",
-          method: "get",
-          headers: getters.authHeader,
         })
-          .then((res) => {
-            console.log(getters.authHeader);
-            if (res.headers.authorization) {
-              const newAccessToken = res.headers.authorization;
-              const refreshToken = localStorage.getItem("refreshToken") || "";
-              dispatch("checkAccessToken", { newAccessToken, refreshToken });
-              console.log(newAccessToken);
-              console.log(getters.authHeader);
-              axios({
-                url: API_URL + "/rank",
-                method: "get",
-                headers: getters.authHeader,
-              })
-                .then((res) => {
-                  console.log(res);
-                  const rankingList = res.data;
-                  commit("SET_RANKINGLIST", rankingList);
-                })
-                .catch((err) => {
-                  console.err(err.response.data);
-                });
-            } else {
-              console.log(res);
-              const rankingList = res.data;
-              commit("SET_RANKINGLIST", rankingList);
-            }
-          })
-          .catch((err) => {
-            console.error(err.response.data);
-          });
+        .catch((error) => {
+          console.log(error)
+          refresh(error, store, router, this.fetchUserInfo)
+          dispatch(this.fetchUserInfo)
+        })
       }
     },
 
-    fetchMyRanking({ commit, getters, dispatch }, no) {
+
+    fetchRankingList({commit, getters}){
+      axios({
+        url: API_URL + "/rank",
+        method: "get",
+        headers: getters.authHeader
+      })
+      .then((res) => {
+          const rankingList = res.data
+          commit("SET_RANKINGLIST", rankingList)
+      })
+      .catch((err) => {
+        console.log(getters.isLoggedIn)
+        console.error(err.response.data)
+      })
+    },
+
+
+
+    fetchMyRanking({ commit, getters }, no) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + "/rank/" + no,
           method: "get",
           headers: getters.authHeader,
         })
-          .then((res) => {
-            console.log(getters.authHeader);
-            if (res.headers.authorization) {
-              const newAccessToken = res.headers.authorization;
-              const refreshToken = localStorage.getItem("refreshToken") || "";
-              dispatch("checkAccessToken", { newAccessToken, refreshToken });
-              console.log(newAccessToken);
-              console.log(getters.authHeader);
-              axios({
-                url: API_URL + "/rank/" + no,
-                method: "get",
-                headers: getters.authHeader,
-              })
-                .then((res) => {
-                  console.log("myranking", res);
-                  const myRanking = res.data;
-                  commit("SET_MYRANKING", myRanking);
-                })
-                .catch((err) => {
-                  console.err(err.response.data);
-                });
-            } else {
-              console.log("myranking", res);
-              const myRanking = res.data;
-              commit("SET_MYRANKING", myRanking);
-            }
-          })
-          .catch((err) => {
-            console.error(err.response.data);
-          });
+        .then((res) => {
+            console.log("myranking", res);
+            const myRanking = res.data;
+            commit("SET_MYRANKING", myRanking);
+        })
+        .catch((err) => {
+          console.error(err.response.data);
+        });
       }
     },
 
-    fetchExerciseInfo({ getters, commit, dispatch }) {
+    fetchExerciseInfo({ getters, commit }) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + "/users/exercise",
           method: "get",
           headers: getters.authHeader,
-        }).then((res) => {
-          if (res.headers.authorization) {
-            const newAccessToken = res.headers.authorization;
-            const refreshToken = localStorage.getItem("refreshToken") || "";
-            console.log(newAccessToken);
-            dispatch("checkAccessToken", { newAccessToken, refreshToken });
-            console.log(newAccessToken);
-            commit("SET_AUTH_HEADER", {
-              Authorization: "Bearer " + newAccessToken,
-              Authorization2: "Bearer " + refreshToken,
-            });
-            axios({
-              url: API_URL + "/users/exercise",
-              method: "get",
-              headers: getters.authHeader,
-            })
-              .then((res) => {
-                console.log("ex", res);
-                const exerciseInfo = res.data;
-                commit("SET_USER_EXERCISE", exerciseInfo);
-              })
-              .catch((err) => {
-                console.log(err.response.data);
-              });
-          } else {
-            console.log(res);
-            const exerciseInfo = res.data;
-            commit("SET_USER_EXERCISE", exerciseInfo);
-          }
+        })
+        .then((res) => {
+          console.log("ex", res);
+          const exerciseInfo = res.data;
+          commit("SET_USER_EXERCISE", exerciseInfo);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
         });
       }
     },
 
-    fetchGameInfo({ getters, commit, dispatch }) {
+    fetchGameInfo({ getters, commit }) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + "/users/totalgame",
           method: "get",
           headers: getters.authHeader,
-        }).then((res) => {
-          if (res.headers.authorization) {
-            const newAccessToken = res.headers.authorization;
-            const refreshToken = localStorage.getItem("refreshToken") || "";
-            console.log(newAccessToken);
-            dispatch("checkAccessToken", { newAccessToken, refreshToken });
-            console.log(newAccessToken);
-            commit("SET_AUTH_HEADER", {
-              Authorization: "Bearer " + newAccessToken,
-              Authorization2: "Bearer " + refreshToken,
-            });
-            axios({
-              url: API_URL + "/users/totalgame",
-              method: "get",
-              headers: getters.authHeader,
-            })
-              .then((res) => {
-                console.log("tot", res);
-                const gameInfo = res.data;
-                commit("SET_GAME_INFO", gameInfo);
-              })
-              .catch((err) => {
-                console.err(err.response.data);
-              });
-          } else {
-            console.log(res);
-            const gameInfo = res.data;
-            commit("SET_GAME_INFO", gameInfo);
-          }
+        })
+        .then((res) => {
+          console.log("tot", res);
+          const gameInfo = res.data;
+          commit("SET_GAME_INFO", gameInfo);
+        })
+        .catch((err) => {
+          console.err(err.response.data);
         });
       }
     },
 
-    changeImg({ getters }, img) {
+    changeImg({ getters, dispatch }, img) {
       if (getters.isLoggedIn) {
         axios({
           url: API_URL + "/users/image",
@@ -301,8 +195,28 @@ export default {
           })
           .catch((err) => {
             console.error(err.response.data);
+            refresh(err, store, router, this.changeImg)
+            dispatch('changeImg', img)
           });
       }
+    },
+
+    fetchImg({getters, commit}, nick){
+      axios({
+        url: API_URL + '/users/image',
+        method: "get",
+        params: {
+          "nick": nick
+        },
+        headers: getters.authHeader,
+      }) .then((res) => {
+          console.log(res)
+          const imgInfo = res.data;
+          commit("SET_CURRENT_USER_IMAGE", imgInfo)
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      })
     },
 
     login({ commit, dispatch }, credentials) {

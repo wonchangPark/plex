@@ -4,7 +4,7 @@
       <div class="mypage-logo d-flex align-self-center">MY PAGE</div>
       <div class="d-flex flex-row">
         <div class="d-flex justify-center" style="flex: 1 1 30%">
-          <div class="d-flex justify-center">
+          <div class="d-flex justify-center" style="flex: 1 1 80%">
           <CharaterBox></CharaterBox>
           </div>
         </div>

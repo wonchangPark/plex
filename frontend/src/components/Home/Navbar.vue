@@ -12,7 +12,7 @@
           <v-btn icon v-on="on" @click="fetchUserInfo">
               <v-avatar color="white" size="35">
                 <img v-if="getUser.img" :src="require(`@/assets/profile/${getUser.img}.png`)" alt="profile">
-                <img v-else src="@/assets/profile/test.png" alt="chick">
+                <img v-else :src="require(`@/assets/profile/test.png`)" alt="chick">
               </v-avatar>
           </v-btn>
       </template>
