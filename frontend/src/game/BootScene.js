@@ -484,15 +484,15 @@ class BootScene extends Scene {
         if (idx == 0){
             this.scene.stop("waitingScene");
             this.scene.stop("runningScene");
-            this.scene.stop("ropFightScene");
-            this.scene.stop("runningScene");
-            this.scene.stop("ropFightScene");
+            //this.scene.stop("ropFightScene");
+            //this.scene.stop("runningScene");
+            //this.scene.stop("ropFightScene");
             this.scene.start("ropeFightScene");
         }
         else if (idx == 1){
             this.scene.stop("waitingScene");
-            this.scene.stop("ropFightScene");
-            this.scene.stop("runningScene");
+            this.scene.stop("ropeFightScene");
+            //this.scene.stop("runningScene");
             this.scene.start("runningScene");
         }
     }

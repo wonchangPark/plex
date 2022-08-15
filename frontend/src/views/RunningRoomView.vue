@@ -103,6 +103,17 @@ export default {
         videoMute: false, // 영상 중지
         audioMute: false, // 음소거
 
+        runningMusic: require("../assets/audio/runningAudio.mp3"),
+        gameEndMusic: require("../assets/audio/gameEndAudio.mp3"),
+        runningEndAudio: require("../assets/audio/runningEndAudio.mp3"),
+        blopMusic: require("../assets/audio/blop.mp3"),
+
+        musicOn: undefined,
+        gameEndMusicOn: undefined,
+        runningEndAudioOn: undefined,
+        blopMusicOn: undefined,
+
+
         user: {},
         roomNo:'', // 방 번호
         isHost: false,
@@ -138,6 +149,8 @@ export default {
     },
     countDownTimer () {
       if (this.countDown > 0) {
+        this.blopMusicOn = new Audio(this.blopMusic);
+        this.blopMusicOn.play();
         setTimeout(() => {
           this.countDown -= 1
           this.countDownTimer()
@@ -208,7 +221,17 @@ export default {
                     this.personalScore[`${event.data}`] += 1;
                     this.game.scene.getScene("runningScene").GoRight(`${event.data}`);
                 } else{
-                    if (event.data === this.myUserName) this.win = true
+                    if (event.data === this.myUserName) this.win = true;
+                    this.game.scene.getScene("runningScene").gameActive = false;
+                    this.runningEndAudioOn = new Audio(this.runningEndAudio);
+                    this.runningEndAudioOn.play();
+                    if (this.musicOn != undefined)
+                        this.musicOn.pause();
+                    this.gameEndMusicOn = new Audio(this.gameEndMusic);
+                    setTimeout(()=>(this.gameEndMusicOn.play()), 3000);
+                    setTimeout(()=>(this.gameFinished = true), 3000);
+                    setTimeout(()=>(this.gameFinished = false), 7000);
+
                     this.game.scene.getScene("runningScene").Winner(`${event.data}`);
                     this.gameEnd = true;
                     this.gameHistory()
@@ -332,6 +355,12 @@ export default {
         this.game.scene.getScene("runningScene").setName(Object.keys(this.personalScore));
 
         this.dataInit();
+        this.musicOn = new Audio(this.runningMusic);
+        this.musicOn.play();
+        this.musicOn.loop = true;
+        this.game.scene.getScene('runningScene').gameActive = true;
+
+
         this.session
             .signal({
                 // 게임 시작 송신

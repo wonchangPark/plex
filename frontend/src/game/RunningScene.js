@@ -18,6 +18,7 @@ class RunningScene extends Scene {
     teamName1 = []
     teamNameMove1 = []
     grounds = undefined;
+    gameActive = false;
 
 
 
