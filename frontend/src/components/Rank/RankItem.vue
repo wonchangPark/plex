@@ -2,7 +2,7 @@
   <div class="rank-item d-flex flex-row justify-center align-center deepblue">
     <v-row justify="center" align="center">
       <v-col cols="4">
-        <v-avatar class="ml-5" color="white" size="50"></v-avatar>
+        <v-avatar class="ml-5" color="white" size="50"><img :src="require(`@/assets/profile/${rankerImg}.png`)" alt="profile"></v-avatar>
       </v-col>
       <v-col cols="4">
         <div class="white--text ranker-info">{{rankerNick}}</div>
@@ -23,7 +23,7 @@ export default {
   name: 'RankItem',
   components: {
   },
-  props: ["rankerNick", "rankerTotalScore", "rankerRanking"],
+  props: ["rankerNick", "rankerTotalScore", "rankerRanking", "rankerImg"],
   data() {
     return {}
   },
