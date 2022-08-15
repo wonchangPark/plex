@@ -12,9 +12,9 @@
             minlength="4"/>
           </v-col>
           <v-col cols="5">
-            <span class="check secondary--text" v-if="!idValidate">4~12자의 영문 대소문자와 숫자로만 입력해주세요</span>
+            <span class="check secondary--text" v-if="!idValidate">4~12자의 영문 대소문자와 숫자만 입력</span>
             <span class="check error--text" v-else-if="idValidate && !idFlag">사용 불가능한 아이디 입니다.</span>
-            <span class="check secondary--text" v-else-if="idValidate && idFlag">사용 가능 아이디 입니다.</span>
+            <span class="check secondary--text" v-else-if="idValidate && idFlag">사용 가능한 아이디 입니다.</span>
           </v-col>
         </v-row>
         <v-row align="center" justify="center">

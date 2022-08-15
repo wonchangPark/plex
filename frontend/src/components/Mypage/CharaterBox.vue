@@ -1,14 +1,13 @@
 <template>
   <div class="character-box d-flex justify-center">
-    <ContentBox :height="80" :width="100">
+    <ContentBox :height="70" :width="100">
       <div class="d-flex flex-column">
 
-      <div class="d-flex justify-center align-self-center">
+      <div class="d-flex justify-center align-center align-self-center">
         <img v-if="getUser.img" :src="require(`@/assets/profile/${getUser.img}.png`)" alt="profile">
-        <!-- <img v-if="getUser.img" :src="getUser.img" alt="profile"> -->
         <img v-else src="@/assets/profile/test.png" alt="chick">
       </div>
-        <div class="d-flex justify-center">
+        <div class="d-flex justify-center" style="pt-2">
            <CharacterSelectionModal>
           </CharacterSelectionModal>
         </div> 
@@ -46,6 +45,7 @@ export default {
 
 <style>
 .character-box img {
-  width: 300px;
+  height: 250px;
+  width: 250px;
 }
 </style>

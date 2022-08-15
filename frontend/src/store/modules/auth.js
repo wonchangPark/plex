@@ -155,8 +155,8 @@ export default {
         })
         .then((res) => {
           console.log("ex", res);
-          const exerciseInfo = res.data;
-          commit("SET_USER_EXERCISE", exerciseInfo);
+            const exerciseInfo = res.data;
+            commit("SET_USER_EXERCISE", exerciseInfo);
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -243,8 +243,8 @@ export default {
         })
         .catch((err) => {
           console.error(err.response.data);
-          commit("SET_LOGINMODAL", true);
           commit("SET_AUTH_ERROR", err.response.data);
+          alert("로그인과 비밀번호를 확인해주세요")
         });
     },
 
