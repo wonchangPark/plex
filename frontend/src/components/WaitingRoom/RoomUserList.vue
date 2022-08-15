@@ -4,12 +4,12 @@
             <div class="d-flex flex-column" style="width: 75%; height: 100%">
                 <div class="room-user-grid-wrap">
                     <RoomUserItem
-                        
                         v-for="(item, index) in users"
                         :key="index"
                         :nick="item.nick"
                         :height="80"
                         :width="80"
+                        :img="item.img"
                         :team="item.team"
                     ></RoomUserItem>
                 </div>
@@ -87,6 +87,7 @@ export default {
                                 nick: this.getUser.nick,
                                 team: 0,
                                 isHost: false,
+                                img: this.getUser.img,
                             },
                         };
                         this.send(msg);
@@ -100,8 +101,11 @@ export default {
             );
         },
         exitRoom() {
+            let leaveType;
+            if (this.isHost) leaveType = "LeaveHost";
+            else leaveType = "Leave";
             let msg = {
-                type: "Leave",
+                type: leaveType,
                 roomId: this.room.code,
                 user: {
                     userId: this.getUser.userId,
@@ -135,6 +139,8 @@ export default {
                 if (type === "Sync") {
                     this.SET_USERS(users);
                     if (gameType !== undefined) this.gameType = gameType;
+                } else if (type === "LeaveHost") {
+                    this.$router.push("/waiting");
                 }
             }
         },
@@ -173,7 +179,4 @@ export default {
     width: 100%;
     height: 100%;
 }
-
-
-
 </style>

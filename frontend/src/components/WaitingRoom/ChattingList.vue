@@ -3,7 +3,7 @@
         <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
             <div class="d-flex flex-column" style="height: 87%; width: 100%">
                 <div class="d-flex flex-column chatting-list-box" ref="chattingListBox">
-                    <ChattingItem v-for="(item, index) in recvList" :key="index" :name="item.userName" :content="item.content"></ChattingItem>
+                    <ChattingItem v-for="(item, index) in recvList" :key="index" :name="item.userName" :content="item.content" :img="item.img"></ChattingItem>
                 </div>
             </div>
             <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
@@ -69,7 +69,7 @@ export default {
                         this.receive(JSON.parse(res.body));
                     });
                     window.addEventListener("beforeunload", this.exit);
-                    this.send("enter", this.getUser.nick, "");
+                    this.send("enter", this.getUser.nick, "", this.getUser.img);
                 },
                 (error) => {
                     // 소켓 연결 실패
@@ -78,19 +78,20 @@ export default {
                 }
             );
         },
-        send(type, userName, content) {
+        send(type, userName, content, img) {
             //console.log("Send Message:" + content);
             if (this.stompClient && this.stompClient.connected) {
                 const msg = {
                     type,
                     userName,
                     content,
+                    img,
                 };
                 this.stompClient.send("/receive", JSON.stringify(msg), {});
             }
         },
-        receive({ type, content, userName }) {
-            if (type === "message") this.recvList.push({ userName, content });
+        receive({ type, content, userName, img }) {
+            if (type === "message") this.recvList.push({ userName, content, img });
             else if (type === "enter") {
                 this.getConnectUsers();
             } else if (type === "exit") {
@@ -98,7 +99,7 @@ export default {
             }
         },
         sendEvent() {
-            this.send("message", this.getUser.nick, this.message);
+            this.send("message", this.getUser.nick, this.message, this.getUser.img);
             this.message = "";
 
             this.getConnectUsers();
@@ -112,7 +113,7 @@ export default {
     },
     computed: {
         ...mapState(["token", "auth"]),
-        ...mapGetters(["getUser","authHeader"]),
+        ...mapGetters(["getUser", "authHeader"]),
     },
     updated() {
         if (Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5) {

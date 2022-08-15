@@ -6,7 +6,7 @@
             </div>
             <div class="d-flex flex-column" style="flex: 0 0 90%; width: 100%; height: 90%">
                 <div class="d-flex flex-column align-center user-info-list-box">
-                    <UserInfo v-for="(item, index) in connectUsers" :nick="item" :key="index"></UserInfo>
+                    <UserInfo v-for="(item, index) in connectUsers" :nick="item.nick" :img="item.img" :key="index"></UserInfo>
                 </div>
             </div>
         </div>

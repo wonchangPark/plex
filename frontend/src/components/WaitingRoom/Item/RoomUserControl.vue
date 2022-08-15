@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState } from "vuex";
 const room = "room";
 export default {
     name: "RoomUserControl",
@@ -46,6 +46,7 @@ export default {
     },
     props: ["stompClient", "isHost", "gameType"],
     methods: {
+        ...mapMutations(room, ["INIT_TEAM_INFO"]),
         gameTypeEvent(num) {
             if (this.isHost) {
                 let msg = {
@@ -55,6 +56,7 @@ export default {
                     users: this.users,
                 };
                 this.send(msg);
+                if (num == 1) this.INIT_TEAM_INFO();
             }
         },
         teamEvent(num) {
@@ -67,6 +69,7 @@ export default {
                     nick: this.getUser.nick,
                     team: num,
                     host: this.isHost,
+                    img: this.getUser.img,
                 },
             };
             this.send(msg);

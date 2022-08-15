@@ -40,7 +40,7 @@ public class RoomRepository {
     public void endRoom(Room room) {
         LocalDateTime endDate = LocalDateTime.now();
         room.setEndTime(endDate);
-//        em.persist(room);
+        em.merge(room);
     }
 
     public List<User> getCurrentUserList(int from, int to) {

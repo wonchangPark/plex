@@ -29,7 +29,7 @@ const roomStore = {
             state.connectUsers.push(payload);
         },
         REMOVE_CONNECT_USER: (state, payload) => {
-            state.connectUsers = state.connectUsers.filter((item) => item !== payload);
+            state.connectUsers = state.connectUsers.filter((item) => item.nick !== payload.nick);
         },
         SET_CONNECT_USER: (state, payload) => {
             state.connectUsers = payload;

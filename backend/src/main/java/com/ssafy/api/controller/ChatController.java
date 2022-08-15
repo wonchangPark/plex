@@ -11,6 +11,7 @@ import com.ssafy.db.entity.RoomUser;
 import com.ssafy.db.entity.User;
 import com.ssafy.vo.RoomSocketVo;
 import com.ssafy.vo.SocketVO;
+import com.ssafy.vo.UserSetVo;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
@@ -35,7 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/ws")
 public class ChatController {
-    HashSet<String> userSet = new HashSet<>();
+    HashSet<UserSetVo> userSet = new HashSet<>();
 
     private final SimpMessagingTemplate template;
 
@@ -50,27 +51,22 @@ public class ChatController {
 
     @MessageMapping("/receive")
     @SendTo("/send")
-    public SocketVO SocketHandler(SocketVO socketVo, SimpMessageHeaderAccessor headerAccessor){
+    public SocketVO SocketHandler(SocketVO socketVo){
         String userName = socketVo.getUserName();
-        String content = socketVo.getContent();
         String type = socketVo.getType();
-        SocketVO result;
         if(type.equals("enter")){
-            userSet.add(userName);
-            result = new SocketVO(userName, content, "enter");
+            userSet.add(new UserSetVo(socketVo.getUserName(), socketVo.getImg()));
         }else if(type.equals("exit")) {
-            userSet.remove(userName);
-            result = new SocketVO(userName, content, "exit");
+            userSet.removeIf(userSetVo -> userSetVo.getNick().equals(userName));
         }else {
-            userSet.add(userName);
-            result = new SocketVO(userName, content, type);
+            userSet.add(new UserSetVo(socketVo.getUserName(), socketVo.getImg()));
         }
-        return result;
+        return socketVo;
     }
 
     @MessageMapping("/room")
     public void roomSocketHandler(RoomSocketVo socketVo){
-        if(socketVo.getType().equals("Leave")){
+        if(socketVo.getType().equals("Leave") || socketVo.getType().equals("LeaveHost")){
             RoomJoinPostReq joinInfo = new RoomJoinPostReq();
             joinInfo.setCode(socketVo.getRoomId());
             joinInfo.setId(socketVo.getUser().getNick());
@@ -81,7 +77,7 @@ public class ChatController {
 
     @RequestMapping("/users")
     @ResponseBody
-    public List<String> getUserList(){
+    public List<UserSetVo> getUserList(){
         return new ArrayList<>(userSet);
     }
 

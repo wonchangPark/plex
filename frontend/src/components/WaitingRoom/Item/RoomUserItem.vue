@@ -4,10 +4,12 @@
             v-bind:class="{ team1: this.team == 1, team2: this.team == 2 }"
             class="room-user-item d-flex flex-column justify-center align-center"
             v-bind:style="{ width: this.width + '%', height: this.height + '%' }"
-            style="background:#4A3E33"
+            style="background: #4a3e33"
         >
             <div>
-                <v-avatar size="80" color="white"></v-avatar>
+                <v-avatar size="80" color="white">
+                    <img :src="require(`@/assets/profile/${img}.png`)" alt="profile" />
+                </v-avatar>
             </div>
             <div class="primary--text" style="font-size: 2vw">{{ nick }}</div>
         </div>
@@ -17,7 +19,7 @@
 <script>
 export default {
     name: "RoomUserItem",
-    props: ["height", "width", "nick", "team"],
+    props: ["height", "width", "nick", "team", "img"],
 };
 </script>
 

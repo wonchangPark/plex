@@ -2,7 +2,7 @@
   <div class="d-flex user-info flex-row justify-left align-center">
     <v-avatar class="mr-4 ml-4" color="white" size="45">
       <img
-        :src="require(`@/assets/profile/${getUser.img}.png`)"
+        :src="require(`@/assets/profile/${img}.png`)"
         alt="profile">
     </v-avatar>
     <div class="white--text font">{{nick}}</div>
@@ -13,7 +13,7 @@
 import {mapGetters} from 'vuex'
 export default {
     name: "UserInfo",
-    props:["nick"],
+    props:["nick","img"],
     computed: {
       ...mapGetters(['getUser'])
     }

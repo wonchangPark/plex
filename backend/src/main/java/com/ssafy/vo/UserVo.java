@@ -10,4 +10,5 @@ public class UserVo {
     private String nick;
     private int team;
     private boolean host;
+    private String img;
 }
