@@ -28,7 +28,7 @@ import RoomUserControl from "./Item/RoomUserControl.vue";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { API_BASE_URL } from "@/config";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
 
 const room = "room";
 export default {
