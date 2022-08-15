@@ -44,7 +44,7 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     @Transactional
-    public long insertGameHistory(long roomNo) {
+    public long insertGameHistory(Long roomNo) {
 
         Room room = roomRepository.findByNo(roomNo);
         roomRepository.saveGameHistory(room);
@@ -52,6 +52,7 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
+    @Transactional
     public void insertScoreHistory(ScoreHistoryPostReq scoreHistoryPostReq){
         long userNo = scoreHistoryPostReq.getUserNo();
         long gameHistoryNo = scoreHistoryPostReq.getGameHistoryNo();
@@ -59,6 +60,27 @@ public class RoomServiceImpl implements RoomService{
         GameHistory gameHistory = roomRepository.getGameHistoryByNo(gameHistoryNo);
         ScoreHistory scoreHistory = ScoreHistory.createScoreHistory(user, gameHistory, scoreHistoryPostReq.getScore(), scoreHistoryPostReq.getTeamNo(), scoreHistoryPostReq.isWin(), scoreHistoryPostReq.getExerciseNum(), scoreHistoryPostReq.getGameNo() );
         roomRepository.saveScoreHistory(scoreHistory);
+    }
+
+    @Override
+    public boolean isHost(User user, Long roomNo) {
+        return roomRepository.isHost(user, roomNo);
+    }
+
+    @Override
+    @Transactional
+    public void endGame(Long gameHistoryNo) {
+        roomRepository.endGame(gameHistoryNo);
+    }
+
+    @Override
+    public boolean isGaming(Room room) {
+        return roomRepository.isGaming(room);
+    }
+
+    @Override
+    public boolean isAlreadyInRoom(User user) {
+        return roomRepository.isAlreadyInRoom(user);
     }
 
 }

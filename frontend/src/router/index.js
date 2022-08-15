@@ -67,16 +67,11 @@ const routes = [
         name: "rank",
         component: Rank,
     },
-  {
-    path: "/runningroom",
-    name: "runningroom",
-    component: RunningRoom,
-  },
-  {
-    path: "/runningroom",
-    name: "runningroom",
-    component: RunningRoom,
-  },
+    {
+        path: "/runningroom",
+        name: "runningroom",
+        component: RunningRoom,
+    },
 ];
 
 const router = new VueRouter({

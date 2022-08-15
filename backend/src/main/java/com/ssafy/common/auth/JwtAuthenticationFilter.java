@@ -18,6 +18,7 @@ import com.ssafy.common.exception.ReIssuanceAccessTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -67,7 +68,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } else if(request.getMethod().equals("POST") && path.contains("/check")){
             filterChain.doFilter(request, response);
             return;
-        } else if (path.contains("/ws")) {
+        }
+        else if (path.contains("/ws")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -95,7 +97,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } catch (ReIssuanceAccessTokenException ex) {
             System.out.println("인가 토큰 재발급");
 //            filterChain.doFilter(request, response);
-
             return;
         } catch (JwtTokenException ex) {
             ex.printStackTrace();
@@ -144,7 +145,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                 hashOperations.delete(userId, "accessToken", "refreshToken");
                 throw new JwtTokenException("thats not exact token");
             }
-            System.out.println("h3");
             JwtTokenUtil.accessHandleError(accessToken); // 이곳에서 토큰 만료 여부가 체크됨
 
             // jwt 토큰에 포함된 계정 정보(userId) 통해 실제 디비에 해당 정보의 계정이 있는지 조회.

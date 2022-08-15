@@ -1,5 +1,5 @@
 <template>
-  <ContentBox :height="90" :width="80">
+  <ContentBox :height="90" :width="100">
   <v-container >
     <v-row>
       <v-col>

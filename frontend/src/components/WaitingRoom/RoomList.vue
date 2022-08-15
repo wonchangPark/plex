@@ -1,5 +1,5 @@
 <template>
-    <ContentBox :height="90" :width="90">
+    <ContentBox :height="100" :width="100">
         <div class="d-flex flex-column align-center" style="width: 100%; height: 100%">
             <div class="room-list d-flex flex-column align-center justify-space-around">
                 <RoomItem v-for="(item, index) in rooms" :key="index" :room="item" :v-show="Object.keys(item).length !== 0"></RoomItem>

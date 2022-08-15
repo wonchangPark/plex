@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 const room = "room";
 export default {
     name: "CreateRoomDialog",
@@ -60,9 +60,11 @@ export default {
     }),
     methods: {
         ...mapActions(room, ["roomCreate"]),
+        ...mapMutations(room, ["INIT_HOST"]),
         createRoom() {
             this.roomInfo.host = this.getUser.nick;
             this.roomCreate(this.roomInfo);
+            this.dialog = false;
         },
     },
     computed: {

@@ -28,11 +28,12 @@ public class RoomUserRepository {
         try{
             num= em.createQuery("select count(ur) from RoomUser ur " +
                             "where ur.room = :room ",Long.class)
-                    .setParameter("room", room).getSingleResult();
+                    .setParameter("room", room).setLockMode(LockModeType.PESSIMISTIC_WRITE).getSingleResult();
             return num;
         }catch (NoResultException e){
             return null;
         }
+        // 애초에 RoomUser를 여기에서 lock을 걸어버리기 때문에 save 할때도 같은 트랜잭션 안이라서 lock이 같이 적용된다.
     }
 
     public RoomUser findRoomUser (User user, Room room) {
@@ -44,7 +45,14 @@ public class RoomUserRepository {
         return roomUser;
     }
 
-    public void delete(RoomUser roomUser) {
-        em.remove(roomUser);
+    public RoomUser findRoomUserByRoomUser(RoomUser roomUser){
+        RoomUser roomUser1 = em.find(RoomUser.class, roomUser.getNo());
+        System.out.println(roomUser1);
+        return roomUser1;
     }
+
+    public void delete(RoomUser roomUser) {
+        em.remove(em.contains(roomUser) ? roomUser : em.merge(roomUser));
+    }
+
 }

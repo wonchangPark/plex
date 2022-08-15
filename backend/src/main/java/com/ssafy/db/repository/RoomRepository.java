@@ -1,15 +1,11 @@
 package com.ssafy.db.repository;
 
-import com.ssafy.db.entity.GameHistory;
-import com.ssafy.db.entity.Room;
-import com.ssafy.db.entity.ScoreHistory;
-import com.ssafy.db.entity.User;
+import com.ssafy.db.entity.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -75,5 +71,42 @@ public class RoomRepository {
 
     public void saveScoreHistory(ScoreHistory scoreHistory) {
         em.persist(scoreHistory);
+    }
+
+    public boolean isHost(User user, Long roomNo) {
+        Room room = null;
+        try{
+            room = em.createQuery("select r from Room r where r.no = :roomNo and r.host = :userNick", Room.class)
+                    .setParameter("roomNo", roomNo).setParameter("userNick", user.getNick()).getSingleResult();
+        } catch (NoResultException e){
+            return false;
+        }
+        return true;
+    }
+
+    public void endGame(Long gameHistoryNo) {
+        em.createQuery("update GameHistory gh set gh.endTime = current_timestamp where gh.no = :gameHistoryNo")
+                .setParameter("gameHistoryNo", gameHistoryNo).executeUpdate();
+    }
+
+    public boolean isGaming(Room room){
+        try{
+            em.createQuery("select gh from GameHistory gh where gh.room = :room and gh.endTime is null",GameHistory.class)
+                    .setParameter("room", room).getSingleResult();
+            return true;
+        } catch (NoResultException e){
+            return false;
+        }
+    }
+
+    public boolean isAlreadyInRoom(User user) {
+        try{
+            em.createQuery("select ru from RoomUser ru, Room r " +
+                    "where ru.user = :user and ru.room = r and r.endTime is null", RoomUser.class)
+                    .setParameter("user", user).getSingleResult();
+            return true;
+        } catch (NoResultException e){
+            return false;
+        }
     }
 }

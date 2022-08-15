@@ -20,7 +20,8 @@ public interface UserService {
 
 	User getUserByUserId(String userId);
 
-	@Transactional
+	User getUserByNick(String nick);
+
 	void setMyImage(User user, String image);
 
 	List<UserExerciseRes> getMyTotalExercise(User user);
