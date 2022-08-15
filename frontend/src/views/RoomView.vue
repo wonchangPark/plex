@@ -101,6 +101,11 @@ export default {
         videoMute: false, // 영상 중지
         audioMute: false, // 음소거
 
+        ropeFightMusic: require("../assets/audio/ropeFightAudio.mp3"),
+        gameEndMusic: require("../assets/audio/gameEndAudio.mp3"),
+        musicOn: undefined,
+        musicOnGameEnd: undefined,
+
         user: {},
         roomNo:'', // 방 번호
         isHost: false, //호스트 여부
@@ -208,8 +213,12 @@ export default {
                     console.log(this.personalScore);
                     if (this.score1 - this.score2 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score1 - this.score2 >= 1)) {
                         this.game.scene.getScene("ropeFightScene").LeftWin();
+                        if (this.musicOn != undefined)
+                            this.musicOn.pause();
                         this.gameHistory()
-                        setTimeout(() => (this.gameFinished = true), 1000);
+                        this.musicOnGameEnd = new Audio(this.gameEndMusic);
+                        setTimeout(() => (this.gameFinished = true), 3000);
+                        setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                         setTimeout(() => (this.gameFinished = false), 7000);
                         this.game.scene.getScene("ropeFightScene").gameActive = false;
                     } else {
@@ -224,8 +233,12 @@ export default {
                 this.personalScore[`${event.data}`] += 1;
                 if (this.score2 - this.score1 >= 10 || (this.game.scene.getScene("ropeFightScene").leftTime <= 0 && this.score2 - this.score1 >= 1)) {
                     this.game.scene.getScene("ropeFightScene").RightWin();
+                    if (this.musicOn != undefined)
+                        this.musicOn.pause();
                     this.gameHistory()
-                    setTimeout(() => (this.gameFinished = true), 1000);
+                    this.musicOnGameEnd = new Audio(this.gameEndMusic);
+                    setTimeout(() => (this.gameFinished = true), 3000);
+                    setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                     setTimeout(() => (this.gameFinished = false), 7000);
                     this.game.scene.getScene("ropeFightScene").gameActive = false;
                 } else {
@@ -349,6 +362,9 @@ export default {
         // this.$refs.teachable.init()
         // this.init()
         this.dataInit()
+        this.musicOn = new Audio(this.ropeFightMusic);
+        this.musicOn.play();
+        this.musicOn.loop = true;
         this.session
             .signal({
                 // 게임 시작 송신
@@ -634,6 +650,8 @@ export default {
     },
     beforeDestroy() {
         console.log("destroy");
+        if (this.musicOn != undefined)
+            this.musicOn.pause();
         if (this.session) {
             this.leaveSession();
         }
