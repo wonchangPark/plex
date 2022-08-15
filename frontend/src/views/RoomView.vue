@@ -244,6 +244,8 @@ export default {
                     if (this.musicOn != undefined)
                         this.musicOn.pause();
                     this.gameHistory()
+                    this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
+                    this.soundOnFall.play();
                     this.musicOnGameEnd = new Audio(this.gameEndMusic);
                     setTimeout(() => (this.gameFinished = true), 3000);
                     setTimeout(() => (this.musicOnGameEnd.play()), 3000);
