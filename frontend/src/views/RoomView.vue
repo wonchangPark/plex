@@ -103,8 +103,12 @@ export default {
 
         ropeFightMusic: require("../assets/audio/ropeFightAudio.mp3"),
         gameEndMusic: require("../assets/audio/gameEndAudio.mp3"),
+        ropeFightFallSoundEffect: require("../assets/audio/ropeFightFallAudio.mp3"),
+        blopMusic: require("../assets/audio/blop.mp3"),
         musicOn: undefined,
         musicOnGameEnd: undefined,
+        soundOnFall: undefined,
+        blopOn: undefined,
 
         user: {},
         roomNo:'', // 방 번호
@@ -139,6 +143,8 @@ export default {
       this.setGameHistory({roomNo, score})
     },
     countDownTimer () {
+        this.blopOn = new Audio(this.blopMusic);
+        this.blopOn.play();
       if (this.countDown > 0) {
         setTimeout(() => {
           this.countDown -= 1
@@ -216,6 +222,8 @@ export default {
                         if (this.musicOn != undefined)
                             this.musicOn.pause();
                         this.gameHistory()
+                        this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
+                        this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);

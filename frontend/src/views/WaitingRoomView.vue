@@ -60,6 +60,9 @@ export default {
     mounted() {
         this.musicOn = new Audio(this.homeMusic);
         this.musicOn.play();
+        this.musicOn.volume = 0.4;
+        this.musicOn.loop = true;
+        
     },
 
     beforeRouteLeave(to, from, next) {
