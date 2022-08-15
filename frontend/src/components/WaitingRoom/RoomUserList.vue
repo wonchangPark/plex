@@ -28,7 +28,7 @@ import RoomUserControl from "./Item/RoomUserControl.vue";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { API_BASE_URL } from "@/config";
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
 
 const room = "room";
 export default {
@@ -57,7 +57,8 @@ export default {
         }, {});
     },
     methods: {
-        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_UESRS", "UPDATE_USER"]),
+        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN","UPDATE_USER"]),
+        ...mapActions(room, ["leaveRoom"]),
         connect() {
             const serverURL = API_BASE_URL + "/api/v1/ws";
             let socket = new SockJS(serverURL);
@@ -115,6 +116,9 @@ export default {
                 },
             };
             this.send(msg);
+            // this.INIT_ROOM();
+            // this.INIT_USERS();
+            // router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
             this.stompClient.disconnect(() => {
                 console.log("소켓 연결 해제");
             }, {});
@@ -141,6 +145,13 @@ export default {
                     if (gameType !== undefined) this.gameType = gameType;
                 } else if (type === "LeaveHost") {
                     this.$router.push("/waiting");
+                } else if (type === "Start") {
+                    this.SET_ROOMJOIN()
+                    if (this.room.gameNo === 1) {
+                        this.$router.push('/room')
+                    } else if (this.room.gameNo === 2) {
+                        this.$router.push('/runningroom')
+                    }
                 }
             }
         },

@@ -38,17 +38,17 @@ const routes = [
         meta: { unauthorized: true}
     },
     {
+        path: "/room",
+        name: "gameroom",
+        component: GameRoom,
+    },
+    {
         path: "/waiting",
         component: WaitingRoom,
         children: [
             { path: "", name: "waiting", component: RoomList },
             { path: ":roomId", name: "RoomUserList", component: RoomUserList },
         ],
-    },
-    {
-        path: "/room",
-        name: "gameroom",
-        component: GameRoom,
     },
     {
         path: "/mypage",

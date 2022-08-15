@@ -46,7 +46,7 @@ export default {
     },
     props: ["stompClient", "isHost", "gameType"],
     methods: {
-        ...mapMutations(room, ["INIT_TEAM_INFO"]),
+        ...mapMutations(room, ["SET_ROOMJOIN", "INIT_TEAM_INFO"]),
         gameTypeEvent(num) {
             if (this.isHost) {
                 let msg = {
@@ -80,16 +80,24 @@ export default {
             }
         },
         startEvent() {
-            let msg = {
-                type: "Start",
-                roomId: this.room.code,
-                users: this.users,
-            };
-            this.send(msg);
+            if (this.isHost) {
+                let msg = {
+                    type: "Start",
+                    roomId: this.room.code,
+                    users: this.users,
+                };
+                this.send(msg);
+                this.SET_ROOMJOIN()
+                if (this.room.gameNo === 1) {
+                    this.$router.push('/room')
+                } else if (this.room.gameNo === 2) {
+                    this.$router.push('/runningroom')
+                }
+            }
         },
     },
     computed: {
-        ...mapState(room, ["users", "room"]),
+        ...mapState(room, ["users", "room", "roomJoin"]),
         ...mapGetters(["getUser"]),
     },
 };
