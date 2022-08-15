@@ -25,21 +25,17 @@
 import ContentBox from "../common/ContentBox.vue";
 import RoomUserItem from "./Item/RoomUserItem.vue";
 import RoomUserControl from "./Item/RoomUserControl.vue";
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-import { API_BASE_URL } from "@/config";
 import { mapGetters, mapMutations, mapState, mapActions } from "vuex";
 
+const SocketStore = "socketStore";
 const room = "room";
 export default {
     components: { ContentBox, RoomUserItem, RoomUserControl },
     name: "RoomUserList",
     data() {
         return {
-            stompClient: null,
             userName: "",
             message: "",
-            connected: false,
             isHost: null,
             sendVo: {},
             gameType: 0,
@@ -47,60 +43,37 @@ export default {
     },
     created: function () {
         this.isHost = this.getUser.nick === this.room.host ? true : false;
-        this.connect();
+        if (this.stompClient && this.stompClient.connected) {
+            this.stompClient.subscribe("/send/" + this.room.code, (res) => {
+                console.log("구독으로 받은 메시지 입니다.", res.body);
+                // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+                this.receive(JSON.parse(res.body));
+            });
+        }
+        window.addEventListener("beforeunload", this.exitRoom);
+        if (!this.isHost) {
+            let msg = {
+                type: "Enter",
+                roomId: this.room.code,
+                gameType: 0,
+                user: {
+                    userId: this.getUser.userId,
+                    nick: this.getUser.nick,
+                    team: 0,
+                    isHost: false,
+                    img: this.getUser.img,
+                },
+            };
+            this.send(msg);
+        }
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exitRoom);
         this.exitRoom();
-        this.stompClient.disconnect(() => {
-            console.log("소켓 연결 해제");
-        }, {});
     },
     methods: {
-        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN","UPDATE_USER"]),
+        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN", "UPDATE_USER"]),
         ...mapActions(room, ["leaveRoom"]),
-        connect() {
-            const serverURL = API_BASE_URL + "/api/v1/ws";
-            let socket = new SockJS(serverURL);
-            this.stompClient = Stomp.over(socket);
-            console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
-            this.stompClient.connect(
-                this.authHeader,
-                (frame) => {
-                    // 소켓 연결 성공
-                    this.connected = true;
-                    console.log("소켓 연결 성공", frame);
-                    // 서버의 메시지 전송 endpoint를 구독합니다.
-                    // 이런형태를 pub sub 구조라고 합니다.
-                    this.stompClient.subscribe("/send/" + this.room.code, (res) => {
-                        console.log("구독으로 받은 메시지 입니다.", res.body);
-                        // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-                        this.receive(JSON.parse(res.body));
-                    });
-                    window.addEventListener("beforeunload", this.exitRoom);
-                    if (!this.isHost) {
-                        let msg = {
-                            type: "Enter",
-                            roomId: this.room.code,
-                            gameType: 0,
-                            user: {
-                                userId: this.getUser.userId,
-                                nick: this.getUser.nick,
-                                team: 0,
-                                isHost: false,
-                                img: this.getUser.img,
-                            },
-                        };
-                        this.send(msg);
-                    }
-                },
-                (error) => {
-                    // 소켓 연결 실패
-                    console.log("소켓 연결 실패", error);
-                    this.connected = false;
-                }
-            );
-        },
         exitRoom() {
             let leaveType;
             if (this.isHost) leaveType = "LeaveHost";
@@ -119,9 +92,6 @@ export default {
             // this.INIT_ROOM();
             // this.INIT_USERS();
             // router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
-            this.stompClient.disconnect(() => {
-                console.log("소켓 연결 해제");
-            }, {});
         },
         send(msg) {
             if (this.stompClient && this.stompClient.connected) {
@@ -146,11 +116,11 @@ export default {
                 } else if (type === "LeaveHost") {
                     this.$router.push("/waiting");
                 } else if (type === "Start") {
-                    this.SET_ROOMJOIN()
+                    this.SET_ROOMJOIN();
                     if (this.room.gameNo === 1) {
-                        this.$router.push('/room')
+                        this.$router.push("/room");
                     } else if (this.room.gameNo === 2) {
-                        this.$router.push('/runningroom')
+                        this.$router.push("/runningroom");
                     }
                 }
             }
@@ -170,6 +140,7 @@ export default {
     computed: {
         ...mapState(room, ["room", "users"]),
         ...mapGetters(["getUser", "authHeader"]),
+        ...mapState(SocketStore, ["stompClient", "connected"]),
     },
     watch: {
         users() {
