@@ -51,9 +51,7 @@ export default {
     ])
   },
   created(){
-    this.fetchUserInfo(),
-    this.fetchExercise(),
-    this.fetchTotalGame()
+    this.fetchUserInfo()
   }
 }
 </script>
