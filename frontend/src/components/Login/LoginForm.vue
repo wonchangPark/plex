@@ -40,7 +40,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['authError', 'isLoggedIn', 'loginModal']),
+    ...mapGetters(['authError', 'isLoggedIn']),
   },
 
   created() {

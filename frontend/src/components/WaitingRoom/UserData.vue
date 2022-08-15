@@ -14,13 +14,13 @@
     </v-row>
     <v-row v-if="userExercise.length">
       <v-col>
-        <DataBox :number="userExercise[0].cnt + userExercise[1].cnt" string="운동"></DataBox>
+        <DataBox :number="userExercise.length!==0 ? userExercise[0].cnt + userExercise[1].cnt : 0" string="운동"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userExercise[0].cnt" string="스쿼트"></DataBox>
+        <DataBox :number="userExercise.length!==0 ?userExercise[0].cnt:0" string="스쿼트"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userExercise[1].cnt" string="달리기"></DataBox>
+        <DataBox :number="userExercise.length!==0 ? userExercise[1].cnt:0" string="런지"></DataBox>
       </v-col>
     </v-row>
   </v-container>
