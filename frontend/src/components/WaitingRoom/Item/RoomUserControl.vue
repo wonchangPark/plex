@@ -88,9 +88,9 @@ export default {
                 };
                 this.send(msg);
                 this.SET_ROOMJOIN()
-                if (this.room.gameNo === 1) {
+                if (this.gameType === 0) {
                     this.$router.push('/room')
-                } else if (this.room.gameNo === 2) {
+                } else if (this.gameType === 1) {
                     this.$router.push('/runningroom')
                 }
             }

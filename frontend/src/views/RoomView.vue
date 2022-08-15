@@ -129,7 +129,8 @@ export default {
         teamNo: this.teamNo,
         win: this.win, 
         gameHistoryNo: this.gameNo,
-        userNo: this.getUser.no
+        userNo: this.getUser.no,
+        roomNo: this.roomNo
       }
       this.setGameHistory({roomNo, score})
     },
@@ -154,8 +155,6 @@ export default {
 
         // --- Init a session ---
         this.session = this.OV.initSession();
-
-        // this.game.scene.getScene("waitingScene").gameCategory = 0;
 
         // --- Specify the actions when events take place in the session ---
 
@@ -246,7 +245,6 @@ export default {
                 }
             }
             if (idx !== null) this.signal[idx]++;
-            //this.personalScore[`${event.data}`] += 1
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
             });
@@ -608,6 +606,7 @@ export default {
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
+        this.game.scene.getScene("waitingScene").gameCategory = 0;
     },
     created() {
         if (this.roomJoin) {

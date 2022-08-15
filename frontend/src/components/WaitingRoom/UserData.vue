@@ -3,24 +3,35 @@
   <v-container >
     <v-row>
       <v-col>
-        <DataBox :number="userGameInfo.totalCnt ? userGameInfo.totalCnt : 0" string="게임"></DataBox>
+        <DataBox :number="userGameInfo ? userGameInfo.totalCnt : 0" string="게임"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userGameInfo.winCnt ? userGameInfo.winCnt : 0" string="승"></DataBox>
+        <DataBox :number="userGameInfo ? userGameInfo.winCnt : 0" string="승"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userGameInfo.loseCnt ? userGameInfo.loseCnt : 0" string="패"></DataBox>
+        <DataBox :number="userGameInfo ? userGameInfo.loseCnt : 0" string="패"></DataBox>
       </v-col>
     </v-row>
-    <v-row v-if="userExercise.length">
+    <v-row v-if="userExercise.length !== 0">
       <v-col>
-        <DataBox :number="userExercise.length!==0 ? userExercise[0].cnt + userExercise[1].cnt : 0" string="운동"></DataBox>
+        <DataBox :number="userExercise.length === 2 ? userExercise[0].cnt + userExercise[1].cnt : userExercise[0].cnt" string="운동"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userExercise.length!==0 ?userExercise[0].cnt:0" string="스쿼트"></DataBox>
+        <DataBox :number="userExercise.length === 2 ?userExercise[0].cnt: (userExercise[0].gamecategoryName === 'squat' ? userExercise[0].cnt: 0)" string="스쿼트"></DataBox>
       </v-col>
       <v-col>
-        <DataBox :number="userExercise.length!==0 ? userExercise[1].cnt:0" string="런지"></DataBox>
+        <DataBox :number="userExercise.length === 2 ? userExercise[1].cnt: (userExercise[0].gamecategoryName === 'lunge' ? userExercise[0].cnt: 0)" string="런지"></DataBox>
+      </v-col>
+    </v-row>
+    <v-row v-if="userExercise.length === 0">
+      <v-col>
+        <DataBox :number="0" string="운동"></DataBox>
+      </v-col>
+      <v-col>
+        <DataBox :number="0" string="스쿼트"></DataBox>
+      </v-col>
+      <v-col>
+        <DataBox :number="0" string="런지"></DataBox>
       </v-col>
     </v-row>
   </v-container>
