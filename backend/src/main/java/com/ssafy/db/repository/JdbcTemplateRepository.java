@@ -24,7 +24,7 @@ public class JdbcTemplateRepository {
 
     // rank 관련 sql
     public List<RankingRes> getRankList(){
-        String query = "select u.user_no, u.user_nick, sum(sh.scorehistory_score) as totalscore, rank() over(order by sum(sh.scorehistory_score) desc) as ranking " +
+        String query = "select u.user_no, u.user_nick, u.user_image, sum(sh.scorehistory_score) as totalscore, rank() over(order by sum(sh.scorehistory_score) desc) as ranking " +
                 "from score_history sh, user u " +
                 "where u.user_no = sh.user_no " +
                 "group by u.user_no " +
@@ -38,7 +38,7 @@ public class JdbcTemplateRepository {
 
     public RankingRes getMyRank(Long userNo){
         String query = "select * " +
-                "from (select u.user_no, u.user_id, u.user_nick, sum(sh.scorehistory_score) as totalscore, rank() over (order by sum(sh.scorehistory_score) desc) as ranking " +
+                "from (select u.user_no, u.user_id, u.user_nick, u.user_image, sum(sh.scorehistory_score) as totalscore, rank() over (order by sum(sh.scorehistory_score) desc) as ranking " +
                 "from score_history sh, user u " +
                 "where u.user_no = sh.user_no " +
                 "group by u.user_no " +
@@ -56,6 +56,7 @@ public class JdbcTemplateRepository {
                 return new RankingRes(
                         rs.getLong("user_no"),
                         rs.getString("user_nick"),
+                        rs.getString("user_image"),
                         rs.getLong("totalscore"),
                         rs.getLong("ranking")
                 );
