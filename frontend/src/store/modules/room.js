@@ -1,4 +1,4 @@
-import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
+import { createRoomApi, leaveRoomApi, setRoomUserApi, setGameHistoryApi, setGameScoreApi } from "@/api/room.js";
 import router from "@/router";
 import axios from "axios";
 import { API_BASE_URL } from '@/config';
@@ -87,11 +87,11 @@ const room = {
                 }
             );
         },
-        setGameHistory({ dispatch, getters}, { roomNo, score }) {
+        setGameHistory({ dispatch, rootState}, { roomNo, score }) {
             axios({
               url: API_URL + `/rooms/game?roomNo=${roomNo}`,
               method: 'post',
-              headers: getters.authHeader
+              headers: rootState.auth.authHeader
             })
             .then( (res) => {
               console.log(res)
@@ -102,12 +102,12 @@ const room = {
               console.log(e)
             })
           },
-          setGameScore({ getters }, score) {
+          setGameScore({ rootState }, score) {
             axios({
               url: API_URL + '/rooms/score',
               method: 'post',
               data: score,
-              headers: getters.authHeader
+              headers: rootState.auth.authHeader
             })
             .then( (res) => {
               console.log(res)

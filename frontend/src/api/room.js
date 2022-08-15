@@ -26,4 +26,12 @@ function leaveRoomApi({ headers, joinInfo }, success, fail) {
     api.post("/api/v1/rooms/leave-room", joinInfo, { headers }).then(success).catch(fail);
 }
 
-export { rooms, connectUsers, createRoomApi, setRoomUserApi, leaveRoomApi };
+function setGameHistoryApi({ headers,  roomNo }, success, fail) {
+    api.post(`/api/v1/rooms/game?roomNo=${roomNo}`, { headers }).then(success).catch(fail);
+}
+
+function setGameScoreApi({ headers, score }, success, fail) {
+    api.post("/api/v1/rooms/score", score, { headers }).then(success).catch(fail);
+}
+
+export { rooms, connectUsers, createRoomApi, setRoomUserApi, leaveRoomApi, setGameHistoryApi, setGameScoreApi };

@@ -71,7 +71,11 @@ export default {
                 };
                 this.send(msg);
                 this.SET_ROOMJOIN()
-                this.$router.push('/room')
+                if (this.room.gameNo === 1) {
+                    this.$router.push('/room')
+                } else if (this.room.gameNo === 2) {
+                    this.$router.push('/runningroom')
+                }
             }
         },
     },

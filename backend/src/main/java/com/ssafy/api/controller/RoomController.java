@@ -242,7 +242,7 @@ public class RoomController {
 	}
 
 	@PostMapping("/game")
-	public ResponseEntity<Long> insertGameHistory(@RequestParam long roomNo){
+	public ResponseEntity<Long> insertGameHistory(@RequestBody long roomNo){
 		long gameHistoryNo = roomService.insertGameHistory(roomNo);
 		return ResponseEntity.status(200).body(gameHistoryNo);
 		// gameHistoryNo를 반환
