@@ -18,6 +18,7 @@ import com.ssafy.common.exception.ReIssuanceAccessTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -67,7 +68,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } else if(request.getMethod().equals("POST") && path.contains("/check")){
             filterChain.doFilter(request, response);
             return;
-        } else if (path.contains("/ws")) {
+        }
+        else if (path.contains("/ws")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -95,7 +97,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } catch (ReIssuanceAccessTokenException ex) {
             System.out.println("인가 토큰 재발급");
 //            filterChain.doFilter(request, response);
-
             return;
         } catch (JwtTokenException ex) {
             ex.printStackTrace();
@@ -137,10 +138,13 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if (!accessToken.replace(JwtTokenUtil.TOKEN_PREFIX,"").equals(redisAccessToken) || !refreshToken.replace(JwtTokenUtil.TOKEN_PREFIX, "").equals(redisRefreshToken)) {
                 // redis에서 가져온 토큰들이 없거나
                 // 두 개의 토큰중 안맞는 토큰이 있으므로 둘 다 만료 시키고 401로 로그인을 다시하라고 알리기
+                System.out.println(accessToken);
+                System.out.println(refreshToken);
+                System.out.println(redisAccessToken);
+                System.out.println(redisRefreshToken);
                 hashOperations.delete(userId, "accessToken", "refreshToken");
                 throw new JwtTokenException("thats not exact token");
             }
-            System.out.println("h3");
             JwtTokenUtil.accessHandleError(accessToken); // 이곳에서 토큰 만료 여부가 체크됨
 
             // jwt 토큰에 포함된 계정 정보(userId) 통해 실제 디비에 해당 정보의 계정이 있는지 조회.
@@ -181,6 +185,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 //                out.flush();
 //                out.close();
                 response.setHeader("Authorization", newAccessToken);
+                response.setStatus(405);
                 throw new ReIssuanceAccessTokenException("인가토큰 재발급");
 
             } catch (TokenExpiredException ex) {

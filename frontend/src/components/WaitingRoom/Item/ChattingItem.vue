@@ -3,14 +3,14 @@
         <div class="d-flex flex-column justify-center align-center mr-2">
             <div>
                 <v-avatar size="25" color="white">
-                    <img :src="require(`@/assets/profile/${getUser.img}.png`)" alt="profile" />
+                    <img :src="require(`@/assets/profile/${img}.png`)" alt="profile" />
                 </v-avatar>
             </div>
             <div class="white--text">
                 {{ name }}
             </div>
         </div>
-        <div class="white--text" style="font-weight: bold; font-size: 1.5vw">
+        <div class="white--text" style="font-weight: bold; font-size: 1.2vw">
             {{ content }}
         </div>
     </div>
@@ -20,7 +20,7 @@
 import { mapGetters } from "vuex";
 export default {
     name: "ChattingItem",
-    props: ["name", "content"],
+    props: ["name", "content","img"],
     computed: {
         ...mapGetters(["getUser"]),
     },

@@ -14,16 +14,16 @@
           캐릭터 변경
         </v-btn>
       </template>
-      <form @submit.prevent="changeImg(img)">
+      <form @submit="submitImg(img)">
         <v-card class="room-create align-center" color="brown" width="35vw">
           <v-list-item-content class="align-center justify-center">
             <v-container class="d-flex flex-column justify-center">
               <v-row class="d-flex mt-2 mb-2">
-              <div v-for="image in imgList"
-              :key="image.indexOf(image)"
+              <div v-for="(image, index) in imgList"
+              :key="index"
               :image = image>
                 <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="100">
+                  <v-avatar color="white" size="100" >
                     <v-btn @click="sendGummibear(image)">
                     <img :src="require(`@/assets/profile/${image}.png`)" alt="">
                     </v-btn>
@@ -57,7 +57,9 @@ export default {
       img: {
         image: ''
       },
-      imgList: ['gummybear', 'pudding', 'slime', 'stone', 'sushi', 'whale']
+      imgList: ['gummybear', 'pudding', 'slime', 'stone', 'sushi', 'whale'],
+      // selectList: [0] * length(this.imgList)
+
     }),
   methods: {
     closeDialog() {
@@ -65,9 +67,17 @@ export default {
     },
     sendGummibear(index){
       this.img.image = index
+      // for (var i = 1; i < length(this.imgList); i++){
+      //   this.selectList[i] = 0
+      // }
+      // this.selectList[this.imgList.indexOf(index)] = 1
       console.log(this.img)
     },
-    ...mapActions(['changeImg'])
+    ...mapActions(['changeImg']),
+    submitImg(index){
+      this.changeImg(index)
+      this.closeDialog()
+    }
 
   },
   computed: {
@@ -83,5 +93,9 @@ export default {
   font-size: 1rem;
   font-weight: bold;
   border-radius: 5px;
+}
+.primary {
+  border-radius: 5px;
+  border-color: #FFB82F;
 }
 </style>

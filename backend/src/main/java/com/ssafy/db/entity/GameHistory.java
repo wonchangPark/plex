@@ -1,6 +1,5 @@
 package com.ssafy.db.entity;
 
-import lombok.Cleanup;
 import lombok.Getter;
 
 import javax.persistence.*;

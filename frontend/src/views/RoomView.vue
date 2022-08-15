@@ -601,7 +601,7 @@ export default {
     },
     watch: {
         countDown: function () {
-            if (this.countDown === 1) {
+            if (this.countDown === 0) {
                 this.sendStart()
             } 
         }

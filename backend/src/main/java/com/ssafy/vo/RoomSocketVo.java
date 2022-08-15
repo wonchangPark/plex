@@ -11,5 +11,7 @@ public class RoomSocketVo {
     private String type;
     private String roomId;
     private UserVo user;
+    private int gameType;
+
     private List<UserVo> users;
 }

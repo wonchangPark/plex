@@ -9,5 +9,6 @@ public class UserVo {
     private String userId;
     private String nick;
     private int team;
-    private boolean isHost;
+    private boolean host;
+    private String img;
 }

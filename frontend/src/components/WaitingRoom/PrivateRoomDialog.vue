@@ -27,7 +27,7 @@
               </v-col>
             </v-row>
             <br>
-              <v-btn @click="joinRoom" 
+              <v-btn @click="joinRoomEvent" 
               color="primary" 
               elevation="0" 
               class="page-btn black--text align-self-center" 
@@ -41,7 +41,7 @@
 
 <script>
 import { mapActions} from 'vuex'
-
+const room = "room";
 export default {
   name : 'PrivateRoomDialog',
   data () {
@@ -51,10 +51,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setRoomJoin']),
-    joinRoom(){
-      this.setRoomJoin(this.roomCode)
-      this.$router.push('/room')
+    ...mapActions(room, ['joinRoom']),
+    joinRoomEvent(){
+      this.joinRoom(this.roomCode)
     }
   },
 }
