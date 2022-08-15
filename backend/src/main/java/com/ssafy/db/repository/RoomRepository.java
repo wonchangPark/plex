@@ -74,6 +74,8 @@ public class RoomRepository {
     }
 
     public boolean isHost(User user, Long roomNo) {
+        System.out.println(user.getNick());
+        System.out.println(roomNo);
         Room room = null;
         try{
             room = em.createQuery("select r from Room r where r.no = :roomNo and r.host = :userNick", Room.class)
