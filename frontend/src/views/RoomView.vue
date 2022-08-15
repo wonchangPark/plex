@@ -24,7 +24,7 @@
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
                             <button class="btn btn-lg btn-success" v-if="!countDown" @click="countDownStart()">Start</button>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button>
+                            <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
@@ -125,23 +125,26 @@ export default {
         pose2: 0,
         signal: [0, 0, 0, 0, 0],
         countDown: 0,
+        gameHistoryNoSync: 0,
         };
     },
 
   methods: {
     gameHistory(){
-      const roomNo = this.roomNo
       const score = {
         exerciseNum: 1,
         gameNo: 1,
         score: (this.win ? 100 : 0 ) + this.personalScore[`${this.myUserName}`] * 10,
         teamNo: this.teamNo,
         win: this.win, 
-        gameHistoryNo: this.gameNo,
+        gameHistoryNo: this.gameHistoryNoSync,
         userNo: this.getUser.no,
         roomNo: this.roomNo
       }
-      this.setGameHistory({roomNo, score})
+      if(this.isHost) {
+        this.endGameHistory({ roomNo: this.roomNo, gameHistoryNo: this.gameHistoryNo })
+      }
+      this.setGameScore(score)
     },
     countDownTimer () {
         this.blopOn = new Audio(this.blopMusic);
@@ -335,13 +338,16 @@ export default {
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
         });
+        // gameHistoryNo 수신
+        this.session.on("signal:gameHistoryNo", (event) => {
+            console.log("gameHistoryNo sync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            this.gameHistoryNoSync = event.data
+        });
 
         // --- Connect to the session with a valid user token ---
-
-        // 'getToken' method is simulating what your server-side should do.
-        // 'token' parameter should be retrieved and returned by your own backend
-
-        // this.getToken(this.mySessionId, this.myUserName)
+        this.connectSession(this.room.token)
 
         this.init()
 
@@ -369,6 +375,9 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
         this.musicOn.play();
@@ -611,12 +620,12 @@ export default {
     
     //END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(room, ["leaveRoom", "setGameHistory", "setGameScore"]),
+    ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
     ...mapMutations(room, ["SET_ROOMCLOSE"]),
   },
 
     computed: {
-        ...mapGetters(room, ["roomJoin"]),
+        ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
         ...mapState(room, ["room", "users"]),
         win () {
@@ -628,6 +637,21 @@ export default {
             if (this.countDown === 0) {
                 this.sendStart()
             } 
+        },
+        gameHistoryNo: function () {
+            if (this.isHost) {
+                this.session.signal({		// 운동 점수 송신
+                    data: this.gameHistoryNo,  // Any string (optional)
+                    to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: 'gameHistoryNo'             // The type of message (optional)
+                })
+                .then(() => {
+                        console.log('Message successfully sent');
+                })
+                .catch(error => {
+                        console.error(error);
+                });
+            }
         }
     },
     mounted() {
@@ -641,7 +665,6 @@ export default {
             this.roomNo = this.room.no
             this.myUserName = this.getUser.nick
             this.joinSession()
-            this.connectSession(this.room.token)
             this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
             this.teamNo = this.user.team
             this.isHost = this.user.host

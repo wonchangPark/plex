@@ -24,7 +24,7 @@
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="!countDown" :nameList="Object.keys(this.personalScore)" :scoreList="personalScore"></ScoreBoard>
                             <button class="btn btn-lg btn-success" v-if="!countDown" @click="countDownStart()">Start</button>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button>
+                            <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
@@ -118,23 +118,26 @@ export default {
         signal: [0, 0, 0, 0, 0],
         countDown: 0,
         win: false,
+        gameHistoryNoSync: 0,
         };
     },
 
   methods: {
     gameHistory(){
-      const roomNo = this.roomNo
       const score = {
         exerciseNum: 2,
         gameNo: 2,
         score: (this.win ? 100 : 0 ) + this.personalScore[`${this.myUserName}`] * 10,
         teamNo: this.teamNo,
         win: this.win, 
-        gameHistoryNo: 0,
+        gameHistoryNo: this.gameHistoryNoSync,
         userNo: this.getUser.no,
         roomNo: this.roomNo
       }
-      this.setGameHistory({roomNo, score})
+        if(this.isHost) {
+            this.endGameHistory({ roomNo: this.roomNo, gameHistoryNo: this.gameHistoryNo })
+        }
+        this.setGameScore(score)
     },
     countDownTimer () {
       if (this.countDown > 0) {
@@ -273,6 +276,13 @@ export default {
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
         });
+         // gameHistoryNo 수신
+        this.session.on("signal:gameHistoryNo", (event) => {
+            console.log("gameHistoryNo sync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            this.gameHistoryNoSync = event.data
+        });
 
       // --- Connect to the session with a valid user token ---
 
@@ -304,6 +314,9 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
 
         // 0811 룸뷰
         this.gameEnd = false;
@@ -549,12 +562,12 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(room, ["leaveRoom", "setGameHistory", "setGameScore"]),
+    ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
     ...mapMutations(room, ["SET_ROOMCLOSE"]),
     },
 
     computed: {
-        ...mapGetters(room, ["roomJoin"]),
+        ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
         ...mapState(room, ["room", "users"]),
     },
@@ -563,6 +576,21 @@ export default {
             if (this.countDown === 0) {
                 this.sendStart()
             } 
+        },
+        gameHistoryNo: function () {
+            if (this.isHost) {
+                this.session.signal({		// 운동 점수 송신
+                    data: this.gameHistoryNo,  // Any string (optional)
+                    to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: 'gameHistoryNo'             // The type of message (optional)
+                })
+                .then(() => {
+                        console.log('Message successfully sent');
+                })
+                .catch(error => {
+                        console.error(error);
+                });
+            }
         }
     },
     mounted() {
@@ -580,7 +608,6 @@ export default {
             this.teamNo = this.user.team
             this.isHost = this.user.host
             this.users.forEach(user => {
-                
                 this.personalScore[`${user.nick}`] = 0
             })
         } else {
