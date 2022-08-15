@@ -125,6 +125,7 @@ export default {
         pose2: 0,
         signal: [0, 0, 0, 0, 0],
         countDown: 0,
+        timer: undefined,
         };
     },
 
@@ -221,6 +222,8 @@ export default {
                         this.game.scene.getScene("ropeFightScene").LeftWin();
                         if (this.musicOn != undefined)
                             this.musicOn.pause();
+                        if (this.timer != undefined)
+                            clearInterval(this.timer);
                         this.gameHistory()
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
@@ -243,6 +246,8 @@ export default {
                     this.game.scene.getScene("ropeFightScene").RightWin();
                     if (this.musicOn != undefined)
                         this.musicOn.pause();
+                    if (this.timer != undefined)
+                            clearInterval(this.timer);
                     this.gameHistory()
                     this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                     this.soundOnFall.play();
@@ -375,6 +380,15 @@ export default {
         this.musicOn = new Audio(this.ropeFightMusic);
         this.musicOn.play();
         this.musicOn.loop = true;
+        this.game.scene.getScene("bootScene").StartScene(0);
+        this.game.scene.getScene('ropeFightScene').leftTime = 60;
+        this.game.scene.getScene('ropeFightScene').gameActive = true;
+
+        if (this.game.scene.getScene("ropeFightScene").gameActive) {
+                console.log("Timer Start!");
+                this.timer = setInterval(()=>(this.game.scene.getScene("ropeFightScene").onTimerEvent()), 1000);
+        
+        }
         this.session
             .signal({
                 // 게임 시작 송신
@@ -388,6 +402,7 @@ export default {
             .catch((error) => {
                 console.error(error);
             });
+
         },
 
     sendScore() {
