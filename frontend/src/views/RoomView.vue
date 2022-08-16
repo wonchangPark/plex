@@ -226,7 +226,7 @@ export default {
                             this.musicOn.pause();
                         if (this.timer != undefined)
                             clearInterval(this.timer);
-                        this.gameHistory()
+                        this.scoreSync()
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
@@ -250,7 +250,7 @@ export default {
                         this.musicOn.pause();
                     if (this.timer != undefined)
                             clearInterval(this.timer);
-                    this.gameHistory()
+                    this.scoreSync()
                     this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                     this.soundOnFall.play();
                     this.musicOnGameEnd = new Audio(this.gameEndMusic);
@@ -350,6 +350,17 @@ export default {
             console.log(event.type); // The type of message
             this.gameHistoryNoSync = event.data
         });
+        // 점수 동기화 수신
+        this.session.on("signal:scoreSync", (event) => {
+            console.log("scoreSync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            const data = JSON.parse(event.data);
+            this.score1 = data.score1;
+            this.score2 = data.score2;
+            this.personalScore = data.personalScore;
+            this.gameHistory()
+        });
 
         // --- Connect to the session with a valid user token ---
         this.connectSession(this.room.token)
@@ -426,6 +437,24 @@ export default {
             .catch((error) => {
                 console.error(error);
             });
+    },
+
+    scoreSync() {
+        if (this.isHost) {
+            this.session
+                .signal({
+                    // 점수 동기화
+                    data: JSON.stringify({ score1: this.score1, score2: this.score2, personalScore: this.personalScore }), // Any string (optional)
+                    to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: "scoreSync", // The type of message (optional)
+                })
+                .then(() => {
+                    console.log("Message successfully sent");
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
     },
 
     connectSession(token) {
