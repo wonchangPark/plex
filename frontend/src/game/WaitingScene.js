@@ -133,13 +133,13 @@ class WaitingScene extends Scene {
                 this.nowPosition2[i] = this.team2[i].x;
             }
 
-            this.team2[0].flipX = true;
-            this.team2[1].flipX = true;
-            this.team2[2].flipX = false;
+            // this.team2[0].flipX = true;
+            // this.team2[1].flipX = true;
+            // this.team2[2].flipX = false;
 
-            this.team1[0].flipX = false;
-            this.team1[1].flipX = false;
-            this.team1[2].flipX = false;
+            // this.team1[0].flipX = false;
+            // this.team1[1].flipX = false;
+            // this.team1[2].flipX = false;
 
             this.rope.setImmovable(true);
             this.rope.body.allowGravity = false;
@@ -235,6 +235,9 @@ class WaitingScene extends Scene {
         for (var i=0; i<name.length; i++){
             this.runningImg[i] = imgArr[name[i]];
         }
+    }
+    changeCategory(idx){
+        this.gameCategory = 1;
     }
 
     update() {

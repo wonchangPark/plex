@@ -64,13 +64,13 @@ import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 //테스트 (오른손/왼손)
-const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+// const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
 // const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
 
 //런지
-//const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
+const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 const room = "room";
 let gameEnd = false;
@@ -674,7 +674,7 @@ export default {
     updated(){
 
         // 대기화면 설정
-        this.game.scene.getScene("waitingScene").gameCategory = 1;
+        this.game.scene.getScene("waitingScene").changeCategory(1);
         this.game.scene.getScene("waitingScene").setName(Object.keys(this.personalScore));
 
         this.game.scene.getScene("waitingScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);

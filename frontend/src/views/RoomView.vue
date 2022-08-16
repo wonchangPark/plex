@@ -65,10 +65,10 @@ import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 //테스트 (오른손/왼손)
-const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+// const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-// const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
+const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
 
 //런지
 //const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
