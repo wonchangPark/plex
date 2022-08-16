@@ -51,7 +51,7 @@ export default {
             });
         }
         window.addEventListener("beforeunload", this.exitRoom);
-        if (!this.isHost && this.room) {
+        if (!this.isHost) {
             let msg = {
                 type: "Enter",
                 roomId: this.room.code,
@@ -69,6 +69,7 @@ export default {
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exitRoom);
+        this.exitRoom();
     },
     methods: {
         ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN", "UPDATE_USER"]),

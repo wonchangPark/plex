@@ -21,7 +21,7 @@
                         <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
                             <UserData></UserData>
                         </div>
-                        <div class="d-flex justify-center align-center" style="width: 60%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 63%; height: 90%">
                             <ChattingList></ChattingList>
                         </div>
                     </div>
