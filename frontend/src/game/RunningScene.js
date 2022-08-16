@@ -15,7 +15,7 @@ class RunningScene extends Scene {
     goRightStart = [];
     nowPosition = [0, 0, 0, 0, 0];
     nextPosition = [0, 0, 0, 0, 0, 0];
-    teamName1 = []
+    teamName1 = ["", "", "", "", "", ""]
     teamNameMove1 = []
     
     players = 0;
