@@ -633,7 +633,7 @@ export default {
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
-        this.game.scene.getScene("waitingScene").gameCategory = 1;
+        //this.game.scene.getScene("waitingScene").gameCategory = 1;
     },
     created() {
         if (this.roomJoin) {
@@ -659,6 +659,9 @@ export default {
         }
         // this.$router.push('/waiting')
     },
+    updated(){
+        this.game.scene.getScene("waitingScene").gameCategory = 1;
+    }
 };
 </script>
 <style scoped></style>
