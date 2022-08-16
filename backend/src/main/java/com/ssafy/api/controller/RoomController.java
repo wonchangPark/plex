@@ -60,6 +60,7 @@ public class RoomController {
 	public ResponseEntity<?> createRoom(@RequestBody RoomCreatePostReq roomInfo) {
 		String code = RandomRoomCode.generateRandomCode();
 		System.out.println(roomInfo.getName() + roomInfo.getHost() + roomInfo.getIsPrivate());
+		//if(roomService.isAlreadyInRoom(user)) return ResponseEntity.status(406).build(); // 이미 대기방에 있음
 		Room room = roomService.createRoom(roomInfo, code);
 		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		User user = ssafyUserDetails.getUser();
@@ -275,6 +276,14 @@ public class RoomController {
 //		if(!roomService.isHost(user, scoreHistoryPostReq.getRoomNo())) return ResponseEntity.status(406).build();
 		roomService.insertScoreHistory(scoreHistoryPostReq);
 		return ResponseEntity.status(200).build();
+	}
+
+	@GetMapping("/inroom")
+	public ResponseEntity<Void> isInRoom(){
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
+		if(roomService.isAlreadyInRoom(user)) return ResponseEntity.status(200).build();
+		return ResponseEntity.status(201).build();
 	}
 
 }
