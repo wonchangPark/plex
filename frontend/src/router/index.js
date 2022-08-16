@@ -92,7 +92,7 @@ router.beforeEach((to, from, next) => {
 
     const isAuthRequired = !noAuthPages.includes(to.name);
 
-    if (isAuthRequired && (!isLoggedIn || localStorage.getItem("accessToken") === undefined)) {
+    if (isAuthRequired && (!isLoggedIn || store.getters["authHeader"] === undefined)) {
         next({ name: "login" });
     } else {
         next();
