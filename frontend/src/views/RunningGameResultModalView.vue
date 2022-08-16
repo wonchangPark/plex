@@ -8,17 +8,17 @@
                     <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">
                         <div class="d-flex flex-column align-center">
                             <br>
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="player">{{ idx + 1 }}</div>
+                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="idx">{{ idx + 1 }}</div>
                             <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
                         </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <div class="d-flex flex-column align-center">
                             NICKNAME
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="player in allScore" v-bind:key="player">{{ player.name }}</div>
+                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="idx">{{ player.name }}</div>
                             <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
                         </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <div class="d-flex flex-column align-center">
                             SCORE
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="player in allScore" v-bind:key="player">{{ player.score }}</div>
+                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="idx">{{ player.score }}</div>
                             <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
                         </div>
                     </div>
@@ -37,12 +37,6 @@ export default {
         score: {
             type: Object,
         },
-        team1: {
-            type: Array,
-        },
-        team2: {
-            type: Array,
-        },
         myName: {
             type: String,
         },
@@ -56,8 +50,6 @@ export default {
             winner: undefined,
             myTeam: 0,
             allScore: [], //array to save score of all
-            team1_personalScore: {},
-            team2_personalScore: {},
         }
     },
     
@@ -66,11 +58,8 @@ export default {
 
             let i;
 
-            for (i = 0 ; i < this.team1.length ; i++)
-                this.allScore.push({name: this.team1[i] ,score: this.score[this.team1[i]]});
-
-            for (i = 0 ; i < this.team2.length ; i++)
-                this.allScore.push({name: this.team2[i], score: this.score[this.team2[i]]});
+            for (i = 0 ; i < Object.keys(this.score).length ; i++)
+                this.allScore.push({name: Object.keys(this.score)[i] ,score: this.score[Object.keys(this.score)[i]]});
 
             this.allScore.sort(function(a, b) {
                 return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
