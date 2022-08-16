@@ -17,6 +17,8 @@ class RunningScene extends Scene {
     nextPosition = [0, 0, 0, 0, 0, 0];
     teamName1 = []
     teamNameMove1 = []
+    
+    players = 0;
     grounds = undefined;
 
 
@@ -102,15 +104,19 @@ class RunningScene extends Scene {
 
     }
 
-    setName(team1){
+    setName(name){
         for (var i=0; i<6; i++){
-            this.teamName1[i] = team1[i];
+            this.teamName1[i] = name[i];
         }
+        this.players = name.length;
     }
     update() {
 
         for (var i=0; i<6; i++){
             this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
+            if (i >= this.players){
+                this.team1[i].setX(8000);
+            }
         }
         for (var i=0; i<6; i++){
             
