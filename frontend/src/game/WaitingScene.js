@@ -104,7 +104,7 @@ class WaitingScene extends Scene {
                 } else if (this.team2Img[i] == "pudding"){
                     this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
                     this.team2[i].flipX = true;
-                } else if (this.team2Img === "whale"){
+                } else if (this.team2Img[i] === "whale"){
                     this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
                     this.team2[i].flipX = false;
                 } else{
@@ -133,13 +133,13 @@ class WaitingScene extends Scene {
                 this.nowPosition2[i] = this.team2[i].x;
             }
 
-            this.team2[0].flipX = true;
-            this.team2[1].flipX = true;
-            this.team2[2].flipX = false;
+            // this.team2[0].flipX = true;
+            // this.team2[1].flipX = true;
+            // this.team2[2].flipX = false;
 
-            this.team1[0].flipX = false;
-            this.team1[1].flipX = false;
-            this.team1[2].flipX = false;
+            // this.team1[0].flipX = false;
+            // this.team1[1].flipX = false;
+            // this.team1[2].flipX = false;
 
             this.rope.setImmovable(true);
             this.rope.body.allowGravity = false;
@@ -235,6 +235,9 @@ class WaitingScene extends Scene {
         for (var i=0; i<name.length; i++){
             this.runningImg[i] = imgArr[name[i]];
         }
+    }
+    changeCategory(idx){
+        this.gameCategory = idx;
     }
 
     update() {

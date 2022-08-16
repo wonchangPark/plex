@@ -99,6 +99,15 @@ export default {
         myUserName: "",
         videoMute: false, // 영상 중지
         audioMute: false, // 음소거
+        runningEndAudio: require("../assets/audio/runningEndAudio.mp3"),
+        runningAudio: require("../assets/audio/runningAudio.mp3"),
+        blopSound: require("../assets/audio/blop.mp3"),
+        gameEndAudio: require("../assets/audio/gameEndAudio.mp3"),
+
+        runningEndAudioOn: undefined,
+        runningAudioOn: undefined,
+        blopOn: undefined,
+        gameEndAudioOn: undefined,
 
         user: {},
         roomNo:'', // 방 번호
@@ -141,6 +150,8 @@ export default {
     },
     countDownTimer () {
       if (this.countDown > 0) {
+        this.blopOn = new Audio(this.blopSound);
+        this.blopOn.play();
         setTimeout(() => {
           this.countDown -= 1
           this.countDownTimer()
@@ -198,12 +209,14 @@ export default {
                     this.game.scene.getScene("runningScene").GoRight(`${event.data}`);
                     if (event.data === this.myUserName) this.win = true;
                     this.runningEndAudioOn = new Audio(this.runningEndAudio);
+                    this.runningEndAudioOn.volume = 0.4;
                     this.runningEndAudioOn.play();
-                    if (this.musicOn != undefined)
-                        this.musicOn.pause();
-                    this.gameEndMusicOn = new Audio(this.gameEndMusic);
+                    if (this.runningAudioOn != undefined)
+                        this.runningAudioOn.pause();
+                    this.gameEndAudioOn = new Audio(this.gameEndAudio);
+                    this.gameEndAudioOn.volume = 0.4;
+                    setTimeout(()=>(this.gameEndAudioOn.play()), 3000);
                     setTimeout(()=>(this.gameFinished = true), 3000);
-                    setTimeout(()=>(this.gameEndMusicOn.play()), 3000);
                     setTimeout(()=>(this.gameFinished = false), 10000);
 
                     this.gameEnd = true;
@@ -350,6 +363,11 @@ export default {
 
         //이미지 설정
         this.game.scene.getScene("runningScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
+
+        this.runningAudioOn = new Audio(this.runningAudio);
+        this.runningAudioOn.play();
+        this.runningAudioOn.volume = 0.4;
+        this.runningAudioOn.loop = true;
 
         this.dataInit();
         this.session
@@ -665,6 +683,8 @@ export default {
     }
     },
     beforeDestroy() {
+        if (this.runningAudioOn != undefined)
+            this.runningAudioOn.pause();
         console.log("destroy");
         if (this.session) {
             this.leaveSession();
@@ -674,10 +694,12 @@ export default {
     updated(){
 
         // 대기화면 설정
-        this.game.scene.getScene("waitingScene").gameCategory = 1;
-        this.game.scene.getScene("waitingScene").setName(Object.keys(this.personalScore));
+        if (this.game.scene.getScene("waitingScene").gameCategory != 1){
+            this.game.scene.getScene("waitingScene").changeCategory(1);
+            this.game.scene.getScene("waitingScene").setName(Object.keys(this.personalScore));
 
-        this.game.scene.getScene("waitingScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
+            this.game.scene.getScene("waitingScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
+        }
     }
 };
 </script>

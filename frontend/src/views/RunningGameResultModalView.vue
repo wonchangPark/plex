@@ -4,7 +4,7 @@
         <div class="modal-card">
             <ContentBox :height="100" :width="100">
                 <div class="d-flex flex-column">
-                    <div id="Main" class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo animate__heartBeat">{{WhoWins()}}</div>
+                    <div id="Main" class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo animate__heartBeat">{{WhoWins}}</div>
                     <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">
                         <div class="d-flex flex-column align-center">
                             <br>
@@ -52,23 +52,17 @@ export default {
             allScore: [], //array to save score of all
         }
     },
-    
-    methods: {
+
+    computed: {
         WhoWins() {
 
-            let i;
+            this.allScoreSort();
 
-            for (i = 0 ; i < Object.keys(this.score).length ; i++)
-                this.allScore.push({name: Object.keys(this.score)[i] ,score: this.score[Object.keys(this.score)[i]]});
-
-            this.allScore.sort(function(a, b) {
-                return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
-            })
-
-            for (i = 0 ; i < this.allScore.length ; i++) {
+            for (let i = 0 ; i < this.allScore.length ; i++) {
                 if (this.myName == this.allScore[i].name)
                     return "Your Rate : #" + (i + 1);
             }
+            return "";
             /*let team1_score = 0;
             let team2_score = 0;            
             
@@ -90,6 +84,19 @@ export default {
             //console.log(team1_score);
             //console.log(team2_score);
 
+        }
+    },
+    
+    methods: {
+        allScoreSort() {
+            let i;
+
+            for (i = 0 ; i < Object.keys(this.score).length ; i++)
+                this.allScore.push({name: Object.keys(this.score)[i] ,score: this.score[Object.keys(this.score)[i]]});
+
+            this.allScore.sort(function(a, b) {
+                return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
+            })
         }
     },
 };

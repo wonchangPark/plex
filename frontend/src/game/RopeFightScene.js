@@ -129,7 +129,7 @@ class RopeFightScene extends Scene {
             } else if (this.team2Img[i] == "pudding"){
                 this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
                 this.team2[i].flipX = true;
-            } else if (this.team2Img === "whale"){
+            } else if (this.team2Img[i] === "whale"){
                 this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
                 this.team2[i].flipX = false;
             } else{

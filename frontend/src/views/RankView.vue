@@ -21,6 +21,25 @@ export default {
     RankList,
     ContentBox
   },
+
+  data() {
+    return {
+      rankMusic: require("../assets/audio/rankAudio.mp3"),
+      musicOn: undefined,
+    }
+  },
+
+  mounted() {
+    this.musicOn = new Audio(this.rankMusic);
+    this.musicOn.volume = 0.5;
+    this.musicOn.loop = true;
+    this.musicOn.play();
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.musicOn != undefined)
+      this.musicOn.pause();
+    next();
+  },
  
 }
 </script>
