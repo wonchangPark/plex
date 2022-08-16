@@ -26,6 +26,9 @@ class RopeFightScene extends Scene {
     shakePosition1 = []
     shakePosition2 = []
 
+    startRopePosition = 0;
+    leftPosition = 0;
+    RightPosition = 0;
 
     //this.$refs.game-container.clientHeight
     //spriteScale = Game.world.width / 1600;
@@ -75,6 +78,9 @@ class RopeFightScene extends Scene {
         this.rope.setImmovable(true);
         this.rope.body.allowGravity = false;
         this.ropePosition = this.rope.x;
+        this.startRopePosition = this.rope.x;
+        this.leftPosition = 0;
+        this.RightPosition = 0;
 
         //adding sprites with physics
         this.team1[0] = this.physics.add.sprite(250*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
@@ -166,6 +172,11 @@ class RopeFightScene extends Scene {
     goLeftHandler(idx) {
 
 
+        this.leftPosition = this.leftPosition + 15;
+        if (this.RightPosition > 0){
+            this.RightPosition = this.RightPosition - 15;
+        }        
+
         for (var i = 0 ; i < this.team1.length ; i++){   //move players to left
             this.team1[i].setVelocityX(-20);
             this.team2[i].setVelocityX(-20);
@@ -198,6 +209,13 @@ class RopeFightScene extends Scene {
     }
 
     goRightHandler(idx2) {
+
+
+        this.RightPosition = this.RightPosition + 15;
+        if (this.leftPosition > 0){
+            this.leftPosition = this.leftPosition - 15;
+        }        
+
 
         for (var i = 0 ; i < this.team1.length ; i++){   //move players to left
             this.team1[i].setVelocityX(20);
@@ -267,20 +285,29 @@ class RopeFightScene extends Scene {
         }
 
         // 로프 및 스프라이트가 10이상 움직였으면 stop
-        if (this.rope.x >= this.ropePosition + 10 || this.rope.x <= this.ropePosition - 10){
+        // if (this.rope.x >= this.ropePosition + 10 || this.rope.x <= this.ropePosition - 10){
+        //     this.rope.setVelocityX(0);
+        //     this.ropePosition = this.rope.x;
+        // }
+        // for (var i=0; i<3; i++){
+        //     if (this.team1[i].x >= this.nowPosition1[i] + 10 || this.team1[i].x <= this.nowPosition1[i] - 10){
+        //         this.team1[i].setVelocityX(0);
+        //         this.nowPosition1[i] = this.team1[i].x;
+        //     }
+        //     if (this.team2[i].x >= this.nowPosition2[i] + 10 || this.team2[i].x <= this.nowPosition2[i] - 10){
+        //         this.team2[i].setVelocityX(0);
+        //         this.nowPosition2[i] = this.team2[i].x;
+        //     }
+        // }
+
+        if (this.rope.x <= this.startRopePosition - this.leftPosition * this.WidthScale || this.rope.x >= this.startRopePosition + this.RightPosition * this.WidthScale){
             this.rope.setVelocityX(0);
-            this.ropePosition = this.rope.x;
-        }
-        for (var i=0; i<3; i++){
-            if (this.team1[i].x >= this.nowPosition1[i] + 10 || this.team1[i].x <= this.nowPosition1[i] - 10){
+            for (var i=0; i<3; i++){
                 this.team1[i].setVelocityX(0);
-                this.nowPosition1[i] = this.team1[i].x;
-            }
-            if (this.team2[i].x >= this.nowPosition2[i] + 10 || this.team2[i].x <= this.nowPosition2[i] - 10){
                 this.team2[i].setVelocityX(0);
-                this.nowPosition2[i] = this.team2[i].x;
             }
         }
+
         
         /*if (this.leftTime >= 0)
             this.timerText.setText(this.leftTime);
