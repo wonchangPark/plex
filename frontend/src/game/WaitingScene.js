@@ -237,7 +237,7 @@ class WaitingScene extends Scene {
         }
     }
     changeCategory(idx){
-        this.gameCategory = 1;
+        this.gameCategory = idx;
     }
 
     update() {
