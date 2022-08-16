@@ -68,10 +68,10 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-// const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+// const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
 
 //런지
-//const URL = "https://teachablemachine.withgoogle.com/models/jU1Vcn59o/";
+//const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
 
 
 let model, webcam, ctx, labelContainer, maxPredictions;
@@ -127,6 +127,8 @@ export default {
         countDown: 0,
         gameHistoryNoSync: 0,
         timer: undefined,
+
+        imgArray : {}, // 개인별 사진 목록
         };
     },
 
@@ -335,6 +337,10 @@ export default {
             this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene('ropeFightScene').gameActive = true;
             this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
+            //이미지 설정
+            this.game.scene.getScene("ropeFightScene").setImg(this.team1, this.team2, this.imgArray);
+            
             const data = JSON.parse(event.data);
             this.score1 = data.score1;
             this.score2 = data.score2;
@@ -401,6 +407,10 @@ export default {
         this.game.scene.getScene("bootScene").StartScene(0);
         this.game.scene.getScene('ropeFightScene').leftTime = 60;
         this.game.scene.getScene('ropeFightScene').gameActive = true;
+
+        //이미지 설정
+        this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+        this.game.scene.getScene("ropeFightScene").setImg(this.team1, this.team2, this.imgArray);
 
         if (this.game.scene.getScene("ropeFightScene").gameActive) {
                 console.log("Timer Start!");
@@ -700,7 +710,7 @@ export default {
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
-        this.game.scene.getScene("waitingScene").gameCategory = 0;
+        //this.game.scene.getScene("waitingScene").gameCategory = 0;
     },
     created() {
         if (this.roomJoin) {
@@ -718,7 +728,10 @@ export default {
                 } else {
                     this.team2.push(user.nick)
                 }
-                this.personalScore[`${user.nick}`] = 0
+                this.personalScore[`${user.nick}`] = 0;
+
+                //이미지 설정
+                this.imgArray[`${user.nick}`] = `${user.img}`;
             })
         } else {
         this.$router.push("/waiting");
@@ -733,6 +746,13 @@ export default {
         }
         // this.$router.push('/waiting')
     },
+    updated(){
+
+        // 대기화면 이미지 설정
+        this.game.scene.getScene("waitingScene").setTeamName(this.team1, this.team2);
+
+        this.game.scene.getScene("waitingScene").setImg(this.team1, this.team2, this.imgArray);
+    }
 };
 </script>
 <style scoped></style>

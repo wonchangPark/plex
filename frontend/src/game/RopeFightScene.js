@@ -30,6 +30,9 @@ class RopeFightScene extends Scene {
     leftPosition = 0;
     RightPosition = 0;
 
+    team1Img = ["not", "not", "not"];
+    team2Img = ["not", "not", "not"];
+
     //this.$refs.game-container.clientHeight
     //spriteScale = Game.world.width / 1600;
 
@@ -83,13 +86,57 @@ class RopeFightScene extends Scene {
         this.RightPosition = 0;
 
         //adding sprites with physics
-        this.team1[0] = this.physics.add.sprite(250*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
-        this.team1[1] = this.physics.add.sprite(400*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
-        this.team1[2] = this.physics.add.sprite(550*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
+        // this.team1[0] = this.physics.add.sprite(250*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
+        // this.team1[1] = this.physics.add.sprite(400*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+        // this.team1[2] = this.physics.add.sprite(550*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
 
-        this.team2[0] = this.physics.add.sprite(1050*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
-        this.team2[1] = this.physics.add.sprite(1200*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
-        this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+        // this.team2[0] = this.physics.add.sprite(1050*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+        // this.team2[1] = this.physics.add.sprite(1200*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+        // this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+
+        // (700 - (150 * (3-i)))
+        for (var i=0; i<3; i++){
+            if(this.team1Img[i] === "slime"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
+            } else if (this.team1Img[i] === "stone"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+            } else if (this.team1Img[i] === "sushi"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
+            } else if (this.team1Img[i] === "gummybear"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+            } else if (this.team1Img[i] === "pudding"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+            } else  if (this.team1Img[i] === "whale"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team1[i].flipX = true;
+            } else{
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team1[i].setX(8000);
+            }
+
+            if(this.team2Img[i] == "slime"){
+                this.team2[i] = this.physics.add.sprite((900 + (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "stone"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "sushi"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "gummybear"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "pudding"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img === "whale"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team2[i].flipX = false;
+            } else{
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team2[i].setX(8000);
+            }
+        }
 
 
         // team name for moving
@@ -135,13 +182,13 @@ class RopeFightScene extends Scene {
             this.nowPosition2[i] = this.team2[i].x;
         }
 
-        this.team2[0].flipX = true;
-        this.team2[1].flipX = true;
-        this.team2[2].flipX = false;
+        // this.team2[0].flipX = true;
+        // this.team2[1].flipX = true;
+        // this.team2[2].flipX = true;
 
-        this.team1[0].flipX = false;
-        this.team1[1].flipX = false;
-        this.team1[2].flipX = false;
+        // this.team1[0].flipX = false;
+        // this.team1[1].flipX = false;
+        // this.team1[2].flipX = false;
 
 
         // no gravity
@@ -276,6 +323,17 @@ class RopeFightScene extends Scene {
         }
     }
 
+    setImg(team1, team2, imgArr){
+        for (var i=0; i<team1.length; i++){
+            this.team1Img[i] = imgArr[team1[i]];
+        }
+
+        for (var i=0; i<team2.length; i++){
+            this.team2Img[i] = imgArr[team2[i]]
+        }
+
+    }
+
     update() {
 
         
@@ -284,29 +342,29 @@ class RopeFightScene extends Scene {
             this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
         }
 
-        // 로프 및 스프라이트가 10이상 움직였으면 stop
-        // if (this.rope.x >= this.ropePosition + 10 || this.rope.x <= this.ropePosition - 10){
-        //     this.rope.setVelocityX(0);
-        //     this.ropePosition = this.rope.x;
-        // }
-        // for (var i=0; i<3; i++){
-        //     if (this.team1[i].x >= this.nowPosition1[i] + 10 || this.team1[i].x <= this.nowPosition1[i] - 10){
-        //         this.team1[i].setVelocityX(0);
-        //         this.nowPosition1[i] = this.team1[i].x;
-        //     }
-        //     if (this.team2[i].x >= this.nowPosition2[i] + 10 || this.team2[i].x <= this.nowPosition2[i] - 10){
-        //         this.team2[i].setVelocityX(0);
-        //         this.nowPosition2[i] = this.team2[i].x;
-        //     }
-        // }
-
-        if (this.rope.x <= this.startRopePosition - this.leftPosition * this.WidthScale || this.rope.x >= this.startRopePosition + this.RightPosition * this.WidthScale){
+        //로프 및 스프라이트가 10이상 움직였으면 stop
+        if (this.rope.x >= this.ropePosition + 10 || this.rope.x <= this.ropePosition - 10){
             this.rope.setVelocityX(0);
-            for (var i=0; i<3; i++){
+            this.ropePosition = this.rope.x;
+        }
+        for (var i=0; i<3; i++){
+            if (this.team1[i].x >= this.nowPosition1[i] + 10 || this.team1[i].x <= this.nowPosition1[i] - 10){
                 this.team1[i].setVelocityX(0);
+                this.nowPosition1[i] = this.team1[i].x;
+            }
+            if (this.team2[i].x >= this.nowPosition2[i] + 10 || this.team2[i].x <= this.nowPosition2[i] - 10){
                 this.team2[i].setVelocityX(0);
+                this.nowPosition2[i] = this.team2[i].x;
             }
         }
+
+        // if (this.rope.x <= this.startRopePosition - this.leftPosition * this.WidthScale || this.rope.x >= this.startRopePosition + this.RightPosition * this.WidthScale){
+        //     this.rope.setVelocityX(0);
+        //     for (var i=0; i<3; i++){
+        //         this.team1[i].setVelocityX(0);
+        //         this.team2[i].setVelocityX(0);
+        //     }
+        // }
 
         
         /*if (this.leftTime >= 0)

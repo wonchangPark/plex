@@ -68,11 +68,10 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-//const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+// const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
 
 //런지
-// const URL = "https://teachablemachine.withgoogle.com/models/jU1Vcn59o/";
-
+//const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 const room = "room";
 let gameEnd = false;
@@ -119,6 +118,8 @@ export default {
         countDown: 0,
         win: false,
         gameHistoryNoSync: 0,
+
+        imgArray : {}, // 개인별 사진 목록
         };
     },
 
@@ -268,7 +269,11 @@ export default {
             const data = JSON.parse(event.data);
             this.gameEnd = false;
             this.game.scene.getScene("bootScene").StartScene(1);
-            this.game.scene.getScene("runningScene").setName(Object.keys(this.personalScore));           
+            this.game.scene.getScene("runningScene").setName(Object.keys(this.personalScore));   
+            
+            //이미지 설정
+            this.game.scene.getScene("runningScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
+
             this.score1 = data.score1;
             this.score2 = data.score2;
             this.personalScore = data.personalScore;
@@ -333,6 +338,9 @@ export default {
         this.gameEnd = false;
         this.game.scene.getScene("bootScene").StartScene(1);
         this.game.scene.getScene("runningScene").setName(Object.keys(this.personalScore));
+
+        //이미지 설정
+        this.game.scene.getScene("runningScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
 
         this.dataInit();
         this.session
@@ -638,6 +646,8 @@ export default {
             this.isHost = this.user.host
             this.users.forEach(user => {
                 this.personalScore[`${user.nick}`] = 0
+
+                this.imgArray[`${user.nick}`] = `${user.img}`;
             })
         } else {
         this.$router.push("/waiting");
@@ -651,7 +661,12 @@ export default {
         // this.$router.push('/waiting')
     },
     updated(){
+
+        // 대기화면 설정
         this.game.scene.getScene("waitingScene").gameCategory = 1;
+        this.game.scene.getScene("waitingScene").setName(Object.keys(this.personalScore));
+
+        this.game.scene.getScene("waitingScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
     }
 };
 </script>

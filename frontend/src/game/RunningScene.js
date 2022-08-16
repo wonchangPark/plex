@@ -21,6 +21,9 @@ class RunningScene extends Scene {
     players = 0;
     grounds = undefined;
 
+    pos = [175, 235, 290, 340, 400, 450];
+
+    team1Img = ["not","not","not","not","not","not"]
 
 
     create() {
@@ -41,18 +44,37 @@ class RunningScene extends Scene {
 
 
 
+        for (var i=0; i<6; i++){
+            if(this.team1Img[i] === "slime"){
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'slime1_1').setScale(0.4*this.WidthScale).play('slime1Move');
+            } else if (this.team1Img[i] === "stone"){
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'stone').setScale(0.4*this.WidthScale).play('stoneMove');
+            } else if (this.team1Img[i] === "sushi"){
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'Sushi_1').setScale(0.4*this.WidthScale).play('SushiMove');
+            } else if (this.team1Img[i] === "gummybear"){
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'gummybear_1').setScale(0.4*this.WidthScale).play('gummybearMove');
+            } else if (this.team1Img[i] === "pudding"){
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'pudding_1').setScale(0.4*this.WidthScale).play('puddingMove');
+            } else  if (this.team1Img[i] === "whale"){
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'whale').setScale(0.4*this.WidthScale).play('whaleMove');
+                this.team1[i].flipX = true;
+            } else{
+                this.team1[i] = this.physics.add.sprite(50 + (10*i)*this.WidthScale, this.pos[i]*this.HeightScale, 'whale').setScale(0.4*this.WidthScale).play('whaleMove');
+                this.team1[i].setX(8000);
+            }
+        }
         
 
 
 
-        this.team1[0] = this.physics.add.sprite(50*this.WidthScale, 175*this.HeightScale, 'slime1_1').setScale(0.4*this.WidthScale).play('slime1Move');
+        // this.team1[0] = this.physics.add.sprite(50*this.WidthScale, 175*this.HeightScale, 'slime1_1').setScale(0.4*this.WidthScale).play('slime1Move');
 
-        this.team1[1] = this.physics.add.sprite(60*this.WidthScale, 235*this.HeightScale, 'stone').setScale(0.4*this.WidthScale).play('stoneMove');
-        this.team1[2] = this.physics.add.sprite(70*this.WidthScale, 290*this.HeightScale, 'Sushi_1').setScale(0.4*this.WidthScale).play('SushiMove');
+        // this.team1[1] = this.physics.add.sprite(60*this.WidthScale, 235*this.HeightScale, 'stone').setScale(0.4*this.WidthScale).play('stoneMove');
+        // this.team1[2] = this.physics.add.sprite(70*this.WidthScale, 290*this.HeightScale, 'Sushi_1').setScale(0.4*this.WidthScale).play('SushiMove');
 
-        this.team1[3] = this.physics.add.sprite(80*this.WidthScale, 340*this.HeightScale, 'gummybear_1').setScale(0.4*this.WidthScale).play('gummybearMove');
-        this.team1[4] = this.physics.add.sprite(90*this.WidthScale, 400*this.HeightScale, 'pudding_1').setScale(0.4*this.WidthScale).play('puddingMove');
-        this.team1[5] = this.physics.add.sprite(100*this.WidthScale, 450*this.HeightScale, 'whale').setScale(0.4*this.WidthScale).play('whaleMove');
+        // this.team1[3] = this.physics.add.sprite(80*this.WidthScale, 340*this.HeightScale, 'gummybear_1').setScale(0.4*this.WidthScale).play('gummybearMove');
+        // this.team1[4] = this.physics.add.sprite(90*this.WidthScale, 400*this.HeightScale, 'pudding_1').setScale(0.4*this.WidthScale).play('puddingMove');
+        // this.team1[5] = this.physics.add.sprite(100*this.WidthScale, 450*this.HeightScale, 'whale').setScale(0.4*this.WidthScale).play('whaleMove');
 
 
         // team name for moving
@@ -90,7 +112,7 @@ class RunningScene extends Scene {
                 idx = i;
             }
         }
-        this.nextPosition[idx] += 145 * this.WidthScale;
+        this.nextPosition[idx] += 150 * this.WidthScale;
         this.team1[idx].setVelocityX(200 * this.WidthScale);
     }
 
@@ -98,8 +120,19 @@ class RunningScene extends Scene {
 
     Winner(name){
 
+        let idx = 0;
         for (var i=0; i<6; i++){
-            this.nextPosition[i] = 0;
+            if (this.teamName1[i] == name){
+                idx = i;
+            }
+        }
+
+        for (var i=0; i<6; i++){
+            if (i == idx){
+                this.nextPosition[i] = 1550 * this.WidthScale;
+            }else{
+               this.nextPosition[i] = 0;
+            }
         }
 
     }
@@ -109,6 +142,14 @@ class RunningScene extends Scene {
             this.teamName1[i] = name[i];
         }
         this.players = name.length;
+    }
+
+    setRunningImg(name, imgArr){
+        for (var i=0; i<name.length; i++){
+            this.team1Img[i] = imgArr[name[i]];
+        }
+
+
     }
     update() {
 
