@@ -545,6 +545,8 @@ export default {
         this.subscribers = [];
         this.OV = undefined;
         this.SET_ROOMCLOSE();
+        this.INIT_ROOM()
+        this.INIT_USERS()
 
         window.removeEventListener("beforeunload", this.leaveSession);
         this.$router.push("/waiting");
@@ -678,7 +680,7 @@ export default {
     //END OF TEACHABLE MACHINE METHODS
 
     ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
-    ...mapMutations(room, ["SET_ROOMCLOSE"]),
+    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM"]),
   },
 
     computed: {
