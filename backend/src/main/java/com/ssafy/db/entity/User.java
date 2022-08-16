@@ -51,15 +51,16 @@ public class User {
 
     }
 
-    protected User(String userId, String password, String nick, String email) {
+    protected User(String userId, String password, String nick, String email, String image) {
         this.userId = userId;
         this.password = password;
         this.nick = nick;
         this.email = email;
         this.registerDate = LocalDateTime.now();
+        this.img = image;
     }
-    public static User createUser(String userId, String password, String nick, String email) {
-        return new User(userId, password, nick, email);
+    public static User createUser(String userId, String password, String nick, String email, String image) {
+        return new User(userId, password, nick, email, image);
     }
 
 }

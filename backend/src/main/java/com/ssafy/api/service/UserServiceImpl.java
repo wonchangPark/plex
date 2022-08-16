@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void createUser(UserRegisterPostReq userRegisterInfo) throws UserDuplicateException {
 		validateDuplicateUser(userRegisterInfo);
-		User user = User.createUser(userRegisterInfo.getId(), passwordEncoder.encode(userRegisterInfo.getPassword()), userRegisterInfo.getNick(), userRegisterInfo.getEmail());
+		User user = User.createUser(userRegisterInfo.getId(), passwordEncoder.encode(userRegisterInfo.getPassword()), userRegisterInfo.getNick(), userRegisterInfo.getEmail(), "gummybear");
 		userRepository.save(user);
 		// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
 	}
