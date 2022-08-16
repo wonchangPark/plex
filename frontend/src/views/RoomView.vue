@@ -24,7 +24,7 @@
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
                             <button class="btn btn-lg btn-success" v-if="!countDown" @click="countDownStart()">Start</button>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button>
+                            <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
@@ -125,22 +125,27 @@ export default {
         pose2: 0,
         signal: [0, 0, 0, 0, 0],
         countDown: 0,
+        gameHistoryNoSync: 0,
+        timer: undefined,
         };
     },
 
   methods: {
     gameHistory(){
-      const roomNo = this.roomNo
       const score = {
         exerciseNum: 1,
         gameNo: 1,
         score: (this.win ? 100 : 0 ) + this.personalScore[`${this.myUserName}`] * 10,
         teamNo: this.teamNo,
         win: this.win, 
-        gameHistoryNo: this.gameNo,
-        userNo: this.getUser.no
+        gameHistoryNo: this.gameHistoryNoSync,
+        userNo: this.getUser.no,
+        roomNo: this.roomNo
       }
-      this.setGameHistory({roomNo, score})
+      if(this.isHost) {
+        this.endGameHistory({ roomNo: this.roomNo, gameHistoryNo: this.gameHistoryNo })
+      }
+      this.setGameScore(score)
     },
     countDownTimer () {
         this.blopOn = new Audio(this.blopMusic);
@@ -165,8 +170,6 @@ export default {
 
         // --- Init a session ---
         this.session = this.OV.initSession();
-
-        // this.game.scene.getScene("waitingScene").gameCategory = 0;
 
         // --- Specify the actions when events take place in the session ---
 
@@ -221,6 +224,8 @@ export default {
                         this.game.scene.getScene("ropeFightScene").LeftWin();
                         if (this.musicOn != undefined)
                             this.musicOn.pause();
+                        if (this.timer != undefined)
+                            clearInterval(this.timer);
                         this.gameHistory()
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
@@ -243,6 +248,8 @@ export default {
                     this.game.scene.getScene("ropeFightScene").RightWin();
                     if (this.musicOn != undefined)
                         this.musicOn.pause();
+                    if (this.timer != undefined)
+                            clearInterval(this.timer);
                     this.gameHistory()
                     this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                     this.soundOnFall.play();
@@ -269,7 +276,6 @@ export default {
                 }
             }
             if (idx !== null) this.signal[idx]++;
-            //this.personalScore[`${event.data}`] += 1
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
             });
@@ -337,13 +343,16 @@ export default {
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
         });
+        // gameHistoryNo 수신
+        this.session.on("signal:gameHistoryNo", (event) => {
+            console.log("gameHistoryNo sync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            this.gameHistoryNoSync = event.data
+        });
 
         // --- Connect to the session with a valid user token ---
-
-        // 'getToken' method is simulating what your server-side should do.
-        // 'token' parameter should be retrieved and returned by your own backend
-
-        // this.getToken(this.mySessionId, this.myUserName)
+        this.connectSession(this.room.token)
 
         this.init()
 
@@ -371,10 +380,22 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
         this.musicOn.play();
         this.musicOn.loop = true;
+        this.game.scene.getScene("bootScene").StartScene(0);
+        this.game.scene.getScene('ropeFightScene').leftTime = 60;
+        this.game.scene.getScene('ropeFightScene').gameActive = true;
+
+        if (this.game.scene.getScene("ropeFightScene").gameActive) {
+                console.log("Timer Start!");
+                this.timer = setInterval(()=>(this.game.scene.getScene("ropeFightScene").onTimerEvent()), 1000);
+        
+        }
         this.session
             .signal({
                 // 게임 시작 송신
@@ -388,6 +409,7 @@ export default {
             .catch((error) => {
                 console.error(error);
             });
+
         },
 
     sendScore() {
@@ -613,12 +635,12 @@ export default {
     
     //END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(room, ["leaveRoom", "setGameHistory", "setGameScore"]),
+    ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
     ...mapMutations(room, ["SET_ROOMCLOSE"]),
   },
 
     computed: {
-        ...mapGetters(room, ["roomJoin"]),
+        ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
         ...mapState(room, ["room", "users"]),
         win () {
@@ -630,10 +652,26 @@ export default {
             if (this.countDown === 0) {
                 this.sendStart()
             } 
+        },
+        gameHistoryNo: function () {
+            if (this.isHost) {
+                this.session.signal({		// 운동 점수 송신
+                    data: this.gameHistoryNo,  // Any string (optional)
+                    to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: 'gameHistoryNo'             // The type of message (optional)
+                })
+                .then(() => {
+                        console.log('Message successfully sent');
+                })
+                .catch(error => {
+                        console.error(error);
+                });
+            }
         }
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
+        this.game.scene.getScene("waitingScene").gameCategory = 0;
     },
     created() {
         if (this.roomJoin) {
@@ -642,7 +680,6 @@ export default {
             this.roomNo = this.room.no
             this.myUserName = this.getUser.nick
             this.joinSession()
-            this.connectSession(this.room.token)
             this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
             this.teamNo = this.user.team
             this.isHost = this.user.host

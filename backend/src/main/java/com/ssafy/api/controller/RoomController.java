@@ -270,9 +270,9 @@ public class RoomController {
 
 	@PostMapping("/score")
 	public ResponseEntity<Void> insertScoreHistory(@RequestBody ScoreHistoryPostReq scoreHistoryPostReq){
-		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		User user = ssafyUserDetails.getUser();
-		if(!roomService.isHost(user, scoreHistoryPostReq.getRoomNo())) return ResponseEntity.status(406).build();
+//		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+//		User user = ssafyUserDetails.getUser();
+//		if(!roomService.isHost(user, scoreHistoryPostReq.getRoomNo())) return ResponseEntity.status(406).build();
 		roomService.insertScoreHistory(scoreHistoryPostReq);
 		return ResponseEntity.status(200).build();
 	}

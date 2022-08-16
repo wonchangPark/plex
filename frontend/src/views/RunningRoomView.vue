@@ -24,7 +24,7 @@
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="!countDown" :nameList="Object.keys(this.personalScore)" :scoreList="personalScore"></ScoreBoard>
                             <button class="btn btn-lg btn-success" v-if="!countDown" @click="countDownStart()">Start</button>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button>
+                            <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
@@ -57,7 +57,6 @@ import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "../components/Room/UserVideo.vue";
 import { mapState, mapGetters, mapActions, mapMutations } from "vuex";
-import { API_BASE_URL } from "@/config";
 import Game from "../game/game.js";
 import GameResultModal from "./RunningGameResultModalView.vue";
 import ContentBox from "@/components/common/ContentBox.vue";
@@ -119,22 +118,26 @@ export default {
         signal: [0, 0, 0, 0, 0],
         countDown: 0,
         win: false,
+        gameHistoryNoSync: 0,
         };
     },
 
   methods: {
     gameHistory(){
-      const roomNo = this.roomNo
       const score = {
-        exerciseNum: 1,
-        gameNo: 1,
+        exerciseNum: 2,
+        gameNo: 2,
         score: (this.win ? 100 : 0 ) + this.personalScore[`${this.myUserName}`] * 10,
         teamNo: this.teamNo,
         win: this.win, 
-        gameHistoryNo: this.gameNo,
-        userNo: this.getUser.no
+        gameHistoryNo: this.gameHistoryNoSync,
+        userNo: this.getUser.no,
+        roomNo: this.roomNo
       }
-      this.setGameHistory({roomNo, score})
+        if(this.isHost) {
+            this.endGameHistory({ roomNo: this.roomNo, gameHistoryNo: this.gameHistoryNo })
+        }
+        this.setGameScore(score)
     },
     countDownTimer () {
       if (this.countDown > 0) {
@@ -158,8 +161,6 @@ export default {
       // --- Init a session ---
       this.session = this.OV.initSession();
 
-     this.game.scene.getScene("waitingScene").gameCategory = 1;
-
       // --- Specify the actions when events take place in the session ---
 
       // On every new Stream received...
@@ -167,26 +168,11 @@ export default {
         // console.log(this.session)
         const subscriber = this.session.subscribe(stream);
         console.log(subscriber.stream.connection.data)
-         if (this.team1.includes(subscriber.stream.connection.data) && this.teamNo === 1) {
-          for (let i = 0; i < 2; i++ ){
+        for (let i = 0; i < 5; i++ ){
             if (this.subscribers[i] === null) {
-              this.subscribers[i] = subscriber
-              break
-            }
-          }
-        } else if (this.team2.includes(subscriber.stream.connection.data) && this.teamNo === 2) {
-          for (let i = 0; i < 2; i++ ){
-            if (this.subscribers[i] === null) {
-              this.subscribers[i] = subscriber
-              break
-            }
-          }
-        } else {
-          for (let i = 2; i < 5; i++ ){
-            if (this.subscribers[i] === null) {
-              this.subscribers[i] = subscriber
-              break}
-        }}
+                this.subscribers[i] = subscriber
+                break}
+        }
       });
 
       // On every Stream destroyed...
@@ -225,7 +211,6 @@ export default {
                 }
             }
             if (idx !== null) this.signal[idx]++;
-
         });
         // 참가자 퇴장 수신
         this.session.on("signal:memberLeave", (event) => {
@@ -291,13 +276,17 @@ export default {
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
         });
+         // gameHistoryNo 수신
+        this.session.on("signal:gameHistoryNo", (event) => {
+            console.log("gameHistoryNo sync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            this.gameHistoryNoSync = event.data
+        });
 
       // --- Connect to the session with a valid user token ---
 
-      // 'getToken' method is simulating what your server-side should do.
-      // 'token' parameter should be retrieved and returned by your own backend
-
-      // this.getToken(this.mySessionId, this.myUserName)
+        this.connectSession(this.room.token)
 
       this.init()
 
@@ -325,6 +314,9 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
 
         // 0811 룸뷰
         this.gameEnd = false;
@@ -363,34 +355,34 @@ export default {
             });
         },
 
-        connectSession(token) {
-            this.session
-                .connect(token, this.myUserName)
-                .then(() => {
-                    // --- Get your own camera stream with the desired properties ---
+    connectSession(token) {
+        this.session
+            .connect(token, this.myUserName)
+            .then(() => {
+                // --- Get your own camera stream with the desired properties ---
 
-                    let publisher = this.OV.initPublisher(undefined, {
-                        audioSource: undefined, // The source of audio. If undefined default microphone
-                        videoSource: undefined, // The source of video. If undefined default webcam
-                        publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
-                        publishVideo: true, // Whether you want to start publishing with your video enabled or not
-                        resolution: "640x480", // The resolution of your video
-                        frameRate: 30, // The frame rate of your video
-                        insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-                        mirror: true, // Whether to mirror your local video or not
-                    });
-
-                    this.mainStreamManager = publisher;
-                    console.log(this.mainStreamManager);
-                    this.publisher = publisher;
-
-                    // --- Publish your stream ---
-
-                    this.session.publish(this.publisher);
-                })
-                .catch((error) => {
-                    console.log("There was an error connecting to the session:", error.code, error.message);
+                let publisher = this.OV.initPublisher(undefined, {
+                    audioSource: undefined, // The source of audio. If undefined default microphone
+                    videoSource: undefined, // The source of video. If undefined default webcam
+                    publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
+                    publishVideo: true, // Whether you want to start publishing with your video enabled or not
+                    resolution: "640x480", // The resolution of your video
+                    frameRate: 30, // The frame rate of your video
+                    insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+                    mirror: true, // Whether to mirror your local video or not
                 });
+
+                this.mainStreamManager = publisher;
+                console.log(this.mainStreamManager);
+                this.publisher = publisher;
+
+                // --- Publish your stream ---
+
+                this.session.publish(this.publisher);
+            })
+            .catch((error) => {
+                console.log("There was an error connecting to the session:", error.code, error.message);
+            });
         },
 
         leaveSession() {
@@ -570,12 +562,12 @@ export default {
 		
 		//END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(room, ["leaveRoom", "setGameHistory", "setGameScore"]),
+    ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
     ...mapMutations(room, ["SET_ROOMCLOSE"]),
     },
 
     computed: {
-        ...mapGetters(room, ["roomJoin"]),
+        ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
         ...mapState(room, ["room", "users"]),
     },
@@ -584,10 +576,26 @@ export default {
             if (this.countDown === 0) {
                 this.sendStart()
             } 
+        },
+        gameHistoryNo: function () {
+            if (this.isHost) {
+                this.session.signal({		// 운동 점수 송신
+                    data: this.gameHistoryNo,  // Any string (optional)
+                    to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: 'gameHistoryNo'             // The type of message (optional)
+                })
+                .then(() => {
+                        console.log('Message successfully sent');
+                })
+                .catch(error => {
+                        console.error(error);
+                });
+            }
         }
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
+        this.game.scene.getScene("waitingScene").gameCategory = 1;
     },
     created() {
         if (this.roomJoin) {
@@ -596,16 +604,10 @@ export default {
             this.roomNo = this.room.no
             this.myUserName = this.getUser.nick
             this.joinSession()
-            this.connectSession(this.room.token)
             this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
             this.teamNo = this.user.team
             this.isHost = this.user.host
             this.users.forEach(user => {
-                if (user.team === 1) {
-                    this.team1.push(user.nick)
-                } else {
-                    this.team2.push(user.nick)
-                }
                 this.personalScore[`${user.nick}`] = 0
             })
         } else {

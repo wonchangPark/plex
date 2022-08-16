@@ -119,11 +119,11 @@ export default {
                 } else if (type === "LeaveHost") {
                     this.$router.push("/waiting");
                 } else if (type === "Start") {
-                    this.SET_ROOMJOIN();
-                    if (this.room.gameNo === 1) {
-                        this.$router.push("/room");
-                    } else if (this.room.gameNo === 2) {
-                        this.$router.push("/runningroom");
+                    this.SET_ROOMJOIN()
+                    if (this.gameType === 0) {
+                        this.$router.push('/room')
+                    } else if (this.gameType === 1) {
+                        this.$router.push('/runningroom')
                     }
                 }
             }
