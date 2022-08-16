@@ -30,15 +30,15 @@
                         </ContentBox>
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[2] !== null" :stream-manager="subscribers[2]" :signal="signal[0]" />
+                        <user-video v-if="subscribers[2] !== null" :stream-manager="subscribers[2]" :signal="signal[2]" />
                     </div>
                 </div>
                 <div class="d-flex flex-row justify-space-between" style="height: 48%; width: 100%%">
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" :signal="signal[1]" />
+                        <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" :signal="signal[0]" />
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[1] !== null" :stream-manager="subscribers[1]" :signal="signal[2]" />
+                        <user-video v-if="subscribers[1] !== null" :stream-manager="subscribers[1]" :signal="signal[1]" />
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
                         <user-video v-if="subscribers[3] !== null" :stream-manager="subscribers[3]" :signal="signal[3]" />
@@ -236,6 +236,7 @@ export default {
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                         setTimeout(() => (this.gameFinished = false), 7000);
                         this.game.scene.getScene("ropeFightScene").gameActive = false;
+                        setTimeout(() => (this.leaveSession()), 7000);
                     } else {
                         if (this.score1 > this.score2 + 7)
                             this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
@@ -260,6 +261,7 @@ export default {
                     setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                     setTimeout(() => (this.gameFinished = false), 7000);
                     this.game.scene.getScene("ropeFightScene").gameActive = false;
+                    setTimeout(() => (this.leaveSession()), 7000);
                 } else {
                     if (this.score2 > this.score1 + 7)
                         this.game.scene.getScene("ropeFightScene").goRightHandler(1);
@@ -345,6 +347,7 @@ export default {
             this.score1 = data.score1;
             this.score2 = data.score2;
             this.personalScore = data.personalScore;
+            this.gameEnd = false
             console.log("게임 시작 수신"); // Message
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
@@ -694,7 +697,7 @@ export default {
         },
         gameHistoryNo: function () {
             if (this.isHost) {
-                this.session.signal({		// 운동 점수 송신
+                this.session.signal({		// 게임 기록 송신
                     data: this.gameHistoryNo,  // Any string (optional)
                     to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
                     type: 'gameHistoryNo'             // The type of message (optional)

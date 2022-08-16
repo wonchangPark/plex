@@ -4,8 +4,7 @@
             <GameResultModal
                 v-if="gameFinished"
                 v-bind:score="personalScore"
-                v-bind:team1="this.team1"
-                v-bind:team2="this.team2"
+                v-bind:win="win"
                 v-bind:myName="this.myUserName"
             />
             <div id="label-container" style="display: none" />
@@ -191,17 +190,27 @@ export default {
         this.session.on("signal:score", (event) => {
             console.log(event.data); // Message
             if (!this.gameEnd){
-                if ( this.personalScore[`${event.data}`] < 10){
+                if ( this.personalScore[`${event.data}`] < 9){
                     this.personalScore[`${event.data}`] += 1;
                     this.game.scene.getScene("runningScene").GoRight(`${event.data}`);
                 } else{
-                    if (event.data === this.myUserName) this.win = true
-                    this.game.scene.getScene("runningScene").Winner(`${event.data}`);
+                    this.personalScore[`${event.data}`] += 1;
+                    this.game.scene.getScene("runningScene").GoRight(`${event.data}`);
+                    if (event.data === this.myUserName) this.win = true;
+                    this.runningEndAudioOn = new Audio(this.runningEndAudio);
+                    this.runningEndAudioOn.play();
+                    if (this.musicOn != undefined)
+                        this.musicOn.pause();
+                    this.gameEndMusicOn = new Audio(this.gameEndMusic);
+                    setTimeout(()=>(this.gameFinished = true), 3000);
+                    setTimeout(()=>(this.gameEndMusicOn.play()), 3000);
+                    setTimeout(()=>(this.gameFinished = false), 10000);
+
                     this.gameEnd = true;
                     this.scoreSync()
+                    setTimeout(() => (this.leaveSession()), 10000);
                 }
             }
-
 
             let userNick = event.data;
             let idx = null;
@@ -616,7 +625,7 @@ export default {
         },
         gameHistoryNo: function () {
             if (this.isHost) {
-                this.session.signal({		// 운동 점수 송신
+                this.session.signal({		// 게임 기록 송신
                     data: this.gameHistoryNo,  // Any string (optional)
                     to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
                     type: 'gameHistoryNo'             // The type of message (optional)

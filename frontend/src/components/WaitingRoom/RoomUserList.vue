@@ -51,7 +51,7 @@ export default {
             });
         }
         window.addEventListener("beforeunload", this.exitRoom);
-        if (!this.isHost && this.room) {
+        if (!this.isHost) {
             let msg = {
                 type: "Enter",
                 roomId: this.room.code,
