@@ -7,7 +7,8 @@
                 </div>
             </div>
             <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
-                <input class="ml-4 chatting-input white" v-model="message" @keyup.enter="sendEvent" type="text" />
+                <button class="mx-2 chatting-sub text--primary" @click="toggle">{{ isAll ? "전체" : "방" }}</button>
+                <input class="chatting-input white" v-model="message" @keyup.enter="sendEvent" type="text" />
                 <button class="mx-2 chatting-submit primary" @click="sendEvent">전송</button>
             </div>
         </div>
@@ -20,6 +21,7 @@ import ChattingItem from "./Item/ChattingItem.vue";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 const RoomStore = "roomStore";
 const SocketStore = "socketStore";
+const Room = "room";
 export default {
     name: "ChattingList",
     components: { ContentBox, ChattingItem },
@@ -29,6 +31,7 @@ export default {
             message: "",
             recvList: [],
             prevScrollHeight: 0,
+            isAll: true,
         };
     },
     created: function () {
@@ -52,6 +55,9 @@ export default {
     methods: {
         ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
         ...mapActions(RoomStore, ["getConnectUsers"]),
+        toggle() {
+            this.isAll = this.isAll ? false : true;
+        },
         send(type, userName, content, img) {
             //console.log("Send Message:" + content);
             if (this.stompClient && this.stompClient.connected) {
@@ -75,7 +81,6 @@ export default {
         sendEvent() {
             this.send("message", this.getUser.nick, this.message, this.getUser.img);
             this.message = "";
-
             this.getConnectUsers();
         },
         exit() {
@@ -86,6 +91,7 @@ export default {
         ...mapState(["token", "auth"]),
         ...mapGetters(["getUser", "authHeader"]),
         ...mapState(SocketStore, ["stompClient", "connected"]),
+        ...mapState(Room, ["room"]),
     },
     updated() {
         if (Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5) {
@@ -108,11 +114,18 @@ export default {
 
 .chatting-list .chatting-input {
     height: 80%;
-    width: 95%;
+    width: 90%;
     border-radius: 5px;
 }
 
 .chatting-list .chatting-submit {
+    height: 80%;
+    width: 5%;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.chatting-list .chatting-sub {
     height: 80%;
     width: 5%;
     border-radius: 5px;
