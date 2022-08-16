@@ -4,7 +4,6 @@ import auth from "./modules/auth";
 import room from "./modules/room";
 import roomStore from "./modules/roomStore";
 import socketStore from "./modules/socketStore";
-import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -15,8 +14,5 @@ export default new Vuex.Store({
         socketStore,
     },
     plugins: [
-        createPersistedState({
-            paths: ["auth", "room", "roomStore"],
-        }),
     ],
 });

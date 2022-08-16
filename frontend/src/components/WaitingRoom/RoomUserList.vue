@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="d-flex align-center" style="width: 25%; height: 100%">
-                <RoomUserControl :isHost="isHost" :gameType="gameType" :stompClient="stompClient"></RoomUserControl>
+                <RoomUserControl @exitEvent="exitRoomEvent" :isHost="isHost" :gameType="gameType" :stompClient="stompClient"></RoomUserControl>
             </div>
         </div>
     </content-box>
@@ -51,7 +51,7 @@ export default {
             });
         }
         window.addEventListener("beforeunload", this.exitRoom);
-        if (!this.isHost) {
+        if (!this.isHost && this.room) {
             let msg = {
                 type: "Enter",
                 roomId: this.room.code,
@@ -69,7 +69,6 @@ export default {
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exitRoom);
-        this.exitRoom();
     },
     methods: {
         ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN", "UPDATE_USER"]),
@@ -89,9 +88,13 @@ export default {
                 },
             };
             this.send(msg);
-            // this.INIT_ROOM();
-            // this.INIT_USERS();
-            // router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
+            this.INIT_ROOM();
+            this.INIT_USERS();
+            //router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
+        },
+        exitRoomEvent() {
+            this.exitRoom();
+            this.$router.push("/waiting");
         },
         send(msg) {
             if (this.stompClient && this.stompClient.connected) {

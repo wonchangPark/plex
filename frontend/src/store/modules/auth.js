@@ -66,15 +66,11 @@ export default {
                 Authorization: "Bearer " + accessToken,
                 Authorization2: "Bearer " + refreshToken,
             });
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
         },
 
         removeToken({ commit }) {
             commit("SET_ACCESSTOKEN", "");
             commit("SET_REFRESHTOKEN", "");
-            localStorage.setItem("accessToken", "");
-            localStorage.setItem("refreshToken", "");
         },
 
         fetchUserInfo({ commit, getters, dispatch }) {
