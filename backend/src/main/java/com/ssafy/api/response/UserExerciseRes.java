@@ -9,11 +9,11 @@ public class UserExerciseRes {
 
     Integer gamecategoryType;
     String gamecategoryName;
-    Long cnt;
+    Long score;
 
-    public UserExerciseRes(Integer gamecategoryType, String gamecategoryName, Long cnt) {
+    public UserExerciseRes(Integer gamecategoryType, String gamecategoryName, Long score) {
         this.gamecategoryType = gamecategoryType;
         this.gamecategoryName = gamecategoryName;
-        this.cnt = cnt;
+        this.score = score;
     }
 }
