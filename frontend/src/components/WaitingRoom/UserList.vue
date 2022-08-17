@@ -6,7 +6,7 @@
             </div>
             <div class="d-flex flex-column" style="flex: 0 0 90%; width: 100%; height: 90%">
                 <div class="d-flex flex-column align-center user-info-list-box">
-                    <UserInfo v-for="(item, index) in connectUsers" :nick="item.nick" :img="item.img" :key="index"></UserInfo>
+                    <UserInfo v-for="(item, index) in connectUsers" :nick="item.nick" :img="item.img ? item.img : primary" :key="index"></UserInfo>
                 </div>
             </div>
         </div>
@@ -21,6 +21,11 @@ const RoomStore = "roomStore";
 export default {
     name: "UserList",
     components: { ContentBox, UserInfo },
+    data () {
+      return {
+        primary: "gummybear"
+      }
+  },
     created: function(){
         this.getConnectUsers();
     },

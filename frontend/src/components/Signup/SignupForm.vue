@@ -12,8 +12,8 @@
             minlength="4"/>
           </v-col>
           <v-col cols="5">
-            <span class="check secondary--text" v-if="!idValidate">4~12자의 영문 대소문자와 숫자만 입력</span>
-            <span class="check error--text" v-else-if="idValidate && !idFlag">사용 불가능한 아이디 입니다.</span>
+            <span class="check error--text" v-if="!idValidate">4~12자의 영문 혹은 숫자를 입력</span>
+            <span class="check error--text" v-else-if="idValidate && !idFlag">이미 사용중인 아이디 입니다.</span>
             <span class="check secondary--text" v-else-if="idValidate && idFlag">사용 가능한 아이디 입니다.</span>
           </v-col>
         </v-row>
@@ -25,11 +25,10 @@
             <input id="PW" type="password" 
             v-model="credentials.password" 
             required
-            minlength="8"
-            maxlength="16"/>
+            minlength="8"/>
           </v-col>
           <v-col cols="5">
-            <span class="check secondary--text" v-if="!PWValidFlag">8~16자의 영문 대소문자와 숫자로만 입력</span>
+            <span class="check error--text" v-if="!pwValidate">8자이상 영문과 숫자의 조합으로 입력</span>
           </v-col>
         </v-row>
         <v-row align="center" justify="center">
@@ -40,7 +39,6 @@
             <input id="checkPW" type="password" 
             v-model="credentials.password2" 
             required
-            :rules="passwordRule"
             @blur="passwordCheckValid"/>
           </v-col>
           <v-col cols="5">
@@ -60,8 +58,8 @@
             maxlength="6"/>
           </v-col>
           <v-col cols="5">
-            <span class="check secondary--text" v-if="!nickValidate">6자의 영문 한글 입력</span>
-            <span class="check error--text" v-else-if="nickValidate&&!nicknameFlag">사용 불가능한 닉네임 입니다.</span>
+            <span class="check error--text" v-if="!nickValidate">6자이하의 영문 숫자 한글 중 입력</span>
+            <span class="check error--text" v-else-if="nickValidate&&!nicknameFlag">이미 사용중인 닉네임 입니다.</span>
             <span class="check secondary--text" v-else-if="nickValidate&&nicknameFlag">사용 가능한 닉네임 입니다.</span>
           </v-col>
         </v-row>
@@ -97,17 +95,20 @@ export default {
       pwShow: false,
       idCheckFlag: false,
       nicknameCheckFlag: false,
-      PWValidFlag: false,
+      pwValidFlag: false,
     }
   },
   computed: {
     ...mapGetters(['authError', 'passwordFlag', 'idFlag', 'nicknameFlag']),
     idValidate(){
-      return /^[A-Za-z0-9]+$/.test(this.credentials.id)
+        return /^[A-Za-z0-9]{4,13}$/.test(this.credentials.id)
     },
     nickValidate(){
-      return /^[A-Za-z0-9가-힣]+$/.test(this.credentials.id)
+      return /^[A-Za-z0-9가-힣]{1,7}$/.test(this.credentials.nick)
     },
+    pwValidate(){
+      return /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$/.test(this.credentials.password)
+    }
   },
   methods: {
     ...mapActions(['passwordCheck', 'signup', 'nicknameCheck', 'idCheck']),
@@ -118,15 +119,17 @@ export default {
         this.passwordCheckFlag = false
       }
     },
-    PWValidate(){
-      if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,16}$/.test(this.credentials.password)) {
-        this.PWValidFlag = true
-      } else {
-        this.PWValidFlag = false
-      }
-    },
+    // pwValidateFlag(){
+    //   this. /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$/.test(this.credentials.password)
+    //   if ( res === true){
+    //     this.pwValidFlag = true
+    //     console.log(this.pwValidFlag)
+    //   } else {
+    //     this.pwValidFlag = false
+    //   }
+    // },
     signupSubmit(){
-      if (this.passwordCheckFlag === true && this.idFlag === true && this.nicknameFlag === true) {
+      if (this.passwordCheckFlag === true && this.idFlag === true && this.nicknameFlag === true && this.pwValidate === true) {
         this.passwordCheck(this.credentials)
       } else {
         alert('회원가입 실패')
