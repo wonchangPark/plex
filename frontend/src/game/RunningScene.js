@@ -86,7 +86,7 @@ class RunningScene extends Scene {
         this.teamNameMove1[5] = this.add.text(65*this.WidthScale, 450*this.HeightScale, this.teamName1[5], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(0.7*this.WidthScale);
         
 
-        this.team1[5].flipX = true;
+        //this.team1[5].flipX = true;
 
 
         for (var i=0; i<6; i++){
