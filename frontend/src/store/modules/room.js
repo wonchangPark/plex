@@ -1,6 +1,8 @@
 import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
 import router from "@/router";
 import axios from "axios";
+import {refresh} from '@/api/error'
+import store from '@/store'
 import { API_BASE_URL } from '@/config';
 
 const API_URL = API_BASE_URL + '/api/v1';
@@ -58,7 +60,7 @@ const room = {
         },
     },
     actions: {
-        roomCreate({ rootState, commit }, roomInfo) {
+        roomCreate({ rootState, commit, dispatch }, roomInfo) {
             createRoomApi(
                 { headers: rootState.auth.authHeader, roomInfo },
                 ({ data }) => {
@@ -76,10 +78,12 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    refresh(error, store, router)
+                    dispatch("roomCreate", roomInfo)
                 }
             );
         },
-        leaveRoom({ rootState, commit }, joinInfo) {
+        leaveRoom({ rootState, commit, dispatch }, joinInfo) {
             leaveRoomApi(
                 { headers: rootState.auth.authHeader, joinInfo },
                 () => {
@@ -87,10 +91,12 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    refresh(error, store, router)
+                    dispatch("roomCreate", joinInfo)
                 }
             );
         },
-        joinRoom({ rootState, commit }, roomCode) {
+        joinRoom({ rootState, commit, dispatch }, roomCode) {
             setRoomUserApi(
                 { headers: rootState.auth.authHeader, code: roomCode, id: rootState.auth.user.nick },
                 ({ data }) => {
@@ -99,11 +105,14 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
-                    if (error.response.status == 403) {
+                    if (error.response.status === 405){
+                        refresh(error, store, router)
+                        dispatch("joinRoom", roomCode)
+                    } else if (error.response.status == 403) {
                         alert("이미 인원이 다 차있어 입장 불가능합니다.");
                     } else if (error.response.status == 406) {
                         alert("이미 해당 아이디가 대기방에 들어가 있습니다.");
-                    }
+                    } 
                 }
             );
         },
@@ -120,9 +129,12 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
+              refresh(e, store, router)
+              dispatch("setGameHistory", { roomNo, score })
             })
           },
-          setGameScore({ rootState }, score) {
+
+          setGameScore({ rootState, dispatch }, score) {
             axios({
               url: API_URL + '/rooms/score',
               method: 'post',
@@ -134,6 +146,8 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
+              refresh(e, store, router)
+              dispatch("setGameScore", score)
             })
         }
     },

@@ -1,4 +1,4 @@
-import axios from "@/axios";
+import axios from "axios";
 import router from "@/router";
 import { API_BASE_URL } from "@/config";
 import {refresh} from '@/api/error'
@@ -103,8 +103,8 @@ export default {
         })
         .catch((error) => {
           console.log(error)
-          refresh(error, store, router, this.fetchUserInfo)
-          dispatch(this.fetchUserInfo)
+          refresh(error, store, router)
+          dispatch('fetchUserInfo')
         })
       }
     },
@@ -195,7 +195,7 @@ export default {
           })
           .catch((err) => {
             console.error(err.response.data);
-            refresh(err, store, router, this.changeImg)
+            refresh(err, store, router)
             dispatch('changeImg', img)
           });
       }

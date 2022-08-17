@@ -55,10 +55,12 @@
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">랭킹</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">#0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="myRanking.rank">#{{myRanking.rank}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>unRanked</div>
             </v-col>
             <v-col class="text-center" cols="3">
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="myRanking">{{myRanking.score}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else></div>
             </v-col>
             <v-col class="text-center" cols="3">
               <v-btn text>
@@ -95,7 +97,8 @@ export default {
   },
   created(){
     this.fetchExerciseInfo(),
-    this.fetchGameInfo()
+    this.fetchGameInfo(),
+    this.fetchMyRanking(this.getUser.no)
   }
 }
 </script>

@@ -19,7 +19,12 @@
                     </div>
                     <div class="d-flex justify-space-between align-center" style="width: 100%; height: 45%">
                         <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
-                            <UserData></UserData>
+                            <ContentBox :width="100" :height="90">
+                                <div style="margin-top:auto; height: 90%; width: 100%">
+                                    <TutorialCarousel style="height: 90%; width:100%"></TutorialCarousel>
+                                </div>
+                            </ContentBox>
+                            <!-- <UserData></UserData> -->
                         </div>
                         <div class="d-flex justify-center align-center" style="width: 60%; height: 90%">
                             <ChattingList></ChattingList>
@@ -35,13 +40,18 @@
 import UserList from "@/components/WaitingRoom/UserList.vue";
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
 import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue";
-import UserData from "@/components/WaitingRoom/UserData.vue";
+// import UserData from "@/components/WaitingRoom/UserData.vue";
+import TutorialCarousel from '@/components/WaitingRoom/TutorialCarousel.vue'
+import ContentBox from "@/components/common/ContentBox.vue"
 
 import { mapActions, mapGetters } from "vuex";
 
 export default {
     name: "WaitingRoomView",
-    components: { UserList, ChattingList, CreateRoomDialog, UserData },
+    components: { UserList, ChattingList, CreateRoomDialog,
+    //  UserData,
+    ContentBox,
+     TutorialCarousel },
     methods: {
         ...mapActions(["setRoomCreate"]),
         rankBtn() {

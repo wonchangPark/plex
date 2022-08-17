@@ -1,11 +1,9 @@
 <template>
   <div class="d-flex user-info flex-row justify-left align-center">
-    <v-avatar class="mr-4 ml-4" color="white" size="45">
-      <img
-        :src="require(`@/assets/profile/${img}.png`)"
-        alt="profile">
-    </v-avatar>
-    <div class="white--text font">{{nick}}</div>
+      <v-avatar color="white" size="45" class="info-box">
+        <img v-if="this.img" :src="require(`@/assets/profile/${img}.png`)" alt="profile">
+      </v-avatar>
+      <div class="white--text font" >{{nick}}</div>
   </div>
 </template>
 
@@ -30,11 +28,15 @@ export default {
   flex: 0 0 auto;
 }
 
+.info-box {
+  margin-left: 0.5vw;
+}
 .user-info .font {
   font-weight: bold;
-  font-size: 1.6vw;
+  font-size: 1.2vw;
   text-overflow: ellipsis;
   overflow: hidden;
   flex: 1 1 auto;
+  margin-left: 0.2vw;
 }
 </style>
