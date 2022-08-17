@@ -113,6 +113,7 @@ class WaitingScene extends Scene {
                 }
             }
 
+            this.add.image(800*this.WidthScale , 256*this.WidthScale, 'Room1600_2').setScale(this.WidthScale);
 
             this.teamNameMove1[0] = this.add.text(this.team1[0].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
             this.teamNameMove1[1] = this.add.text(this.team1[1].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
@@ -241,21 +242,20 @@ class WaitingScene extends Scene {
     }
 
     update() {
-        if (this.gameCategory == 0){
-            // for (var i=0; i<3; i++){
-            //     this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
-            //     this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
-            // }
-        }
-        else if (this.gameCategory == 1){
-            for (var i=0; i<6; i++){
-                //this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
-                if (i >= this.players){
-                    this.team1[i].setX(8000);
-                }
-            }
-            console.log("waiting 1")
-        }
+        // if (this.gameCategory == 0){
+        //     // for (var i=0; i<3; i++){
+        //     //     this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
+        //     //     this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
+        //     // }
+        // }
+        // else if (this.gameCategory == 1){
+        //     for (var i=0; i<6; i++){
+        //         //this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
+        //         if (i >= this.players){
+        //             this.team1[i].setX(8000);
+        //         }
+        //     }
+        // }
     }
 
 }

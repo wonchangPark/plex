@@ -1,6 +1,8 @@
 import axios from '@/axios'
 import { API_BASE_URL } from '@/config';
 import { OpenVidu } from "openvidu-browser";
+import store from '@/store'
+import router from '@/router'
 
 const API_URL = API_BASE_URL + '/api/v1';
 
@@ -220,6 +222,10 @@ const sessionStore = {
         })
         .catch((e) => {
           console.log(e)
+          if (e.response.status == 401){
+            store.dispatch('removeToken')
+            router.push({name: 'login'})
+        }
         })
       },
       dataInit ({ commit }) {
@@ -236,6 +242,10 @@ const sessionStore = {
         })
         .catch(error => {
             console.error(error);
+            if (error.response.status == 401){
+              store.dispatch('removeToken')
+              router.push({name: 'login'})
+          }
         });
       }
     },

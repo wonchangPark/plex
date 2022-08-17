@@ -13,6 +13,7 @@ import BackGround from '../assets/Room1600.png'
 import RunningRoom from '../assets/RunningRoom.png'
 import DeskRight from '../assets/DeskRight.png'
 import DeskLeft from '../assets/DeskLeft.png'
+import Room1600_2 from '../assets/Room1600_front.png'
 
 
 import Slime3_1 from '../assets/Slime_3/1.png'
@@ -134,6 +135,11 @@ import whale_14 from '../assets/whale/whale (14).png'
 import whale_15 from '../assets/whale/whale (15).png'
 import whale_16 from '../assets/whale/whale (16).png'
 
+import dash_1 from '../assets/dash/dash(1).png'
+import dash_2 from '../assets/dash/dash(2).png'
+import dash_3 from '../assets/dash/dash(3).png'
+import dash_4 from '../assets/dash/dash(4).png'
+
 class BootScene extends Scene {
 
 
@@ -156,7 +162,7 @@ class BootScene extends Scene {
         this.load.rexImageURI('RunningRoom', RunningRoom)
         this.load.rexImageURI('DeskRight', DeskRight)
         this.load.rexImageURI('DeskLeft', DeskLeft)
-
+        this.load.rexImageURI('Room1600_2', Room1600_2)
 
         //TestPlayer(병아리)
         this.load.rexImageURI('test1', T1);
@@ -289,6 +295,12 @@ class BootScene extends Scene {
         this.load.rexImageURI('whale_14', whale_14)
         this.load.rexImageURI('whale_15', whale_15)
         this.load.rexImageURI('whale_16', whale_16)
+
+        //dash
+        this.load.rexImageURI('dash_1', dash_1)
+        this.load.rexImageURI('dash_2', dash_2)
+        this.load.rexImageURI('dash_3', dash_3)
+        this.load.rexImageURI('dash_4', dash_4)
 
         //this.textures.addBase64('player', Player);
         //this.textures.addBase64('player2', Player2);        
@@ -473,6 +485,18 @@ class BootScene extends Scene {
             ],
             frameRate: 20,
             repeat: -1
+        });
+
+        this.anims.create({
+            key: 'dashMove',
+            frames: [
+                { key: 'dash_1' },
+                { key: 'dash_2' },
+                { key: 'dash_3'},
+                { key: 'dash_4', duration: 10 }
+            ],
+            frameRate: 5,
+            repeat: 0
         });
         
 

@@ -1,8 +1,8 @@
 import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
 import router from "@/router";
 import axios from "@/axios";
-import {refresh} from '@/api/error'
-import store from '@/store'
+import store from "@/store"
+import { refresh } from "@/api/error";
 import { API_BASE_URL } from '@/config';
 
 const API_URL = API_BASE_URL + '/api/v1';
@@ -63,7 +63,7 @@ const room = {
         SET_GAME_HISTORY_NO: (state, gameHistoryNo) => state.gameHistoryNo = gameHistoryNo,
     },
     actions: {
-        roomCreate({ rootState, commit, dispatch }, roomInfo) {
+        roomCreate({ rootState, commit }, roomInfo) {
             createRoomApi(
                 { headers: rootState.auth.authHeader, roomInfo },
                 ({ data }) => {
@@ -81,12 +81,14 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
-                    refresh(error, store, router)
-                    dispatch("roomCreate", roomInfo)
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },
-        leaveRoom({ rootState, commit, dispatch }, joinInfo) {
+        leaveRoom({ rootState, commit }, joinInfo) {
             leaveRoomApi(
                 { headers: rootState.auth.authHeader, joinInfo },
                 () => {
@@ -94,8 +96,10 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
-                    refresh(error, store, router)
-                    dispatch("roomCreate", joinInfo)
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },
@@ -115,7 +119,10 @@ const room = {
                         alert("이미 인원이 다 차있어 입장 불가능합니다.");
                     } else if (error.response.status == 406) {
                         alert("이미 해당 아이디가 대기방에 들어가 있습니다.");
-                    } 
+                    } else if (error.response.status == 401){
+                        refresh(error, store, router);
+                        dispatch(this.fetchUserInfo);
+                    }
                 }
             );
         },
@@ -131,9 +138,13 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
             })
           },
-        endGameHistory({ rootState, dispatch }, { roomNo, gameHistoryNo }) {
+        endGameHistory({ rootState }, { roomNo, gameHistoryNo }) {
             axios({
               url: API_URL + `/rooms/gameend?roomNo=${roomNo}&gameHistoryNo=${gameHistoryNo}`,
               method: 'post',
@@ -144,12 +155,14 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
-              refresh(e, store, router)
-              dispatch("endGameHistory", { roomNo, gameHistoryNo })
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
             })
           },
 
-          setGameScore({ rootState, dispatch }, score) {
+          setGameScore({ rootState }, score) {
             axios({
               url: API_URL + '/rooms/score',
               method: 'post',
@@ -161,8 +174,10 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
-              refresh(e, store, router)
-              dispatch("setGameScore", score)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
             })
         }
     },
