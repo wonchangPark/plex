@@ -3,7 +3,7 @@
         <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
             <div class="d-flex flex-column" style="height: 87%; width: 100%">
                 <div class="d-flex flex-column chatting-list-box" ref="chattingListBox">
-                    <ChattingItem v-for="(item, index) in recvList" :key="index" :name="item.userName" :content="item.content" :img="item.img"></ChattingItem>
+                    <ChattingItem v-for="(item, index) in recvList" :key="index" :name="item.userName" :content="item.content" :img="item.img ? item.img : primary"></ChattingItem>
                 </div>
             </div>
             <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
@@ -29,6 +29,7 @@ export default {
             message: "",
             recvList: [],
             prevScrollHeight: 0,
+            primary: "gummybear",
         };
     },
     created: function () {

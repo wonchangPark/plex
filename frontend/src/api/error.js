@@ -13,6 +13,7 @@ function refresh(error, store, router) {
               store.dispatch("saveToken", { accessToken: newAccessToken, refreshToken });
               console.log("axios.interceptors,헤더", store.getters.authHeader);
           }
+          break;
   }
 }
 

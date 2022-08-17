@@ -64,7 +64,7 @@ public class UserRepository {
     }
 
     public List<UserExerciseRes> getMyTotalExercise(User user){
-        return em.createQuery("select new com.ssafy.api.response.UserExerciseRes(gc.type, gc.name, sum(sh.exerciseNum)) " +
+        return em.createQuery("select new com.ssafy.api.response.UserExerciseRes(gc.type, gc.name, sum(sh.score)) " +
                 "from ScoreHistory sh, GameCategory gc " +
                 "where sh.user = :user and sh.gameNo = gc.no " +
                 "group by gc.no", UserExerciseRes.class).setParameter("user", user).getResultList();

@@ -14,19 +14,20 @@
           캐릭터 변경
         </v-btn>
       </template>
-      <form @submit="submitImg(img)">
+      <form @submit.prevent="submitImg(img)">
         <v-card class="room-create align-center" color="brown" width="35vw">
           <v-list-item-content class="align-center justify-center">
             <v-container class="d-flex flex-column justify-center">
               <v-row class="d-flex mt-2 mb-2">
               <div v-for="(image, index) in imgList"
               :key="index"
-              :image = image>
-                <v-col class="text-center" cols="4">
-                  <v-avatar color="white" size="100" >
-                    <v-btn @click="sendGummibear(image)">
-                    <img :src="require(`@/assets/profile/${image}.png`)" alt="">
-                    </v-btn>
+              :image = image
+              class="d-flex justify-center align-center">
+                <v-col class="text-center" cols="5">
+                  <v-avatar color="white" size="150" >
+                    <a @click="sendGummibear(image)">
+                    <img :src="require(`@/assets/profile/${image}.png`)" alt="" style="width: 140px;">
+                    </a>
                   </v-avatar>
                 </v-col>
               </div>
@@ -58,7 +59,6 @@ export default {
         image: ''
       },
       imgList: ['gummybear', 'pudding', 'slime', 'stone', 'sushi', 'whale'],
-      // selectList: [0] * length(this.imgList)
 
     }),
   methods: {
@@ -67,22 +67,22 @@ export default {
     },
     sendGummibear(index){
       this.img.image = index
-      // for (var i = 1; i < length(this.imgList); i++){
-      //   this.selectList[i] = 0
-      // }
-      // this.selectList[this.imgList.indexOf(index)] = 1
       console.log(this.img)
     },
-    ...mapActions(['changeImg']),
-    submitImg(index){
-      this.changeImg(index)
-      this.closeDialog()
+    ...mapActions(['changeImg', 'fetchUserInfo']),
+    async submitImg(index){
+      await this.changeImg(index)
+      await this.fetchUserInfo()
+      await this.closeDialog()
     }
 
   },
   computed: {
     ...mapGetters(['isLoggedIn'])
   },
+  updated(){
+    this.fetchUserInfo()
+  }
 }
 </script>
 
@@ -98,4 +98,7 @@ export default {
   border-radius: 5px;
   border-color: #FFB82F;
 }
+/* .create-room-dialog img{
+  width: 100px;
+} */
 </style>
