@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@/config";
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import router from "@/router";
+import store from "@/store"
 
 const socketStore = {
     namespaced: true,
@@ -28,6 +29,10 @@ const socketStore = {
                     // 소켓 연결 실패
                     console.log("소켓 연결 실패", error);
                     state.connected = false;
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },

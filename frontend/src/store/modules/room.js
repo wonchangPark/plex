@@ -1,6 +1,8 @@
 import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
 import router from "@/router";
 import axios from "@/axios";
+import store from "@/store"
+import { refresh } from "@/api/error";
 import { API_BASE_URL } from '@/config';
 
 const API_URL = API_BASE_URL + '/api/v1';
@@ -79,6 +81,10 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },
@@ -90,10 +96,14 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },
-        joinRoom({ rootState, commit }, roomCode) {
+        joinRoom({ rootState, commit, dispatch }, roomCode) {
             setRoomUserApi(
                 { headers: rootState.auth.authHeader, code: roomCode, id: rootState.auth.user.nick },
                 ({ data }) => {
@@ -106,6 +116,9 @@ const room = {
                         alert("이미 인원이 다 차있어 입장 불가능합니다.");
                     } else if (error.response.status == 406) {
                         alert("이미 해당 아이디가 대기방에 들어가 있습니다.");
+                    } else if (error.response.status == 401){
+                        refresh(error, store, router);
+                        dispatch(this.fetchUserInfo);
                     }
                 }
             );
@@ -122,6 +135,10 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
             })
           },
         endGameHistory({ rootState }, { roomNo, gameHistoryNo }) {
@@ -135,6 +152,10 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
             })
           },
           setGameScore({ rootState }, score) {
@@ -149,6 +170,10 @@ const room = {
             })
             .catch((e) => {
               console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
             })
         }
     },
