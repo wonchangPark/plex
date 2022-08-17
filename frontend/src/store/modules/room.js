@@ -13,9 +13,11 @@ const room = {
         room: {},
         roomJoin: false,
         users: [],
+        gameHistoryNo: 0,
     },
     getters: {
-        roomJoin: state => state.roomJoin
+        roomJoin: state => state.roomJoin,
+        gameHistoryNo: state => state.gameHistoryNo
     },
     mutations: {
         SET_ROOM: (state, room) => {
@@ -58,6 +60,7 @@ const room = {
                 return user;
             });
         },
+        SET_GAME_HISTORY_NO: (state, gameHistoryNo) => state.gameHistoryNo = gameHistoryNo,
     },
     actions: {
         roomCreate({ rootState, commit, dispatch }, roomInfo) {
@@ -116,7 +119,7 @@ const room = {
                 }
             );
         },
-        setGameHistory({ dispatch, rootState}, { roomNo, score }) {
+        setGameHistory({ rootState, commit }, roomNo) {
             axios({
               url: API_URL + `/rooms/game?roomNo=${roomNo}`,
               method: 'post',
@@ -124,13 +127,25 @@ const room = {
             })
             .then( (res) => {
               console.log(res)
-              score.gameHistoryNo = res.data
-              dispatch('setGameScore', score)
+              commit('SET_GAME_HISTORY_NO', res.data)
+            })
+            .catch((e) => {
+              console.log(e)
+            })
+          },
+        endGameHistory({ rootState, dispatch }, { roomNo, gameHistoryNo }) {
+            axios({
+              url: API_URL + `/rooms/gameend?roomNo=${roomNo}&gameHistoryNo=${gameHistoryNo}`,
+              method: 'post',
+              headers: rootState.auth.authHeader
+            })
+            .then( (res) => {
+              console.log(res)
             })
             .catch((e) => {
               console.log(e)
               refresh(e, store, router)
-              dispatch("setGameHistory", { roomNo, score })
+              dispatch("endGameHistory", { roomNo, gameHistoryNo })
             })
           },
 

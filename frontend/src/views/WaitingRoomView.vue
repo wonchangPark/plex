@@ -52,6 +52,12 @@ export default {
     //  UserData,
     ContentBox,
      TutorialCarousel },
+    data() {
+        return {
+            homeMusic: require("../assets/audio/homeAudio.mp3"),
+            musicOn: undefined,
+        }
+    },
     methods: {
         ...mapActions(["setRoomCreate"]),
         rankBtn() {
@@ -60,6 +66,19 @@ export default {
     },
     computed: {
         ...mapGetters(["roompage"]),
+    },
+    mounted() {
+        this.musicOn = new Audio(this.homeMusic);
+        this.musicOn.play();
+        this.musicOn.volume = 0.4;
+        this.musicOn.loop = true;
+        
+    },
+
+    beforeRouteLeave(to, from, next) {
+        if (this.musicOn != undefined)
+            this.musicOn.pause();
+        next();
     },
 };
 </script>

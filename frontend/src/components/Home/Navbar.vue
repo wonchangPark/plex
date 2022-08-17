@@ -1,10 +1,10 @@
 <template>
-  <div class="navbar d-flex flex-row justify-space-between align-end">
-    <div class="router-logo d-flex">
-      <router-link to="/">
-        <img class="nav-img" src="@/assets/plex_nav.png" alt="로고">
-      </router-link>
-    </div>
+    <div class="navbar d-flex flex-row justify-space-between align-end">
+        <div class="router-logo d-flex">
+            <router-link to="/">
+                <img class="nav-img" src="@/assets/plex_nav.png" alt="로고" />
+            </router-link>
+        </div>
 
     <div class="d-flex"  v-if="isLoggedIn">
     <v-menu bottom rounded offset-y>
@@ -40,53 +40,63 @@
       </v-card>
     </v-menu>
     </div>
-  </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-
+import { mapActions, mapGetters, mapState } from "vuex";
+const SocketStore = "socketStore";
 export default {
-  name: 'NavBar',
-  components: {
+    name: "NavBar",
+    components: {},
+    data() {
+        return {
+            dialog: false,
+        };
     },
-  data () {
-      return {
-        dialog: false
-      }
-  },
-  methods: {
-    ...mapActions([
-      'logout',
-      'fetchUserInfo'
-      ]),
-  },
-  computed: {
-    ...mapGetters([
-      'isLoggedIn',
-      'getUser'])
-  },
-  created(){
-    this.fetchUserInfo()
-  }
+    methods: {
+        ...mapActions(["logout", "fetchUserInfo"]),
+        send(type, userName, content, img) {
+            //console.log("Send Message:" + content);
+            if (this.stompClient && this.stompClient.connected) {
+                const msg = {
+                    type,
+                    userName,
+                    content,
+                    img,
+                };
+                this.stompClient.send("/receive", JSON.stringify(msg), {});
+            }
+        },
+        logoutEvent() {
+            this.send("exit", this.getUser.nick, "", this.getUser.img);
+            this.logout();
+        },
+    },
+    computed: {
+        ...mapGetters(["isLoggedIn", "getUser"]),
+        ...mapState(SocketStore, ["stompClient", "connected"]),
+    },
+    created() {
+        this.fetchUserInfo();
+    },
 };
 </script>
 <style>
 .nav-img {
-  height: 30px;
+    height: 30px;
 }
 .navbar {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 .page-btn {
     margin-top: 2%;
     margin-bottom: 2%;
 }
-.menu-name{
-  margin-top: 10%;
+.menu-name {
+    margin-top: 10%;
 }
 .router-logo {
-  text-decoration: none;
+    text-decoration: none;
 }
 </style>

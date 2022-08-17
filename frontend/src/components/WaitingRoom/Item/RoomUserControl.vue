@@ -29,7 +29,7 @@
         </div>
         <div class="d-flex flex-column justify-space-around align-center" style="height: 30%; width: 100%">
             <button v-if="isHost" class="primary" style="width: 90%; height: 35%; border-radius: 3px" @click="startEvent">게임시작</button>
-            <button class="primary" style="width: 90%; height: 35%; border-radius: 3px">나가기</button>
+            <button class="primary" @click="exitEvent" style="width: 90%; height: 35%; border-radius: 3px">나가기</button>
         </div>
     </div>
 </template>
@@ -88,13 +88,16 @@ export default {
                 };
                 this.send(msg);
                 this.SET_ROOMJOIN()
-                if (this.room.gameNo === 1) {
+                if (this.gameType === 0) {
                     this.$router.push('/room')
-                } else if (this.room.gameNo === 2) {
+                } else if (this.gameType === 1) {
                     this.$router.push('/runningroom')
                 }
             }
         },
+        exitEvent(){
+            this.$emit("exitEvent");
+        }
     },
     computed: {
         ...mapState(room, ["users", "room", "roomJoin"]),

@@ -26,10 +26,27 @@ import CharaterBox from "@/components/Mypage/CharaterBox.vue"
 
 export default {
   name: 'mypageView',
+  data() {
+    return {
+      myPageMusic: require("../assets/audio/waitingAudio.mp3"),
+      musicOn: undefined,
+    }
+  },
   components: {
     InformationBox,
     CharaterBox
-  }
+  },
+  mounted() {
+    this.musicOn = new Audio(this.myPageMusic);
+    this.musicOn.volume = 0.5;
+    this.musicOn.loop = true;
+    this.musicOn.play();
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.musicOn != undefined)
+      this.musicOn.pause();
+    next();
+  },
 }
 </script>
 

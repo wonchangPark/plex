@@ -26,6 +26,12 @@ class RopeFightScene extends Scene {
     shakePosition1 = []
     shakePosition2 = []
 
+    startRopePosition = 0;
+    leftPosition = 0;
+    RightPosition = 0;
+
+    team1Img = ["not", "not", "not"];
+    team2Img = ["not", "not", "not"];
 
     //this.$refs.game-container.clientHeight
     //spriteScale = Game.world.width / 1600;
@@ -36,7 +42,7 @@ class RopeFightScene extends Scene {
 
     leftTime = 60;
     timerText;
-    timer;
+    //timer;
     gameActive = false;
     create() {
 
@@ -46,7 +52,7 @@ class RopeFightScene extends Scene {
         var goLeftEvent = new Phaser.Events.EventEmitter();
         var goRightEvent = new Phaser.Events.EventEmitter();
 
-        this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
+        //this.timer = this.time.addEvent({delay: 1000, callback: this.onTimerEvent, callbackScope: this, loop: true});
         
 
         // 화면 비율
@@ -60,7 +66,7 @@ class RopeFightScene extends Scene {
         this.LeftDesk = this.add.image(800*this.WidthScale, 260*this.WidthScale, 'DeskLeft').setScale(this.WidthScale);
 
 
-        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "10", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#660000').setScale(5*this.WidthScale);
+        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "60", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#660000').setScale(5*this.WidthScale);
 
 
         outEvent.on('Out', this.outHandler, this);
@@ -75,15 +81,62 @@ class RopeFightScene extends Scene {
         this.rope.setImmovable(true);
         this.rope.body.allowGravity = false;
         this.ropePosition = this.rope.x;
+        this.startRopePosition = this.rope.x;
+        this.leftPosition = 0;
+        this.RightPosition = 0;
 
         //adding sprites with physics
-        this.team1[0] = this.physics.add.sprite(250*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
-        this.team1[1] = this.physics.add.sprite(400*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
-        this.team1[2] = this.physics.add.sprite(550*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
+        // this.team1[0] = this.physics.add.sprite(250*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
+        // this.team1[1] = this.physics.add.sprite(400*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+        // this.team1[2] = this.physics.add.sprite(550*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
 
-        this.team2[0] = this.physics.add.sprite(1050*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
-        this.team2[1] = this.physics.add.sprite(1200*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
-        this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+        // this.team2[0] = this.physics.add.sprite(1050*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+        // this.team2[1] = this.physics.add.sprite(1200*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+        // this.team2[2] = this.physics.add.sprite(1350*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+
+        // (700 - (150 * (3-i)))
+        for (var i=0; i<3; i++){
+            if(this.team1Img[i] === "slime"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
+            } else if (this.team1Img[i] === "stone"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+            } else if (this.team1Img[i] === "sushi"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
+            } else if (this.team1Img[i] === "gummybear"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+            } else if (this.team1Img[i] === "pudding"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+            } else  if (this.team1Img[i] === "whale"){
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team1[i].flipX = true;
+            } else{
+                this.team1[i] = this.physics.add.sprite((700 - (150 * (3-i)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team1[i].setX(8000);
+            }
+
+            if(this.team2Img[i] == "slime"){
+                this.team2[i] = this.physics.add.sprite((900 + (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'slime1_1').setScale(this.WidthScale).play('slime1Move');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "stone"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'stone').setScale(this.WidthScale).play('stoneMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "sushi"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'Sushi_1').setScale(this.WidthScale).play('SushiMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "gummybear"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'gummybear_1').setScale(this.WidthScale).play('gummybearMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img[i] == "pudding"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'pudding_1').setScale(this.WidthScale).play('puddingMove');
+                this.team2[i].flipX = true;
+            } else if (this.team2Img === "whale"){
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team2[i].flipX = false;
+            } else{
+                this.team2[i] = this.physics.add.sprite((900 +  (150 * (i+1)))*this.WidthScale, 200*this.WidthScale, 'whale').setScale(this.WidthScale).play('whaleMove');
+                this.team2[i].setX(8000);
+            }
+        }
 
 
         // team name for moving
@@ -129,13 +182,13 @@ class RopeFightScene extends Scene {
             this.nowPosition2[i] = this.team2[i].x;
         }
 
-        this.team2[0].flipX = true;
-        this.team2[1].flipX = true;
-        this.team2[2].flipX = false;
+        // this.team2[0].flipX = true;
+        // this.team2[1].flipX = true;
+        // this.team2[2].flipX = true;
 
-        this.team1[0].flipX = false;
-        this.team1[1].flipX = false;
-        this.team1[2].flipX = false;
+        // this.team1[0].flipX = false;
+        // this.team1[1].flipX = false;
+        // this.team1[2].flipX = false;
 
 
         // no gravity
@@ -165,6 +218,11 @@ class RopeFightScene extends Scene {
 
     goLeftHandler(idx) {
 
+
+        this.leftPosition = this.leftPosition + 15;
+        if (this.RightPosition > 0){
+            this.RightPosition = this.RightPosition - 15;
+        }        
 
         for (var i = 0 ; i < this.team1.length ; i++){   //move players to left
             this.team1[i].setVelocityX(-20);
@@ -199,6 +257,13 @@ class RopeFightScene extends Scene {
 
     goRightHandler(idx2) {
 
+
+        this.RightPosition = this.RightPosition + 15;
+        if (this.leftPosition > 0){
+            this.leftPosition = this.leftPosition - 15;
+        }        
+
+
         for (var i = 0 ; i < this.team1.length ; i++){   //move players to left
             this.team1[i].setVelocityX(20);
             this.team2[i].setVelocityX(20);
@@ -231,7 +296,7 @@ class RopeFightScene extends Scene {
         // Desk remove
         this.shakeRightGround.stop();
         this.RightDesk.setX(6000);
-        this.timer.remove(false);
+        //this.timer.remove(false);
 
         // start gravity
         for (var i=0; i<3; i++){
@@ -242,7 +307,7 @@ class RopeFightScene extends Scene {
     RightWin(){
         this.shakeLeftGround.stop();
         this.LeftDesk.setX(6000);
-        this.timer.remove(false);
+        //this.timer.remove(false);
 
         for (var i=0; i<3; i++){
             this.team1[i].body.allowGravity = true;
@@ -258,6 +323,17 @@ class RopeFightScene extends Scene {
         }
     }
 
+    setImg(team1, team2, imgArr){
+        for (var i=0; i<team1.length; i++){
+            this.team1Img[i] = imgArr[team1[i]];
+        }
+
+        for (var i=0; i<team2.length; i++){
+            this.team2Img[i] = imgArr[team2[i]]
+        }
+
+    }
+
     update() {
 
         
@@ -266,7 +342,7 @@ class RopeFightScene extends Scene {
             this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
         }
 
-        // 로프 및 스프라이트가 10이상 움직였으면 stop
+        //로프 및 스프라이트가 10이상 움직였으면 stop
         if (this.rope.x >= this.ropePosition + 10 || this.rope.x <= this.ropePosition - 10){
             this.rope.setVelocityX(0);
             this.ropePosition = this.rope.x;
@@ -281,7 +357,29 @@ class RopeFightScene extends Scene {
                 this.nowPosition2[i] = this.team2[i].x;
             }
         }
+
+        // if (this.rope.x <= this.startRopePosition - this.leftPosition * this.WidthScale || this.rope.x >= this.startRopePosition + this.RightPosition * this.WidthScale){
+        //     this.rope.setVelocityX(0);
+        //     for (var i=0; i<3; i++){
+        //         this.team1[i].setVelocityX(0);
+        //         this.team2[i].setVelocityX(0);
+        //     }
+        // }
+
         
+        /*if (this.leftTime >= 0)
+            this.timerText.setText(this.leftTime);
+        else {
+            if (this.gameActive)
+                this.timerText.setText("연장전!");
+            else
+                this.timerText.setText("");
+        }*/
+
+    }
+
+    onTimerEvent() {
+        this.leftTime--;
         if (this.leftTime >= 0)
             this.timerText.setText(this.leftTime);
         else {
@@ -290,11 +388,6 @@ class RopeFightScene extends Scene {
             else
                 this.timerText.setText("");
         }
-
-    }
-
-    onTimerEvent() {
-        this.leftTime--;
         //console.log(this.leftTime);
     }
 
