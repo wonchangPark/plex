@@ -241,21 +241,20 @@ class WaitingScene extends Scene {
     }
 
     update() {
-        if (this.gameCategory == 0){
-            // for (var i=0; i<3; i++){
-            //     this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
-            //     this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
-            // }
-        }
-        else if (this.gameCategory == 1){
-            for (var i=0; i<6; i++){
-                //this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
-                if (i >= this.players){
-                    this.team1[i].setX(8000);
-                }
-            }
-            console.log("waiting 1")
-        }
+        // if (this.gameCategory == 0){
+        //     // for (var i=0; i<3; i++){
+        //     //     this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
+        //     //     this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
+        //     // }
+        // }
+        // else if (this.gameCategory == 1){
+        //     for (var i=0; i<6; i++){
+        //         //this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
+        //         if (i >= this.players){
+        //             this.team1[i].setX(8000);
+        //         }
+        //     }
+        // }
     }
 
 }

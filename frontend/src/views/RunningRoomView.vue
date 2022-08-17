@@ -694,12 +694,10 @@ export default {
     updated(){
 
         // 대기화면 설정
-        if (this.game.scene.getScene("waitingScene").gameCategory != 1){
-            this.game.scene.getScene("waitingScene").changeCategory(1);
-            this.game.scene.getScene("waitingScene").setName(Object.keys(this.personalScore));
+        this.game.scene.getScene("waitingScene").changeCategory(1);
+        this.game.scene.getScene("waitingScene").setName(Object.keys(this.personalScore));
 
-            this.game.scene.getScene("waitingScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
-        }
+        this.game.scene.getScene("waitingScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
     }
 };
 </script>
