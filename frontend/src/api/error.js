@@ -1,4 +1,7 @@
-function refresh(error, store, router) {
+import store from '@/store'
+import router from '@/router'
+
+function refresh(error) {
   switch (error.response.status) {
       case 401:
           store.dispatch("removeToken");
