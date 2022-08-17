@@ -39,14 +39,19 @@
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else-if="userExercise.length === 1">{{userExercise[0].cnt}}</div>
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[0].cnt + userExercise[1].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else-if="userExercise.length === 1 && userExercise[0].gamecategoryName === 'squat'">{{userExercise[0].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else-if="userExercise.length === 1 && userExercise[0].gamecategoryName === 'lunge'">0</div>
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[0].cnt}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else-if="userExercise.length === 1 && userExercise[0].gamecategoryName === 'squat'">0</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else-if="userExercise.length === 1 && userExercise[0].gamecategoryName === 'lunge'">{{userExercise[0].cnt}}</div>
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[1].cnt}}</div>
             </v-col>
           </v-row>

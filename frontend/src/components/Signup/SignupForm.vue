@@ -119,16 +119,17 @@ export default {
         this.passwordCheckFlag = false
       }
     },
-    pwValidateFlag(){
-      const res = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$/.test(this.credentials.password)
-      if ( res === true){
-        this.pwValidFlag = true
-      } else {
-        this.pwValidFlag = false
-      }
-    },
+    // pwValidateFlag(){
+    //   this. /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$/.test(this.credentials.password)
+    //   if ( res === true){
+    //     this.pwValidFlag = true
+    //     console.log(this.pwValidFlag)
+    //   } else {
+    //     this.pwValidFlag = false
+    //   }
+    // },
     signupSubmit(){
-      if (this.passwordCheckFlag === true && this.idFlag === true && this.nicknameFlag === true && this.pwValidFlag === true) {
+      if (this.passwordCheckFlag === true && this.idFlag === true && this.nicknameFlag === true && this.pwValidate === true) {
         this.passwordCheck(this.credentials)
       } else {
         alert('회원가입 실패')

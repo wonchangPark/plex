@@ -1,6 +1,6 @@
 import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
 import router from "@/router";
-import axios from "axios";
+import axios from "@/axios";
 import {refresh} from '@/api/error'
 import store from '@/store'
 import { API_BASE_URL } from '@/config';

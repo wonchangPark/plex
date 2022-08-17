@@ -1,6 +1,8 @@
 <template>
   <!-- <ContentBox :height="90" :width="100"> -->
-  <v-container style="height:90%; width: 100%">
+    <div class="d-flex justify-center align-center" style="height:100%">
+
+  <v-container style="width: 100%">
     <v-row>
       <v-col>
         <DataBox :number="userGameInfo ? userGameInfo.totalCnt : 0" string="게임"></DataBox>
@@ -36,6 +38,7 @@
     </v-row>
   </v-container>
   <!-- </ContentBox> -->
+    </div>
 </template>
 
 <script>

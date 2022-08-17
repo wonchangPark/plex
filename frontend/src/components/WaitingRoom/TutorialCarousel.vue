@@ -1,5 +1,5 @@
 <template>
-  <v-carousel height="auto" hide-delimiters>
+  <v-carousel height="100%" hide-delimiters>
     <v-carousel-item>
       <UserData></UserData>
     </v-carousel-item>
@@ -21,19 +21,19 @@ import UserData from '@/components/WaitingRoom/UserData.vue'
       return {
         items: [
           {
-            src: require("@/assets/tutorial/page1.png"),
+            src: require("@/assets/tutorial/슬라이드1.png"),
           },
           {
-            src: require("@/assets/tutorial/page2.png"),
+            src: require("@/assets/tutorial/슬라이드2.png"),
           },
           {
-            src: require("@/assets/tutorial/page3.png"),
+            src: require("@/assets/tutorial/슬라이드3.png"),
           },
           {
-            src: require("@/assets/tutorial/page4.png"),
+            src: require("@/assets/tutorial/슬라이드4.png"),
           },
           {
-            src: require("@/assets/tutorial/page5.png"),
+            src: require("@/assets/tutorial/슬라이드5.png"),
           },
         ],
       }

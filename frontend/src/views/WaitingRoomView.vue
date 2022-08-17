@@ -18,15 +18,15 @@
                         <router-view />
                     </div>
                     <div class="d-flex justify-space-between align-center" style="width: 100%; height: 45%">
-                        <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 40%; height: 90%">
                             <ContentBox :width="100" :height="90">
-                                <div style="margin-top:auto; height: 90%; width: 100%">
-                                    <TutorialCarousel style="height: 90%; width:100%"></TutorialCarousel>
+                                <div style="height: 100%; width: 100%">
+                                    <TutorialCarousel style="height: 100%; width:100%"></TutorialCarousel>
                                 </div>
                             </ContentBox>
                             <!-- <UserData></UserData> -->
                         </div>
-                        <div class="d-flex justify-center align-center" style="width: 60%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 55%; height: 90%">
                             <ChattingList></ChattingList>
                         </div>
                     </div>
