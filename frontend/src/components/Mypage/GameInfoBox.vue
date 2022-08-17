@@ -27,7 +27,7 @@
           </v-row>
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
-              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">운동</div>
+              <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">점수</div>
             </v-col>
             <v-col class="text-center" cols="4">
               <div class="secondary--text" style="font-size:1.2rem; font-weight: bold;">스쿼트</div>
@@ -39,15 +39,15 @@
           <v-row class="d-flex justify-center">
             <v-col class="text-center" cols="4">
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[0].cnt + userExercise[1].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[0].score + userExercise[1].score}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[0].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[0].score}}</div>
             </v-col>
             <v-col class="text-center" cols="4">
               <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-if="userExercise.length === 0">0</div>
-              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[1].cnt}}</div>
+              <div class="white--text" style="font-size:1.2rem; font-weight: bold;" v-else>{{userExercise[1].score}}</div>
             </v-col>
           </v-row>
           <v-row class="d-flex justify-center align-center">
