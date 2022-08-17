@@ -114,13 +114,13 @@ class WaitingScene extends Scene {
             }
 
 
-            this.teamNameMove1[0] = this.add.text(125*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-            this.teamNameMove1[1] = this.add.text(275*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-            this.teamNameMove1[2] = this.add.text(425*this.WidthScale, 275*this.WidthScale, this.teamName1[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+            this.teamNameMove1[0] = this.add.text(this.team1[0].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+            this.teamNameMove1[1] = this.add.text(this.team1[1].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+            this.teamNameMove1[2] = this.add.text(this.team1[2].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
     
-            this.teamNameMove2[0] = this.add.text(1025*this.WidthScale, 275*this.WidthScale, this.teamName2[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-            this.teamNameMove2[1] = this.add.text(1175*this.WidthScale, 275*this.WidthScale, this.teamName2[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
-            this.teamNameMove2[2] = this.add.text(1325*this.WidthScale, 275*this.WidthScale, this.teamName2[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+            this.teamNameMove2[0] = this.add.text(this.team2[0].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName2[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+            this.teamNameMove2[1] = this.add.text(this.team2[1].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName2[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
+            this.teamNameMove2[2] = this.add.text(this.team2[2].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName2[2], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
     
     
 
@@ -241,20 +241,20 @@ class WaitingScene extends Scene {
     }
 
     update() {
-        if (this.gameCategory == 0){
-            for (var i=0; i<3; i++){
-                this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
-                this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
-            }
-        }
-        else if (this.gameCategory == 1){
-            for (var i=0; i<6; i++){
-                this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
-                if (i >= this.players){
-                    this.team1[i].setX(8000);
-                }
-            }
-        }
+        // if (this.gameCategory == 0){
+        //     // for (var i=0; i<3; i++){
+        //     //     this.teamNameMove1[i].setX(this.team1[i].x - 25*this.WidthScale);
+        //     //     this.teamNameMove2[i].setX(this.team2[i].x - 25*this.WidthScale);
+        //     // }
+        // }
+        // else if (this.gameCategory == 1){
+        //     for (var i=0; i<6; i++){
+        //         //this.teamNameMove1[i].setX(this.team1[i].x - 35*this.WidthScale);
+        //         if (i >= this.players){
+        //             this.team1[i].setX(8000);
+        //         }
+        //     }
+        // }
     }
 
 }

@@ -112,7 +112,10 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
-                    if (error.response.status == 403) {
+                    if (error.response.status === 405){
+                        refresh(error, store, router)
+                        dispatch("joinRoom", roomCode)
+                    } else if (error.response.status == 403) {
                         alert("이미 인원이 다 차있어 입장 불가능합니다.");
                     } else if (error.response.status == 406) {
                         alert("이미 해당 아이디가 대기방에 들어가 있습니다.");
@@ -158,6 +161,7 @@ const room = {
             }
             })
           },
+
           setGameScore({ rootState }, score) {
             axios({
               url: API_URL + '/rooms/score',

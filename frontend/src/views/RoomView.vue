@@ -22,10 +22,10 @@
                     </div>
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
-                            <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="countDownStart()">Start</button>
+                            <ScoreBoard v-if="countDown <= 0" :score1="score1" :score2="score2"></ScoreBoard>
+                            <button class="btn btn-lg btn-success" v-if="!start" @click="countDownStart()">Start</button>
                             <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
-                            <CountDown v-if="countDown" :countDown="countDown"></CountDown>
+                            <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
                     </div>
@@ -127,6 +127,7 @@ export default {
         countDown: 0,
         gameHistoryNoSync: 0,
         timer: undefined,
+        start: false,
 
         imgArray : {}, // 개인별 사진 목록
         };
@@ -150,6 +151,7 @@ export default {
       this.setGameScore(score)
     },
     countDownTimer () {
+        this.start = true
         this.blopOn = new Audio(this.blopMusic);
         this.blopOn.play();
       if (this.countDown > 0) {

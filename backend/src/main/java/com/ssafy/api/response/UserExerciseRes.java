@@ -14,6 +14,6 @@ public class UserExerciseRes {
     public UserExerciseRes(Integer gamecategoryType, String gamecategoryName, Long score) {
         this.gamecategoryType = gamecategoryType;
         this.gamecategoryName = gamecategoryName;
-        this.score= score;
+        this.score = score;
     }
 }

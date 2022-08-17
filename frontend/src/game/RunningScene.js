@@ -112,8 +112,14 @@ class RunningScene extends Scene {
                 idx = i;
             }
         }
+        this.dash = this.add.sprite(this.team1[idx].x, this.team1[idx].y, 'dash_1').setScale(0.4*this.WidthScale).play('dashMove');
+        this.dash.flipX = true;
+
+
         this.nextPosition[idx] += 150 * this.WidthScale;
         this.team1[idx].setVelocityX(200 * this.WidthScale);
+
+
     }
 
 
