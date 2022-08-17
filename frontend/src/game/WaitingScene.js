@@ -113,6 +113,7 @@ class WaitingScene extends Scene {
                 }
             }
 
+            this.add.image(800*this.WidthScale , 256*this.WidthScale, 'Room1600_2').setScale(this.WidthScale);
 
             this.teamNameMove1[0] = this.add.text(this.team1[0].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
             this.teamNameMove1[1] = this.add.text(this.team1[1].x - 25*this.WidthScale, 275*this.WidthScale, this.teamName1[1], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);

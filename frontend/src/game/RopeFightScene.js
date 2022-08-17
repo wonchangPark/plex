@@ -181,6 +181,7 @@ class RopeFightScene extends Scene {
            }
         }
 
+        this.add.image(800*this.WidthScale , 256*this.WidthScale, 'Room1600_2').setScale(this.WidthScale);
 
         // team name for moving
         this.teamNameMove1[0] = this.add.text(125*this.WidthScale, 275*this.WidthScale, this.teamName1[0], { fontFamily: 'DungGeunMo' }).setColor('#FFFFFF').setScale(1.2*this.WidthScale);
@@ -243,6 +244,8 @@ class RopeFightScene extends Scene {
             this.team2[i].setImmovable(true)
             this.team2[i].body.allowGravity = false;
         }
+
+        
     }
 
     outHandler(idx) {   //delete sprite of disconnected player

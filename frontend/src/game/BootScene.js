@@ -13,6 +13,7 @@ import BackGround from '../assets/Room1600.png'
 import RunningRoom from '../assets/RunningRoom.png'
 import DeskRight from '../assets/DeskRight.png'
 import DeskLeft from '../assets/DeskLeft.png'
+import Room1600_2 from '../assets/Room1600_front.png'
 
 
 import Slime3_1 from '../assets/Slime_3/1.png'
@@ -161,7 +162,7 @@ class BootScene extends Scene {
         this.load.rexImageURI('RunningRoom', RunningRoom)
         this.load.rexImageURI('DeskRight', DeskRight)
         this.load.rexImageURI('DeskLeft', DeskLeft)
-
+        this.load.rexImageURI('Room1600_2', Room1600_2)
 
         //TestPlayer(병아리)
         this.load.rexImageURI('test1', T1);
