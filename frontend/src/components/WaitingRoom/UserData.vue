@@ -1,6 +1,8 @@
 <template>
-  <ContentBox :height="90" :width="100">
-  <v-container >
+  <!-- <ContentBox :height="90" :width="100"> -->
+    <div class="d-flex justify-center align-center" style="height:100%">
+
+  <v-container style="width: 100%">
     <v-row>
       <v-col>
         <DataBox :number="userGameInfo ? userGameInfo.totalCnt : 0" string="게임"></DataBox>
@@ -35,17 +37,18 @@
       </v-col>
     </v-row>
   </v-container>
-  </ContentBox>
+  <!-- </ContentBox> -->
+    </div>
 </template>
 
 <script>
-import ContentBox from "../common/ContentBox.vue";
+// import ContentBox from "../common/ContentBox.vue";
 import DataBox from "@/components/WaitingRoom/Item/Data.vue"
 import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "UserList",
-  components: { ContentBox, DataBox },
+  components: { DataBox },
   methods: {
     ...mapActions(['fetchExerciseInfo', 'fetchGameInfo'])
   },

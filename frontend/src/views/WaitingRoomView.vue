@@ -18,10 +18,15 @@
                         <router-view />
                     </div>
                     <div class="d-flex justify-space-between align-center" style="width: 100%; height: 45%">
-                        <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
-                            <UserData></UserData>
+                        <div class="d-flex justify-center align-center" style="width: 40%; height: 90%">
+                            <ContentBox :width="100" :height="90">
+                                <div style="height: 100%; width: 100%">
+                                    <TutorialCarousel style="height: 100%; width:100%"></TutorialCarousel>
+                                </div>
+                            </ContentBox>
+                            <!-- <UserData></UserData> -->
                         </div>
-                        <div class="d-flex justify-center align-center" style="width: 60%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 55%; height: 90%">
                             <ChattingList></ChattingList>
                         </div>
                     </div>
@@ -35,19 +40,24 @@
 import UserList from "@/components/WaitingRoom/UserList.vue";
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
 import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue";
-import UserData from "@/components/WaitingRoom/UserData.vue";
+// import UserData from "@/components/WaitingRoom/UserData.vue";
+import TutorialCarousel from '@/components/WaitingRoom/TutorialCarousel.vue'
+import ContentBox from "@/components/common/ContentBox.vue"
 
 import { mapActions, mapGetters } from "vuex";
 
 export default {
     name: "WaitingRoomView",
+    components: { UserList, ChattingList, CreateRoomDialog,
+    //  UserData,
+    ContentBox,
+     TutorialCarousel },
     data() {
         return {
             homeMusic: require("../assets/audio/homeAudio.mp3"),
             musicOn: undefined,
         }
     },
-    components: { UserList, ChattingList, CreateRoomDialog, UserData },
     methods: {
         ...mapActions(["setRoomCreate"]),
         rankBtn() {
