@@ -77,8 +77,8 @@ export default {
     },
     mounted() {
         this.musicOn = new Audio(this.homeMusic);
+        this.musicOn.volume = 0.05;
         this.musicOn.play();
-        this.musicOn.volume = 0.3;
         this.musicOn.loop = true;
     },
 
