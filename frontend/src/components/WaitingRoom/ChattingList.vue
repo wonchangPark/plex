@@ -92,29 +92,31 @@ export default {
             }
         },
         sendEvent() {
-            if (this.isAll) {
-                const msg = {
-                    type: "message",
-                    userName: this.getUser.nick,
-                    content: this.message,
-                    img: this.getUser.img,
-                };
-                this.sendAll(msg);
-            } else {
-                const msg = {
-                    type: "Message",
-                    roomId: this.room.code,
-                    user: {
-                        nick: this.getUser.nick,
-                        img: this.getUser.img,
+            if (this.message !== '') {
+                if (this.isAll) {
+                    const msg = {
+                        type: "message",
+                        userName: this.getUser.nick,
                         content: this.message,
-                    },
-                };
-                this.sendRoom(msg);
+                        img: this.getUser.img,
+                    };
+                    this.sendAll(msg);
+                } else {
+                    const msg = {
+                        type: "Message",
+                        roomId: this.room.code,
+                        user: {
+                            nick: this.getUser.nick,
+                            img: this.getUser.img,
+                            content: this.message,
+                        },
+                    };
+                    this.sendRoom(msg);
+                }
+                this.message = "";
+                this.$refs.chattingListBox.scrollTop = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+                this.getConnectUsers();
             }
-            this.message = "";
-            this.$refs.chattingListBox.scrollTop = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
-            this.getConnectUsers();
         },
         exit() {
             this.sendAll({ type: "exit", userName: this.getUser.nick, content: "", img: this.getUser.img });

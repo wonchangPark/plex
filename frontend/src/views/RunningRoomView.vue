@@ -22,7 +22,9 @@
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="countDown <= 0 && start" :nameList="Object.keys(this.personalScore)" :scoreList="personalScore"></ScoreBoard>
-                             <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start" @click="countDownStart()">Start
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start && isHost" @click="countDownStart()">Start
+                            </div>
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; " v-if="!start && !isHost">Ready
                             </div>
                             <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
@@ -213,15 +215,15 @@ export default {
                     this.game.scene.getScene("runningScene").GoRight(`${event.data}`);
                     if (event.data === this.myUserName) this.win = true;
                     this.runningEndAudioOn = new Audio(this.runningEndAudio);
-                    this.runningEndAudioOn.volume = 0.4;
+                    this.runningEndAudioOn.volume = 0.05;
                     this.runningEndAudioOn.play();
                     if (this.runningAudioOn != undefined)
                         this.runningAudioOn.pause();
                     this.gameEndAudioOn = new Audio(this.gameEndAudio);
-                    this.gameEndAudioOn.volume = 0.4;
+                    this.gameEndAudioOn.volume = 0.05;
                     setTimeout(()=>(this.gameEndAudioOn.play()), 3000);
                     setTimeout(()=>(this.gameFinished = true), 3000);
-                    setTimeout(()=>(this.gameFinished = false), 10000);
+                    setTimeout(()=>(this.gameFinished = false), 13000);
 
                     this.gameEnd = true;
                     this.scoreSync()
@@ -369,8 +371,8 @@ export default {
         this.game.scene.getScene("runningScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
 
         this.runningAudioOn = new Audio(this.runningAudio);
+        this.runningAudioOn.volume = 0.05;
         this.runningAudioOn.play();
-        this.runningAudioOn.volume = 0.4;
         this.runningAudioOn.loop = true;
 
         this.dataInit();
@@ -500,7 +502,7 @@ export default {
             this.SET_ROOMCLOSE();
             this.INIT_ROOM();
             this.INIT_USERS();
-
+            this.SET_TOGGLE_TAB(true);
             window.removeEventListener("beforeunload", this.leaveSession);
             this.$router.push("/waiting");
         },
@@ -633,7 +635,7 @@ export default {
 		//END OF TEACHABLE MACHINE METHODS
 
     ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
-    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM"]),
+    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM", "SET_TOGGLE_TAB"]),
     },
 
     computed: {
@@ -668,23 +670,19 @@ export default {
         //this.game.scene.getScene("waitingScene").gameCategory = 1;
     },
     created() {
-        if (this.roomJoin) {
-            console.log("방 입장")
-            this.mySessionId = this.gameRoom.code
-            this.roomNo = this.gameRoom.no
-            this.myUserName = this.getUser.nick
-            this.joinSession()
-            this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
-            this.teamNo = this.user.team
-            this.isHost = this.user.host
-            this.users.forEach(user => {
-                this.personalScore[`${user.nick}`] = 0
+        console.log("방 입장")
+        this.mySessionId = this.gameRoom.code
+        this.roomNo = this.gameRoom.no
+        this.myUserName = this.getUser.nick
+        this.joinSession()
+        this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
+        this.teamNo = this.user.team
+        this.isHost = this.user.host
+        this.users.forEach(user => {
+            this.personalScore[`${user.nick}`] = 0
 
-                this.imgArray[`${user.nick}`] = `${user.img}`;
-            })
-        } else {
-        this.$router.push("/waiting");
-    }
+            this.imgArray[`${user.nick}`] = `${user.img}`;
+        })
     },
     beforeDestroy() {
         if (this.runningAudioOn != undefined)

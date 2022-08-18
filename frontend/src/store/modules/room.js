@@ -89,7 +89,7 @@ const room = {
         },
         SET_GAME_ROOM:(state, room) => {
             state.gameRoom = room;
-        }
+        },
     },
     actions: {
         roomCreate({ rootState, commit }, roomInfo) {

@@ -23,7 +23,9 @@
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="countDown <= 0 && start" :score1="score1" :score2="score2"></ScoreBoard>
-                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start" @click="countDownStart()">Start
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start && isHost" @click="countDownStart()">Start
+                            </div>
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; " v-if="!isHost">Ready
                             </div>
                             <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
@@ -235,7 +237,7 @@ export default {
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
-                        this.musicOnGameEnd.volume = 0.4;
+                        this.musicOnGameEnd.volume = 0.05;
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                         setTimeout(() => (this.gameFinished = false), 7000);
@@ -409,6 +411,7 @@ export default {
         }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
+        this.musicOn.volume = 0.05;
         this.musicOn.play();
         this.musicOn.loop = true;
         this.game.scene.getScene("bootScene").StartScene(0);
@@ -551,7 +554,7 @@ export default {
         this.SET_ROOMCLOSE();
         this.INIT_ROOM()
         this.INIT_USERS()
-
+        this.SET_TOGGLE_TAB(true);
         window.removeEventListener("beforeunload", this.leaveSession);
         this.$router.push("/waiting");
     },
@@ -684,7 +687,7 @@ export default {
     //END OF TEACHABLE MACHINE METHODS
 
     ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
-    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM"]),
+    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM", "SET_TOGGLE_TAB"]),
   },
 
     computed: {
@@ -722,29 +725,25 @@ export default {
         //this.game.scene.getScene("waitingScene").gameCategory = 0;
     },
     created() {
-        if (this.roomJoin) {
-            console.log("방 입장")
-            this.mySessionId = this.gameRoom.code
-            this.roomNo = this.gameRoom.no
-            this.myUserName = this.getUser.nick
-            this.joinSession()
-            this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
-            this.teamNo = this.user.team
-            this.isHost = this.user.host
-            this.users.forEach(user => {
-                if (user.team === 1) {
-                    this.team1.push(user.nick)
-                } else {
-                    this.team2.push(user.nick)
-                }
-                this.personalScore[`${user.nick}`] = 0;
+        console.log("방 입장")
+        this.mySessionId = this.gameRoom.code
+        this.roomNo = this.gameRoom.no
+        this.myUserName = this.getUser.nick
+        this.joinSession()
+        this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
+        this.teamNo = this.user.team
+        this.isHost = this.user.host
+        this.users.forEach(user => {
+            if (user.team === 1) {
+                this.team1.push(user.nick)
+            } else {
+                this.team2.push(user.nick)
+            }
+            this.personalScore[`${user.nick}`] = 0;
 
-                //이미지 설정
-                this.imgArray[`${user.nick}`] = `${user.img}`;
-            })
-        } else {
-        this.$router.push("/waiting");
-    }
+            //이미지 설정
+            this.imgArray[`${user.nick}`] = `${user.img}`;
+        })
     },
     beforeDestroy() {
         console.log("destroy");

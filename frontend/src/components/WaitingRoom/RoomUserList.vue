@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="d-flex align-center" style="width: 25%; height: 100%">
-                <RoomUserControl @exitEvent="exitRoomEvent" :isHost="isHost" :gameType="gameType" :stompClient="stompClient"></RoomUserControl>
+                <RoomUserControl @exitEvent="exitRoomEvent" :isHost="isHost" :gameType="gameType" :stompClient="stompClient" @gameStart="gameStart"></RoomUserControl>
             </div>
         </div>
     </content-box>
@@ -39,6 +39,7 @@ export default {
             isHost: null,
             sendVo: {},
             gameType: 0,
+            game: false,
         };
     },
     created: function () {
@@ -71,7 +72,9 @@ export default {
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exitRoom);
-        this.exitRoom();
+        if (!this.game) {
+            this.exitRoom();
+        }
     },
     methods: {
         ...mapMutations(room, [
@@ -85,8 +88,12 @@ export default {
             "INIT_ROOM_RECV",
             "ADD_ROOM_RECV",
             "SET_TOGGLE_TAB",
+            "SET_GAME_ROOM",
         ]),
         ...mapActions(room, ["leaveRoom"]),
+        gameStart() {
+            this.game = true
+        },
         exitRoom() {
             let leaveType;
             if (this.isHost) leaveType = "LeaveHost";
@@ -134,6 +141,8 @@ export default {
                 } else if (type === "LeaveHost") {
                     this.$router.push("/waiting");
                 } else if (type === "Start") {
+                    this.game = true
+                    this.SET_GAME_ROOM(this.room);
                     this.SET_ROOMJOIN()
                     if (this.gameType === 0) {
                         this.$router.push('/room')
