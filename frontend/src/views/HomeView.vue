@@ -1,18 +1,44 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="d-flex flex-column justify-center align-center align-self-center">
+      <div class="d-flex justify-center align-self-center">
+        <img src="@/assets/plex.png" alt="logo">
+      </div>
+
+      <div class="d-flex flex-column">
+        <div class="d-flex justify-center">
+          <router-link to="/login">
+            <v-btn color="primary" elevation="0" class="routing-btn black--text" style="font-weight:bold" width="10vw">로그인</v-btn>
+          </router-link>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
-  name: 'HomeView',
+  name: "HomeView",
+
   components: {
-    HelloWorld
-  }
-}
+
+  },
+};
 </script>
+
+<style scoped>
+.home {
+  height: 100%;
+  width: 100%;
+  padding-top: 10vh;
+}
+.home img {
+  width: 45%
+}
+.routing-btn{
+  margin-bottom: 5%;
+}
+.wrap {
+  padding-top: 5%;
+}
+</style>
