@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 2vw;">
+  <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 1.5vw;">
     <!-- {{nameList[0]}}:{{scoreList[nameList[0]]}}
     &nbsp;&nbsp;&nbsp;&nbsp;
     {{nameList[1]}}:{{scoreList[nameList[1]]}}
