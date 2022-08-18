@@ -111,4 +111,14 @@ public class RoomRepository {
             return false;
         }
     }
+
+    public void isPlayingTrue(Long roomNo) {
+        em.createQuery("update Room r set r.isPlaying = true where r.no = :roomNo")
+                .setParameter("roomNo", roomNo).executeUpdate();
+    }
+
+    public void isPlayingFalse(Long roomNo) {
+        em.createQuery("update Room r set r.isPlaying = false where r.no = :roomNo")
+                .setParameter("roomNo", roomNo).executeUpdate();
+    }
 }

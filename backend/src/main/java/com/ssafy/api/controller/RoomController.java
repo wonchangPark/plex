@@ -58,12 +58,12 @@ public class RoomController {
 	@PostMapping("/create-room")
 	@Transactional
 	public ResponseEntity<?> createRoom(@RequestBody RoomCreatePostReq roomInfo) {
+		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		User user = ssafyUserDetails.getUser();
 		String code = RandomRoomCode.generateRandomCode();
 		System.out.println(roomInfo.getName() + roomInfo.getHost() + roomInfo.getIsPrivate());
 		//if(roomService.isAlreadyInRoom(user)) return ResponseEntity.status(406).build(); // 이미 대기방에 있음
 		Room room = roomService.createRoom(roomInfo, code);
-		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		User user = ssafyUserDetails.getUser();
 		try {
 			roomUserService.createRoomUser(user, room);
 		} catch (Exception e) {
@@ -251,21 +251,25 @@ public class RoomController {
 	}
 
 	@PostMapping("/game")
+	@Transactional
 	public ResponseEntity<Long> startGame(@RequestParam Long roomNo){
 		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		User user = ssafyUserDetails.getUser();
 		if(!roomService.isHost(user, roomNo)) return ResponseEntity.status(406).build();
 		Long gameHistoryNo = roomService.insertGameHistory(roomNo);
+		roomService.isPlayingTrue(roomNo);
 		return ResponseEntity.status(200).body(gameHistoryNo);
 		// gameHistoryNo를 반환
 	}
 
 	@PostMapping("/gameend")
+	@Transactional
 	public ResponseEntity<Void> endGame(@RequestParam Long roomNo, @RequestParam Long gameHistoryNo){
 		SsafyUserDetails ssafyUserDetails = (SsafyUserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		User user = ssafyUserDetails.getUser();
 		if(!roomService.isHost(user, roomNo)) return ResponseEntity.status(406).build();
 		roomService.endGame(gameHistoryNo);
+		roomService.isPlayingFalse(roomNo);
 		return ResponseEntity.status(200).build();
 	}
 
