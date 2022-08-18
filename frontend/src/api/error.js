@@ -1,4 +1,7 @@
-function refresh(error, store, router) {
+import store from '@/store'
+import router from '@/router'
+
+function refresh(error) {
   switch (error.response.status) {
       case 401:
           store.dispatch("removeToken");
@@ -13,6 +16,7 @@ function refresh(error, store, router) {
               store.dispatch("saveToken", { accessToken: newAccessToken, refreshToken });
               console.log("axios.interceptors,헤더", store.getters.authHeader);
           }
+          break;
   }
 }
 

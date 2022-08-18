@@ -233,7 +233,7 @@ export default {
                 .catch((err) => {
                     console.error(err.response.data);
                     commit("SET_AUTH_ERROR", err.response.data);
-                    alert("로그인과 비밀번호를 확인해주세요");
+                    alert("아이디와 비밀번호를 확인해주세요");
                 });
         },
 

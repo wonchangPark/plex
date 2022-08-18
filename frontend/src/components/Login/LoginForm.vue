@@ -1,19 +1,21 @@
 <template>
   <div id="login-form">
-    <LoginDialog v-if="loginModal"></LoginDialog>
     <form @submit.prevent="login(credentials)">
       <div class="d-flex flex-column">
-        <div style="visibility: hidden;">temp</div>
         <div class="d-flex flex-row justify-content-between">
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column ">
             <PrimaryInput label="ID" labelText="ID" inputType="text" @input="IdListened"></PrimaryInput>
             <PrimaryInput label="PW" labelText="PW" inputType="password" @input="PWListened"></PrimaryInput>
           </div>
-          <div class="d-flex justify-center align-center">
+          <div class="d-flex justify-end align-center">
             <button class="submit primary">확인</button>
           </div>
         </div>
-        <router-link to="/signup" class="primary--text" style="font-weight: bold">회원가입</router-link>
+        <div class="d-flex justify-start">
+          <v-btn text>
+            <router-link to="/signup" style="font-weight:bold; font-size:0.9vw">회원가입</router-link>
+          </v-btn>
+        </div>
       </div>
     </form>
   </div>
@@ -21,14 +23,12 @@
 
 <script>
 import PrimaryInput from '@/components/common/PrimaryInput.vue'
-import LoginDialog from '@/components/Login/LoginDialog.vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: "LoginForm",
   components: { 
-    PrimaryInput,
-    LoginDialog },
+    PrimaryInput},
   data() {
     return {
       credentials: {

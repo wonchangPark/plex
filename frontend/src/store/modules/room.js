@@ -1,7 +1,9 @@
 import { createRoomApi, leaveRoomApi, setRoomUserApi } from "@/api/room.js";
 import router from "@/router";
-import axios from "axios";
-import { API_BASE_URL } from "@/config";
+import axios from "@/axios";
+import store from "@/store"
+import { refresh } from "@/api/error";
+import { API_BASE_URL } from '@/config';
 
 const API_URL = API_BASE_URL + "/api/v1";
 
@@ -12,12 +14,14 @@ const room = {
         gameRoom:{},
         roomJoin: false,
         users: [],
+        gameHistoryNo: 0,
         allRecvList: [],
         roomRecvList: [],
         isAll: true,
     },
     getters: {
-        roomJoin: (state) => state.roomJoin,
+        roomJoin: state => state.roomJoin,
+        gameHistoryNo: state => state.gameHistoryNo
     },
     mutations: {
         SET_ROOM: (state, room) => {
@@ -62,6 +66,7 @@ const room = {
                 return user;
             });
         },
+        SET_GAME_HISTORY_NO: (state, gameHistoryNo) => state.gameHistoryNo = gameHistoryNo,
         INIT_ALL_RECV: (state) => {
             state.allRecvList = [];
         },
@@ -105,6 +110,10 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },
@@ -116,10 +125,14 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
+                    if (error.response.status == 401){
+                        store.dispatch('removeToken')
+                        router.push({name: 'login'})
+                    }
                 }
             );
         },
-        joinRoom({ rootState, commit }, roomCode) {
+        joinRoom({ rootState, commit, dispatch }, roomCode) {
             setRoomUserApi(
                 {
                     headers: rootState.auth.authHeader,
@@ -132,43 +145,74 @@ const room = {
                 },
                 (error) => {
                     console.log(error);
-                    if (error.response.status == 403) {
+                    if (error.response.status === 405){
+                        refresh(error, store, router)
+                        dispatch("joinRoom", roomCode)
+                    } else if (error.response.status == 403) {
                         alert("이미 인원이 다 차있어 입장 불가능합니다.");
                     } else if (error.response.status == 406) {
                         alert("이미 해당 아이디가 대기방에 들어가 있습니다.");
+                    } else if (error.response.status == 401){
+                        refresh(error, store, router);
+                        dispatch(this.fetchUserInfo);
                     }
                 }
             );
         },
-        setGameHistory({ dispatch, rootState }, { roomNo, score }) {
+        setGameHistory({ rootState, commit }, roomNo) {
             axios({
-                url: API_URL + `/rooms/game?roomNo=${roomNo}`,
-                method: "post",
-                headers: rootState.auth.authHeader,
+              url: API_URL + `/rooms/game?roomNo=${roomNo}`,
+              method: 'post',
+              headers: rootState.auth.authHeader
             })
-                .then((res) => {
-                    console.log(res);
-                    score.gameHistoryNo = res.data;
-                    dispatch("setGameScore", score);
-                })
-                .catch((e) => {
-                    console.log(e);
-                });
-        },
-        setGameScore({ rootState }, score) {
+            .then( (res) => {
+              console.log(res)
+              commit('SET_GAME_HISTORY_NO', res.data)
+            })
+            .catch((e) => {
+              console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
+            })
+          },
+        endGameHistory({ rootState }, { roomNo, gameHistoryNo }) {
+            axios({
+              url: API_URL + `/rooms/gameend?roomNo=${roomNo}&gameHistoryNo=${gameHistoryNo}`,
+              method: 'post',
+              headers: rootState.auth.authHeader
+            })
+            .then( (res) => {
+              console.log(res)
+            })
+            .catch((e) => {
+              console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
+            })
+          },
+
+          setGameScore({ rootState }, score) {
             axios({
                 url: API_URL + "/rooms/score",
                 method: "post",
                 data: score,
                 headers: rootState.auth.authHeader,
             })
-                .then((res) => {
-                    console.log(res);
-                })
-                .catch((e) => {
-                    console.log(e);
-                });
-        },
+            .then( (res) => {
+              console.log(res)
+            })
+            .catch((e) => {
+              console.log(e)
+              if (e.response.status == 401){
+                store.dispatch('removeToken')
+                router.push({name: 'login'})
+            }
+            })
+        }
     },
 };
 

@@ -50,6 +50,7 @@ export default {
             message: "",
             recvList: [],
             prevScrollHeight: 0,
+            primary: "gummybear",
         };
     },
     created: function () {

@@ -19,7 +19,12 @@
                     </div>
                     <div class="d-flex justify-space-between align-center" style="width: 100%; height: 45%">
                         <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
-                            <UserData></UserData>
+                            <ContentBox :width="100" :height="90">
+                                <div style="height: 100%; width: 100%">
+                                    <TutorialCarousel style="height: 100%; width:100%"></TutorialCarousel>
+                                </div>
+                            </ContentBox>
+                            <!-- <UserData></UserData> -->
                         </div>
                         <div class="d-flex justify-center align-center" style="width: 63%; height: 90%">
                             <ChattingList></ChattingList>
@@ -37,17 +42,20 @@ import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
 import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue";
 import UserData from "@/components/WaitingRoom/UserData.vue";
 
-import { mapActions, mapGetters, mapState } from "vuex";
-const Room = "room";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
     name: "WaitingRoomView",
+    components: { UserList, ChattingList, CreateRoomDialog,
+    //  UserData,
+    ContentBox,
+     TutorialCarousel },
     data() {
         return {
             homeMusic: require("../assets/audio/homeAudio.mp3"),
             musicOn: undefined,
         };
     },
-    components: { UserList, ChattingList, CreateRoomDialog, UserData },
     methods: {
         ...mapActions(["setRoomCreate"]),
         rankBtn() {
@@ -61,7 +69,7 @@ export default {
     mounted() {
         this.musicOn = new Audio(this.homeMusic);
         this.musicOn.play();
-        this.musicOn.volume = 0.4;
+        this.musicOn.volume = 0.3;
         this.musicOn.loop = true;
     },
 

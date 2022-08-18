@@ -22,23 +22,24 @@
                     </div>
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
-                            <ScoreBoard v-if="!countDown" :score1="score1" :score2="score2"></ScoreBoard>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="countDownStart()">Start</button>
-                            <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button>
-                            <CountDown v-if="countDown" :countDown="countDown"></CountDown>
+                            <ScoreBoard v-if="countDown <= 0 && start" :score1="score1" :score2="score2"></ScoreBoard>
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start" @click="countDownStart()">Start
+                            </div>
+                            <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
+                            <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
                             <div id="label-container"></div>
                         </ContentBox>
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[2] !== null" :stream-manager="subscribers[2]" :signal="signal[0]" />
+                        <user-video v-if="subscribers[2] !== null" :stream-manager="subscribers[2]" :signal="signal[2]" />
                     </div>
                 </div>
                 <div class="d-flex flex-row justify-space-between" style="height: 48%; width: 100%%">
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" :signal="signal[1]" />
+                        <user-video v-if="subscribers[0] !== null" :stream-manager="subscribers[0]" :signal="signal[0]" />
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
-                        <user-video v-if="subscribers[1] !== null" :stream-manager="subscribers[1]" :signal="signal[2]" />
+                        <user-video v-if="subscribers[1] !== null" :stream-manager="subscribers[1]" :signal="signal[1]" />
                     </div>
                     <div style="heigth: 100%; width: 20%; background: rgba(0, 0, 0, 0.5)">
                         <user-video v-if="subscribers[3] !== null" :stream-manager="subscribers[3]" :signal="signal[3]" />
@@ -65,13 +66,13 @@ import CountDown from "@/components/Room/CountDown.vue"
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 //테스트 (오른손/왼손)
-const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
+// const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-// const URL = "https://teachablemachine.withgoogle.com/models/4afz2QVdu/";
+const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
 
 //런지
-//const URL = "https://teachablemachine.withgoogle.com/models/jU1Vcn59o/";
+//const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
 
 
 let model, webcam, ctx, labelContainer, maxPredictions;
@@ -125,24 +126,33 @@ export default {
         pose2: 0,
         signal: [0, 0, 0, 0, 0],
         countDown: 0,
+        gameHistoryNoSync: 0,
+        timer: undefined,
+        start: false,
+
+        imgArray : {}, // 개인별 사진 목록
         };
     },
 
   methods: {
     gameHistory(){
-      const roomNo = this.roomNo
       const score = {
         exerciseNum: 1,
         gameNo: 1,
         score: (this.win ? 100 : 0 ) + this.personalScore[`${this.myUserName}`] * 10,
         teamNo: this.teamNo,
         win: this.win, 
-        gameHistoryNo: this.gameNo,
-        userNo: this.getUser.no
+        gameHistoryNo: this.gameHistoryNoSync,
+        userNo: this.getUser.no,
+        roomNo: this.roomNo
       }
-      this.setGameHistory({roomNo, score})
+      if(this.isHost) {
+        this.endGameHistory({ roomNo: this.roomNo, gameHistoryNo: this.gameHistoryNo })
+      }
+      this.setGameScore(score)
     },
     countDownTimer () {
+        this.start = true
         this.blopOn = new Audio(this.blopMusic);
         this.blopOn.play();
       if (this.countDown > 0) {
@@ -165,8 +175,6 @@ export default {
 
         // --- Init a session ---
         this.session = this.OV.initSession();
-
-        // this.game.scene.getScene("waitingScene").gameCategory = 0;
 
         // --- Specify the actions when events take place in the session ---
 
@@ -221,14 +229,18 @@ export default {
                         this.game.scene.getScene("ropeFightScene").LeftWin();
                         if (this.musicOn != undefined)
                             this.musicOn.pause();
-                        this.gameHistory()
+                        if (this.timer != undefined)
+                            clearInterval(this.timer);
+                        this.scoreSync()
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
+                        this.musicOnGameEnd.volume = 0.4;
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                         setTimeout(() => (this.gameFinished = false), 7000);
                         this.game.scene.getScene("ropeFightScene").gameActive = false;
+                        setTimeout(() => (this.leaveSession()), 7000);
                     } else {
                         if (this.score1 > this.score2 + 7)
                             this.game.scene.getScene("ropeFightScene").goLeftHandler(1);
@@ -243,7 +255,9 @@ export default {
                     this.game.scene.getScene("ropeFightScene").RightWin();
                     if (this.musicOn != undefined)
                         this.musicOn.pause();
-                    this.gameHistory()
+                    if (this.timer != undefined)
+                            clearInterval(this.timer);
+                    this.scoreSync()
                     this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                     this.soundOnFall.play();
                     this.musicOnGameEnd = new Audio(this.gameEndMusic);
@@ -251,6 +265,7 @@ export default {
                     setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                     setTimeout(() => (this.gameFinished = false), 7000);
                     this.game.scene.getScene("ropeFightScene").gameActive = false;
+                    setTimeout(() => (this.leaveSession()), 7000);
                 } else {
                     if (this.score2 > this.score1 + 7)
                         this.game.scene.getScene("ropeFightScene").goRightHandler(1);
@@ -269,7 +284,6 @@ export default {
                 }
             }
             if (idx !== null) this.signal[idx]++;
-            //this.personalScore[`${event.data}`] += 1
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
             });
@@ -329,21 +343,40 @@ export default {
             this.game.scene.getScene('ropeFightScene').leftTime = 60;
             this.game.scene.getScene('ropeFightScene').gameActive = true;
             this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+
+            //이미지 설정
+            this.game.scene.getScene("ropeFightScene").setImg(this.team1, this.team2, this.imgArray);
+            
             const data = JSON.parse(event.data);
             this.score1 = data.score1;
             this.score2 = data.score2;
             this.personalScore = data.personalScore;
+            this.gameEnd = false
             console.log("게임 시작 수신"); // Message
             console.log(event.from); // Connection object of the sender
             console.log(event.type); // The type of message
         });
+        // gameHistoryNo 수신
+        this.session.on("signal:gameHistoryNo", (event) => {
+            console.log("gameHistoryNo sync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            this.gameHistoryNoSync = event.data
+        });
+        // 점수 동기화 수신
+        this.session.on("signal:scoreSync", (event) => {
+            console.log("scoreSync"); // Message
+            console.log(event.from); // Connection object of the sender
+            console.log(event.type); // The type of message
+            const data = JSON.parse(event.data);
+            this.score1 = data.score1;
+            this.score2 = data.score2;
+            this.personalScore = data.personalScore;
+            this.gameHistory()
+        });
 
         // --- Connect to the session with a valid user token ---
-
-        // 'getToken' method is simulating what your server-side should do.
-        // 'token' parameter should be retrieved and returned by your own backend
-
-        // this.getToken(this.mySessionId, this.myUserName)
+        this.connectSession(this.room.token)
 
         this.init()
 
@@ -371,10 +404,26 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
         this.musicOn.play();
         this.musicOn.loop = true;
+        this.game.scene.getScene("bootScene").StartScene(0);
+        this.game.scene.getScene('ropeFightScene').leftTime = 60;
+        this.game.scene.getScene('ropeFightScene').gameActive = true;
+
+        //이미지 설정
+        this.game.scene.getScene("ropeFightScene").setTeamName(this.team1, this.team2);
+        this.game.scene.getScene("ropeFightScene").setImg(this.team1, this.team2, this.imgArray);
+
+        if (this.game.scene.getScene("ropeFightScene").gameActive) {
+                console.log("Timer Start!");
+                this.timer = setInterval(()=>(this.game.scene.getScene("ropeFightScene").onTimerEvent()), 1000);
+        
+        }
         this.session
             .signal({
                 // 게임 시작 송신
@@ -388,6 +437,7 @@ export default {
             .catch((error) => {
                 console.error(error);
             });
+
         },
 
     sendScore() {
@@ -404,6 +454,24 @@ export default {
             .catch((error) => {
                 console.error(error);
             });
+    },
+
+    scoreSync() {
+        if (this.isHost) {
+            this.session
+                .signal({
+                    // 점수 동기화
+                    data: JSON.stringify({ score1: this.score1, score2: this.score2, personalScore: this.personalScore }), // Any string (optional)
+                    to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: "scoreSync", // The type of message (optional)
+                })
+                .then(() => {
+                    console.log("Message successfully sent");
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
     },
 
     connectSession(token) {
@@ -481,6 +549,8 @@ export default {
         this.subscribers = [];
         this.OV = undefined;
         this.SET_ROOMCLOSE();
+        this.INIT_ROOM()
+        this.INIT_USERS()
 
         window.removeEventListener("beforeunload", this.leaveSession);
         this.$router.push("/waiting");
@@ -613,12 +683,12 @@ export default {
     
     //END OF TEACHABLE MACHINE METHODS
 
-    ...mapActions(room, ["leaveRoom", "setGameHistory", "setGameScore"]),
-    ...mapMutations(room, ["SET_ROOMCLOSE"]),
+    ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
+    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM"]),
   },
 
     computed: {
-        ...mapGetters(room, ["roomJoin"]),
+        ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
         ...mapState(room, ["room", "users"]),
         win () {
@@ -630,10 +700,26 @@ export default {
             if (this.countDown === 0) {
                 this.sendStart()
             } 
+        },
+        gameHistoryNo: function () {
+            if (this.isHost) {
+                this.session.signal({		// 게임 기록 송신
+                    data: this.gameHistoryNo,  // Any string (optional)
+                    to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+                    type: 'gameHistoryNo'             // The type of message (optional)
+                })
+                .then(() => {
+                        console.log('Message successfully sent');
+                })
+                .catch(error => {
+                        console.error(error);
+                });
+            }
         }
     },
     mounted() {
         this.game = Game(); //generate phaser game when entering session
+        //this.game.scene.getScene("waitingScene").gameCategory = 0;
     },
     created() {
         if (this.roomJoin) {
@@ -642,7 +728,6 @@ export default {
             this.roomNo = this.room.no
             this.myUserName = this.getUser.nick
             this.joinSession()
-            this.connectSession(this.room.token)
             this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
             this.teamNo = this.user.team
             this.isHost = this.user.host
@@ -652,7 +737,10 @@ export default {
                 } else {
                     this.team2.push(user.nick)
                 }
-                this.personalScore[`${user.nick}`] = 0
+                this.personalScore[`${user.nick}`] = 0;
+
+                //이미지 설정
+                this.imgArray[`${user.nick}`] = `${user.img}`;
             })
         } else {
         this.$router.push("/waiting");
@@ -667,6 +755,13 @@ export default {
         }
         // this.$router.push('/waiting')
     },
+    updated(){
+
+        // 대기화면 이미지 설정
+        this.game.scene.getScene("waitingScene").setTeamName(this.team1, this.team2);
+
+        this.game.scene.getScene("waitingScene").setImg(this.team1, this.team2, this.imgArray);
+    }
 };
 </script>
 <style scoped></style>
