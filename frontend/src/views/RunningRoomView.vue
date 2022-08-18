@@ -327,7 +327,7 @@ export default {
 
       // --- Connect to the session with a valid user token ---
 
-        this.connectSession(this.room.token)
+        this.connectSession(this.gameRoom.token)
 
       this.init()
 
@@ -638,7 +638,7 @@ export default {
     computed: {
         ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
-        ...mapState(room, ["room", "users"]),
+        ...mapState(room, ["gameRoom", "users"]),
     },
     watch: {
         countDown: function () {
@@ -669,8 +669,8 @@ export default {
     created() {
         if (this.roomJoin) {
             console.log("방 입장")
-            this.mySessionId = this.room.code
-            this.roomNo = this.room.no
+            this.mySessionId = this.gameRoom.code
+            this.roomNo = this.gameRoom.no
             this.myUserName = this.getUser.nick
             this.joinSession()
             this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
