@@ -69,7 +69,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 // const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
+const URL = "https://teachablemachine.withgoogle.com/models/vfNVyGUdk/";
 
 //런지
 //const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";

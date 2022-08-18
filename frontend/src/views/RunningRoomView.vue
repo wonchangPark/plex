@@ -71,7 +71,8 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 // const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
 
 //런지
-const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
+const URL = "https://teachablemachine.withgoogle.com/models/5QMq8wug2/";
+
 let model, webcam, ctx, labelContainer, maxPredictions;
 const room = "room";
 let gameEnd = false;
