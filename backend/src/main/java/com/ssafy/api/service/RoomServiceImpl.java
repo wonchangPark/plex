@@ -83,4 +83,13 @@ public class RoomServiceImpl implements RoomService{
         return roomRepository.isAlreadyInRoom(user);
     }
 
+    @Override
+    public void isPlayingTrue(Long roomNo) {
+        roomRepository.isPlayingTrue(roomNo);
+    }
+
+    @Override
+    public void isPlayingFalse(Long roomNo) {
+        roomRepository.isPlayingTrue(roomNo);
+    }
 }
