@@ -9,7 +9,7 @@
                 v-bind:myName="this.myUserName"
             />
             <div id="label-container" style="display: none" />
-            <div class="d-flex" style="height: 98%; width: 90%">
+            <div class="d-flex" style="height: 98%; width: 90%" id="game-canvas">
                 <div id="game-container" style="height: 100%; width: 100%"></div>
             </div>
         </div>
@@ -69,7 +69,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 // const URL = "https://teachablemachine.withgoogle.com/models/w6iITyYRf/";
 
 // 스쿼트
-const URL = "https://teachablemachine.withgoogle.com/models/0h7tKACec/";
+const URL = "https://teachablemachine.withgoogle.com/models/vfNVyGUdk/";
 
 //런지
 //const URL = "https://teachablemachine.withgoogle.com/models/b_Be6e80e/";
@@ -376,7 +376,7 @@ export default {
         });
 
         // --- Connect to the session with a valid user token ---
-        this.connectSession(this.room.token)
+        this.connectSession(this.gameRoom.token)
 
         this.init()
 
@@ -690,7 +690,7 @@ export default {
     computed: {
         ...mapGetters(room, ["roomJoin", "gameHistoryNo"]),
         ...mapGetters(["getUser"]),
-        ...mapState(room, ["room", "users"]),
+        ...mapState(room, ["gameRoom", "users"]),
         win () {
             return (this.score1 > this.score2 ? 1: 2) === this.teamNo ? true: false
         },
@@ -724,8 +724,8 @@ export default {
     created() {
         if (this.roomJoin) {
             console.log("방 입장")
-            this.mySessionId = this.room.code
-            this.roomNo = this.room.no
+            this.mySessionId = this.gameRoom.code
+            this.roomNo = this.gameRoom.no
             this.myUserName = this.getUser.nick
             this.joinSession()
             this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
@@ -764,4 +764,11 @@ export default {
     }
 };
 </script>
-<style scoped></style>
+<style scoped>
+#game-canvas { 
+    border:solid;
+    border-color:rgba(74, 62, 51, 1);
+    /* border-width: thick; */
+    box-sizing: content-box;
+}
+</style>
