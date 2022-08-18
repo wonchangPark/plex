@@ -51,24 +51,27 @@ export default {
             recvList: [],
             prevScrollHeight: 0,
             primary: "gummybear",
+            subscribe: null,
         };
     },
     created: function () {
         this.userName = this.getUser.nick;
         if (this.stompClient && this.stompClient.connected) {
-            this.stompClient.subscribe("/send", (res) => {
+            this.subscribe = this.stompClient.subscribe("/send", (res) => {
                 this.receive(JSON.parse(res.body));
             });
             window.addEventListener("beforeunload", this.exit);
             this.sendAll({ type: "enter", userName: this.getUser.nick, content: "", img: this.getUser.img });
         }
-        // this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+        //this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     mounted: function () {
         this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+        this.$refs.chattingListBox.scrollTop = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exit);
+        this.subscribe.unsubscribe();
         this.exit();
     },
     methods: {
@@ -110,6 +113,7 @@ export default {
                 this.sendRoom(msg);
             }
             this.message = "";
+            this.$refs.chattingListBox.scrollTop = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
             this.getConnectUsers();
         },
         exit() {
