@@ -22,7 +22,9 @@
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="countDown <= 0 && start" :nameList="Object.keys(this.personalScore)" :scoreList="personalScore"></ScoreBoard>
-                             <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start" @click="countDownStart()">Start
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start && isHost" @click="countDownStart()">Start
+                            </div>
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; " v-if="!start && !isHost">Ready
                             </div>
                             <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
@@ -221,7 +223,7 @@ export default {
                     this.gameEndAudioOn.volume = 0.05;
                     setTimeout(()=>(this.gameEndAudioOn.play()), 3000);
                     setTimeout(()=>(this.gameFinished = true), 3000);
-                    setTimeout(()=>(this.gameFinished = false), 10000);
+                    setTimeout(()=>(this.gameFinished = false), 13000);
 
                     this.gameEnd = true;
                     this.scoreSync()
@@ -356,9 +358,6 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
-        if (this.isHost) {
-            this.setGameHistory(this.roomNo)
-        }
 
         // 0811 룸뷰
         this.gameEnd = false;
@@ -676,6 +675,9 @@ export default {
         this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
         this.teamNo = this.user.team
         this.isHost = this.user.host
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.users.forEach(user => {
             this.personalScore[`${user.nick}`] = 0
 

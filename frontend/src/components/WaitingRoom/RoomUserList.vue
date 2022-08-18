@@ -143,6 +143,7 @@ export default {
                 } else if (type === "LeaveHost") {
                     this.$router.push("/waiting");
                 } else if (type === "Start") {
+                    this.game = true
                     this.SET_GAME_ROOM(this.room);
                     this.SET_ROOMJOIN()
                     if (this.gameType === 0) {

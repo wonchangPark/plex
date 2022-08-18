@@ -1,6 +1,7 @@
 <template>
     <div class="d-flex flex-column align-center justify-space-around" style="width: 100%; height: 90%">
-        <div class="d-flex justify-center align-center primary--text" style="height: 30%; width: 100%; font-size: 4vw">{{ this.users.length }}/6</div>
+        <div class="d-flex justify-center align-center primary--text" style="height: 5%; width: 100%; font-size: 1.5vw">방코드 : {{ this.room.code }}</div>
+        <div class="d-flex justify-center align-center primary--text" style="height: 25%; width: 100%; font-size: 4vw">{{ this.users.length }}/6</div>
         <div class="primary--text d-flex flex-column align-center" style="height: 30%; width: 100%">
             <div class="d-flex justify-center" style="height: 30%; width: 100%; font-size: 1vw">게임 종류</div>
             <div class="d-flex flex-row justify-space-around align-center" style="height: 70%; width: 100%">
