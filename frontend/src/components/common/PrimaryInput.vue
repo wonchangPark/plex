@@ -33,13 +33,14 @@ export default {
   margin: 2% 0;
 }
 label{
-    font-size: 1.2rem;
+    font-size: 1.2vw;
     font-weight: bold;
 }
 input {
   background: white;
+  width: 10vw;
   border-radius: 5px;
   border: 3px solid #ffb82f;
-  font-size: 0.8rem;
+  font-size: 0.8vw;
 }
 </style>

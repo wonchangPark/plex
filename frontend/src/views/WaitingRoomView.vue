@@ -39,6 +39,7 @@
     </div>
 </template>
 
+
 <script>
 import UserList from "@/components/WaitingRoom/UserList.vue";
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
@@ -90,8 +91,8 @@ export default {
 </script>
 <style scoped>
 #waiting-room {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 95vh;
     display: flex;
 }
 </style>
