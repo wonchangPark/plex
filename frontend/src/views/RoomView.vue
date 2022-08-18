@@ -406,9 +406,6 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
-        if (this.isHost) {
-            this.setGameHistory(this.roomNo)
-        }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
         this.musicOn.volume = 0.05;
@@ -733,6 +730,9 @@ export default {
         this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
         this.teamNo = this.user.team
         this.isHost = this.user.host
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.users.forEach(user => {
             if (user.team === 1) {
                 this.team1.push(user.nick)

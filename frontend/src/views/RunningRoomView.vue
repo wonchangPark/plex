@@ -358,9 +358,6 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
-        if (this.isHost) {
-            this.setGameHistory(this.roomNo)
-        }
 
         // 0811 룸뷰
         this.gameEnd = false;
@@ -678,6 +675,9 @@ export default {
         this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
         this.teamNo = this.user.team
         this.isHost = this.user.host
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.users.forEach(user => {
             this.personalScore[`${user.nick}`] = 0
 
