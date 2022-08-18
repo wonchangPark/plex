@@ -9,7 +9,7 @@
                 v-bind:myName="this.myUserName"
             />
             <div id="label-container" style="display: none" />
-            <div class="d-flex" style="height: 98%; width: 90%">
+            <div class="d-flex" style="height: 98%; width: 90%" id="game-canvas">
                 <div id="game-container" style="height: 100%; width: 100%"></div>
             </div>
         </div>
@@ -764,4 +764,11 @@ export default {
     }
 };
 </script>
-<style scoped></style>
+<style scoped>
+#game-canvas { 
+    border:solid;
+    border-color:rgba(74, 62, 51, 1);
+    /* border-width: thick; */
+    box-sizing: content-box;
+}
+</style>
