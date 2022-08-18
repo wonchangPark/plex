@@ -40,12 +40,13 @@ export default {
             sendVo: {},
             gameType: 0,
             game: false,
+            subscribe: null,
         };
     },
     created: function () {
         this.isHost = this.getUser.nick === this.room.host ? true : false;
         if (this.stompClient && this.stompClient.connected) {
-            this.stompClient.subscribe("/send/" + this.room.code, (res) => {
+            this.subscribe = this.stompClient.subscribe("/send/" + this.room.code, (res) => {
                 console.log("구독으로 받은 메시지 입니다.", res.body);
                 // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
                 this.receive(JSON.parse(res.body));
@@ -112,6 +113,7 @@ export default {
             this.INIT_ROOM();
             this.INIT_USERS();
             this.SET_TOGGLE_TAB(true);
+            this.subscribe.unsubscribe();
             //router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
         },
         exitRoomEvent() {
