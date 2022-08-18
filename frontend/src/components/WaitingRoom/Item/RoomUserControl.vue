@@ -81,6 +81,22 @@ export default {
             }
         },
         startEvent() {
+            if(this.gameType === 0){
+                if(this.users.length < 6){
+                    alert("게임 시작을 위한 인원이 부족합니다");
+                    return;
+                }
+                let cnt = [0,0,0];
+                for(let i=0 ; i < this.users.length; i++){
+                    let user = this.users[i];
+                    cnt[user.team]++;
+                }
+                if(cnt[1] !== 3 || cnt[2] !== 3){
+                    alert("팀 선택을 완료해주세요");
+                    return;
+                }
+            }
+
             this.$emit('gameStart')
             this.SET_GAME_ROOM(this.room);
             if (this.isHost) {
