@@ -5,15 +5,19 @@ import store from "@/store"
 import { refresh } from "@/api/error";
 import { API_BASE_URL } from '@/config';
 
-const API_URL = API_BASE_URL + '/api/v1';
+const API_URL = API_BASE_URL + "/api/v1";
 
 const room = {
     namespaced: true,
     state: {
         room: {},
+        gameRoom:{},
         roomJoin: false,
         users: [],
         gameHistoryNo: 0,
+        allRecvList: [],
+        roomRecvList: [],
+        isAll: true,
     },
     getters: {
         roomJoin: state => state.roomJoin,
@@ -42,10 +46,12 @@ const room = {
         INIT_ROOM: (state) => {
             state.room = {};
         },
-        SET_ROOMJOIN: (state) => {state.roomJoin = true},
+        SET_ROOMJOIN: (state) => {
+            state.roomJoin = true;
+        },
         SET_ROOMCLOSE: (state) => {
-            state.roomJoin = false
-          },
+            state.roomJoin = false;
+        },
         UPDATE_USER: (state, user) => {
             state.users = state.users.map((item) => {
                 console.log(item);
@@ -61,6 +67,29 @@ const room = {
             });
         },
         SET_GAME_HISTORY_NO: (state, gameHistoryNo) => state.gameHistoryNo = gameHistoryNo,
+        INIT_ALL_RECV: (state) => {
+            state.allRecvList = [];
+        },
+        INIT_ROOM_RECV: (state) => {
+            state.roomRecvList = [];
+        },
+        ADD_ALL_RECV: (state, msg) => {
+            state.allRecvList.push(msg);
+        },
+        ADD_ROOM_RECV: (state, msg) => {
+            state.roomRecvList.push(msg);
+        },
+        TOGGLE_TAB: (state) => {
+            if (Object.keys(state.room).length !== 0) {
+                state.isAll = state.isAll ? false : true;
+            }
+        },
+        SET_TOGGLE_TAB: (state, flag) => {
+            state.isAll = flag;
+        },
+        SET_GAME_ROOM:(state, room) => {
+            state.gameRoom = room;
+        }
     },
     actions: {
         roomCreate({ rootState, commit }, roomInfo) {
@@ -105,7 +134,11 @@ const room = {
         },
         joinRoom({ rootState, commit, dispatch }, roomCode) {
             setRoomUserApi(
-                { headers: rootState.auth.authHeader, code: roomCode, id: rootState.auth.user.nick },
+                {
+                    headers: rootState.auth.authHeader,
+                    code: roomCode,
+                    id: rootState.auth.user.nick,
+                },
                 ({ data }) => {
                     commit("SET_ROOM", data);
                     router.push("/waiting/" + data.code);
@@ -164,10 +197,10 @@ const room = {
 
           setGameScore({ rootState }, score) {
             axios({
-              url: API_URL + '/rooms/score',
-              method: 'post',
-              data: score,
-              headers: rootState.auth.authHeader
+                url: API_URL + "/rooms/score",
+                method: "post",
+                data: score,
+                headers: rootState.auth.authHeader,
             })
             .then( (res) => {
               console.log(res)

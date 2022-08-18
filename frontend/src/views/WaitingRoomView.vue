@@ -4,8 +4,11 @@
             <div class="d-flex flex-column" style="height: 100%; width: 25%">
                 <div class="d-flex flex-column align-center" style="flex: 0 0 20%; height: 20%; width: 100%">
                     <div class="d-flex flex-column justify-space-around align-center" style="width: 100%; height: 100%">
-                        <CreateRoomDialog class="primary" style="width: 70%; height: 45px; font-weight: bold"> </CreateRoomDialog>
-                        <button class="primary" style="width: 70%; height: 45px; font-weight: bold" @click="rankBtn">랭킹 보기</button>
+                        <CreateRoomDialog v-if="Object.keys(this.room).length == 0" class="primary" style="width: 70%; height: 45px; font-weight: bold">
+                        </CreateRoomDialog>
+                        <button v-if="Object.keys(this.room).length == 0" class="primary" style="width: 70%; height: 45px; font-weight: bold" @click="rankBtn">
+                            랭킹 보기
+                        </button>
                     </div>
                 </div>
                 <div class="d-flex justify-center align-center" style="flex: 1 1 80%; height: 80%">
@@ -18,15 +21,15 @@
                         <router-view />
                     </div>
                     <div class="d-flex justify-space-between align-center" style="width: 100%; height: 45%">
-                        <div class="d-flex justify-center align-center" style="width: 40%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
                             <ContentBox :width="100" :height="90">
                                 <div style="height: 100%; width: 100%">
-                                    <TutorialCarousel style="height: 100%; width:100%"></TutorialCarousel>
+                                    <TutorialCarousel style="height: 100%; width: 100%"></TutorialCarousel>
                                 </div>
                             </ContentBox>
                             <!-- <UserData></UserData> -->
                         </div>
-                        <div class="d-flex justify-center align-center" style="width: 55%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 63%; height: 90%">
                             <ChattingList></ChattingList>
                         </div>
                     </div>
@@ -40,44 +43,47 @@
 import UserList from "@/components/WaitingRoom/UserList.vue";
 import ChattingList from "@/components/WaitingRoom/ChattingList.vue";
 import CreateRoomDialog from "@/components/WaitingRoom/CreateRoomDialog.vue";
-// import UserData from "@/components/WaitingRoom/UserData.vue";
-import TutorialCarousel from '@/components/WaitingRoom/TutorialCarousel.vue'
-import ContentBox from "@/components/common/ContentBox.vue"
+//import UserData from "@/components/WaitingRoom/UserData.vue";
+import ContentBox from '@/components/common/ContentBox.vue';
+import TutorialCarousel from "@/components/WaitingRoom/TutorialCarousel.vue";
 
-import { mapActions, mapGetters } from "vuex";
-
+import { mapActions, mapGetters, mapState } from "vuex";
+const Room = "room";
 export default {
     name: "WaitingRoomView",
-    components: { UserList, ChattingList, CreateRoomDialog,
-    //  UserData,
-    ContentBox,
-     TutorialCarousel },
+    components: {
+        UserList,
+        ChattingList,
+        CreateRoomDialog,
+        //  UserData,
+        ContentBox,
+        TutorialCarousel,
+    },
     data() {
         return {
             homeMusic: require("../assets/audio/homeAudio.mp3"),
             musicOn: undefined,
-        }
+        };
     },
     methods: {
         ...mapActions(["setRoomCreate"]),
         rankBtn() {
-            this.$router.push("/rank");
+            if (Object.keys(this.room).length == 0) this.$router.push("/rank");
         },
     },
     computed: {
         ...mapGetters(["roompage"]),
+        ...mapState(Room, ["room"]),
     },
     mounted() {
         this.musicOn = new Audio(this.homeMusic);
         this.musicOn.play();
         this.musicOn.volume = 0.3;
         this.musicOn.loop = true;
-        
     },
 
     beforeRouteLeave(to, from, next) {
-        if (this.musicOn != undefined)
-            this.musicOn.pause();
+        if (this.musicOn != undefined) this.musicOn.pause();
         next();
     },
 };

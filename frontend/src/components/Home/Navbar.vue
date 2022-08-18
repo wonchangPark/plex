@@ -56,20 +56,7 @@ export default {
     },
     methods: {
         ...mapActions(["logout", "fetchUserInfo"]),
-        send(type, userName, content, img) {
-            //console.log("Send Message:" + content);
-            if (this.stompClient && this.stompClient.connected) {
-                const msg = {
-                    type,
-                    userName,
-                    content,
-                    img,
-                };
-                this.stompClient.send("/receive", JSON.stringify(msg), {});
-            }
-        },
         logoutEvent() {
-            this.send("exit", this.getUser.nick, "", this.getUser.img);
             this.logout();
         },
     },

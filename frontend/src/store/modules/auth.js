@@ -297,9 +297,9 @@ export default {
                 headers: getters.authHeader,
             }).then((res) => {
                 console.log(res);
+                dispatch("socketStore/disconnectSocket");
                 dispatch("removeToken");
                 commit("SET_USER", {});
-                dispatch("socketStore/disconnectSocket");
                 router.push({ name: "home" }).error((err) => {
                     console.log(err);
                 });

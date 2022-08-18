@@ -19,7 +19,7 @@ public class WaitingRoomRepository {
         // N+1 문제 안일어남
         return em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
                 "from Room r, RoomUser ru " +
-                "where r = ru.room and r.endTime is null " +
+                "where r = ru.room and r.endTime is null and r.isPrivate = false " +
                 "group by ru.room " +
                 "having COUNT(ru) <> r.roomSize " +
                 "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).setFirstResult(from).setMaxResults(3).getResultList();
@@ -28,7 +28,7 @@ public class WaitingRoomRepository {
     public int getAvailableRoomCount(){
         return em.createQuery("select new com.ssafy.api.response.RoomInfoRes(r.no, r.host, r.code, r.name, r.roomSize, r.gameNo, r.startTime, COUNT(ru)) " +
                 "from Room r, RoomUser ru " +
-                "where r = ru.room and r.endTime is null " +
+                "where r = ru.room and r.endTime is null and r.isPrivate = false " +
                 "group by ru.room " +
                 "having COUNT(ru) <> r.roomSize " +
                 "order by COUNT(ru) desc, r.startTime desc", RoomInfoRes.class).getResultList().size();

@@ -66,12 +66,26 @@ export default {
             };
             this.send(msg);
         }
+        this.INIT_ROOM_RECV();
+        this.SET_TOGGLE_TAB(false);
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exitRoom);
+        this.exitRoom();
     },
     methods: {
-        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN", "UPDATE_USER"]),
+        ...mapMutations(room, [
+            "ADD_USER",
+            "DELETE_USER",
+            "SET_USERS",
+            "INIT_ROOM",
+            "INIT_USERS",
+            "SET_ROOMJOIN",
+            "UPDATE_USER",
+            "INIT_ROOM_RECV",
+            "ADD_ROOM_RECV",
+            "SET_TOGGLE_TAB",
+        ]),
         ...mapActions(room, ["leaveRoom"]),
         exitRoom() {
             let leaveType;
@@ -90,6 +104,7 @@ export default {
             this.send(msg);
             this.INIT_ROOM();
             this.INIT_USERS();
+            this.SET_TOGGLE_TAB(true);
             //router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
         },
         exitRoomEvent() {
@@ -126,6 +141,14 @@ export default {
                         this.$router.push('/runningroom')
                     }
                 }
+            }
+            if (type === "Message") {
+                const msg = {
+                    userName: user.nick,
+                    content: user.content,
+                    img: user.img,
+                };
+                this.ADD_ROOM_RECV(msg);
             }
         },
         sync() {
