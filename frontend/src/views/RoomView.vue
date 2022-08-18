@@ -23,7 +23,9 @@
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="countDown <= 0 && start" :score1="score1" :score2="score2"></ScoreBoard>
-                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start" @click="countDownStart()">Start
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start && isHost" @click="countDownStart()">Start
+                            </div>
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; " v-if="!isHost">Ready
                             </div>
                             <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
