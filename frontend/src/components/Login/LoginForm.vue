@@ -3,7 +3,7 @@
     <form @submit.prevent="login(credentials)">
       <div class="d-flex flex-column">
         <div class="d-flex flex-row justify-content-between">
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column ">
             <PrimaryInput label="ID" labelText="ID" inputType="text" @input="IdListened"></PrimaryInput>
             <PrimaryInput label="PW" labelText="PW" inputType="password" @input="PWListened"></PrimaryInput>
           </div>
@@ -11,7 +11,11 @@
             <button class="submit primary">확인</button>
           </div>
         </div>
-        <router-link to="/signup" class="primary--text" style="font-weight: bold">회원가입</router-link>
+        <div class="d-flex justify-start">
+          <v-btn text>
+            <router-link to="/signup" style="font-weight:bold; font-size:0.9vw">회원가입</router-link>
+          </v-btn>
+        </div>
       </div>
     </form>
   </div>

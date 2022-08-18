@@ -1,5 +1,5 @@
 <template>
-  <v-carousel height="100%" hide-delimiters>
+  <v-carousel height="100%" width=auto hide-delimiters>
     <v-carousel-item>
       <UserData></UserData>
     </v-carousel-item>
