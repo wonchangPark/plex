@@ -221,7 +221,7 @@ export default {
                     this.gameEndAudioOn.volume = 0.4;
                     setTimeout(()=>(this.gameEndAudioOn.play()), 3000);
                     setTimeout(()=>(this.gameFinished = true), 3000);
-                    setTimeout(()=>(this.gameFinished = false), 10000);
+                    setTimeout(()=>(this.gameFinished = false), 13000);
 
                     this.gameEnd = true;
                     this.scoreSync()

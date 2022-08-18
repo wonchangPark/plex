@@ -5,23 +5,32 @@
             <ContentBox :height="100" :width="100">
                 <div class="d-flex flex-column">
                     <div id="Main" class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo animate__heartBeat">{{WhoWins}}</div>
-                    <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">
-                        <div class="d-flex flex-column align-center">
-                            <br>
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="idx">{{ idx + 1 }}</div>
-                            <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
-                        </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div class="d-flex flex-column align-center">
-                            NICKNAME
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="idx">{{ player.name }}</div>
-                            <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
-                        </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div class="d-flex flex-column align-center">
-                            SCORE
-                            <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo" v-for="(player, idx) in allScore" v-bind:key="idx">{{ player.score }}</div>
-                            <!--<div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo">{{WhoWins()}}</div>-->
+                    <v-container class="d-flex flex-column justify-center" style="flex: 1 1 100%; height:100%">
+                        <v-row class="rank-content d-flex align-self-center" justify="center" align="center" style="width:90%;">
+                            <v-col cols="4">
+                            </v-col>
+                            <v-col cols="4">
+                            <div class="primary--text rank-label">닉네임</div>
+                            </v-col>
+                            <v-col cols="2">
+                            <div class="primary--text rank-label">점수</div>
+                            </v-col>
+                            <v-col cols="2">
+                            <div class="primary--text rank-label">순위</div>
+                            </v-col>
+                        </v-row>
+
+                        <div class="rank-list-box d-flex flex-column" style="flex: 0 0 90%; width:100%; height: 90%;">
+                        <div v-for="(ranker, idx) in rank"
+                        :key="idx"
+                        :ranker = ranker
+                        >
+                            <div class="d-flex justify-center align-center">
+                                <ResultItem :rankerNick="ranker.userNick" :rankerRanking="idx + 1" :rankerTotalScore="ranker.score" :rankerImg="ranker.userImage"></ResultItem>
+                            </div>
                         </div>
-                    </div>
+                        </div>
+                    </v-container>
                 </div>
             </ContentBox>
             </div>
@@ -32,6 +41,7 @@
 <script>
 import ContentBox from '@/components/common/ContentBox.vue';
 import { mapState } from 'vuex'
+import ResultItem from '@/components/Room/ResultItem.vue'
 const room = "room";
 
 export default {
@@ -43,7 +53,7 @@ export default {
             type: String,
         },
     },
-    components: {ContentBox},
+    components: {ContentBox, ResultItem},
     mounted() {
 
     },
@@ -66,27 +76,17 @@ export default {
                     return "Your Rate : #" + (i + 1);
             }
             return "";
-            /*let team1_score = 0;
-            let team2_score = 0;            
-            
-            //console.log(this.team1.length);
-            //console.log(this.team2.length);
-            //console.log(this.score);
-           
-            for (let i = 0 ; i < this.team1.length ; i++) {
-                team1_score += this.score[this.team1[i]];
-                //console.log(this.score[this.team1[i]]);
-                this.team1_personalScore[this.team1[i]] = this.score[this.team1[i]];
+
+        },
+        rank() {
+            const rankingList = []
+            for (let i = 0; i < this.users.length; i ++ ) {
+                rankingList.push({userNick: this.users[i].nick, score: this.score[this.users[i].nick], userImage: this.users[i].img})
             }
-            
-            for (let j = 0 ; j < this.team2.length ; j++) {
-                team2_score += this.score[this.team2[j]];
-                this.team2_personalScore[this.team2[j]] = this.score[this.team2[j]];
-            }*/
-
-            //console.log(team1_score);
-            //console.log(team2_score);
-
+            rankingList.sort(function(a, b) {
+                return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
+            })
+            return rankingList
         }
     },
     
@@ -134,5 +134,9 @@ export default {
 <style scoped>
 .win-logo{
     font-size: 4vw;
+}
+.rank-label{
+  font-size: 2vw;
+  font-weight: bold;
 }
 </style>
