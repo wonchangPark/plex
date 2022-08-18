@@ -95,7 +95,6 @@ export default {
       pwShow: false,
       idCheckFlag: false,
       nicknameCheckFlag: false,
-      pwValidFlag: false,
     }
   },
   computed: {
@@ -119,15 +118,7 @@ export default {
         this.passwordCheckFlag = false
       }
     },
-    // pwValidateFlag(){
-    //   this. /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,16}$/.test(this.credentials.password)
-    //   if ( res === true){
-    //     this.pwValidFlag = true
-    //     console.log(this.pwValidFlag)
-    //   } else {
-    //     this.pwValidFlag = false
-    //   }
-    // },
+
     signupSubmit(){
       if (this.passwordCheckFlag === true && this.idFlag === true && this.nicknameFlag === true && this.pwValidate === true) {
         this.passwordCheck(this.credentials)

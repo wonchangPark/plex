@@ -1,5 +1,5 @@
 import { connectUsers, rooms } from "@/api/room.js";
-import router from "@/router";
+import {refresh} from "@/api/error"
 
 const roomStore = {
     namespaced: true,
@@ -37,7 +37,7 @@ const roomStore = {
         },
     },
     actions: {
-        getRooms: ({ commit, rootState }, page) => {
+        getRooms: ({ commit, rootState, dispatch }, page) => {
             console.log({ page, accessToken: rootState.auth.accessToken });
             rooms(
                 { page, accessToken: rootState.auth.accessToken, refreshToken: rootState.auth.refreshToken},
@@ -47,13 +47,12 @@ const roomStore = {
                 },
                 (error) => {
                     console.log(error);
-                    if (error.response.status == 401){
-                        router.push({name: 'login'})
-                    }
+                    refresh(error)
+                    dispatch('getRooms', page)
                 }
             );
         },
-        getConnectUsers: ({ commit, rootState }) => {
+        getConnectUsers: ({ commit, rootState, dispatch }) => {
             connectUsers(
                 { token: rootState.auth.token },
                 ({ data }) => {
@@ -62,9 +61,8 @@ const roomStore = {
                 },
                 (error) => {
                     console.log(error);
-                    if (error.response.status == 401){
-                        router.push({name: 'login'})
-                    }
+                    refresh(error)
+                    dispatch('getConnectUsers')
                 }
             );
         },
