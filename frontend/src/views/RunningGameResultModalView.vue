@@ -31,6 +31,8 @@
 
 <script>
 import ContentBox from '@/components/common/ContentBox.vue';
+import { mapState } from 'vuex'
+const room = "room";
 
 export default {
     props:{
@@ -54,6 +56,7 @@ export default {
     },
 
     computed: {
+        ...mapState(room, ["users"]),
         WhoWins() {
 
             this.allScoreSort();
