@@ -6,7 +6,7 @@
     <ContentBox :height="40" :width="50">
       <div
         class="flex-grow-1 d-flex flex-row justify-space-around align-center">
-        <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold login-box-logo">LOGIN</div>
+        <div class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold login-box-logo">SIGN IN</div>
         <div class="flex-grow-1 d-flex flex-row justify-center">
             <LoginForm></LoginForm>
         </div>
