@@ -237,7 +237,7 @@ export default {
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
-                        this.musicOnGameEnd.volume = 0.4;
+                        this.musicOnGameEnd.volume = 0.05;
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                         setTimeout(() => (this.gameFinished = false), 7000);
@@ -411,6 +411,7 @@ export default {
         }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
+        this.musicOn.volume = 0.05;
         this.musicOn.play();
         this.musicOn.loop = true;
         this.game.scene.getScene("bootScene").StartScene(0);

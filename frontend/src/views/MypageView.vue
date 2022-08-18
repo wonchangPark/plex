@@ -38,7 +38,7 @@ export default {
   },
   mounted() {
     this.musicOn = new Audio(this.myPageMusic);
-    this.musicOn.volume = 0.5;
+    this.musicOn.volume = 0.2;
     this.musicOn.loop = true;
     this.musicOn.play();
   },
