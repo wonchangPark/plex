@@ -46,7 +46,7 @@ export default {
     },
     props: ["stompClient", "isHost", "gameType"],
     methods: {
-        ...mapMutations(room, ["SET_ROOMJOIN", "INIT_TEAM_INFO"]),
+        ...mapMutations(room, ["SET_ROOMJOIN", "INIT_TEAM_INFO", "SET_GAME_ROOM"]),
         gameTypeEvent(num) {
             if (this.isHost) {
                 let msg = {
@@ -80,6 +80,8 @@ export default {
             }
         },
         startEvent() {
+            this.$emit('gameStart')
+            this.SET_GAME_ROOM(this.room);
             if (this.isHost) {
                 let msg = {
                     type: "Start",

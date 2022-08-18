@@ -42,12 +42,41 @@ const socketStore = {
                 state.connected = false;
             }, {});
         },
+        sendAll(state, msg) {
+            console.log("Send Message:" + msg);
+            if (state.stompClient && state.stompClient.connected) {
+                state.stompClient.send("/receive", JSON.stringify(msg), {});
+            }
+        },
+        sendRoom(state, msg) {
+            if (state.stompClient && state.stompClient.connected) {
+                state.stompClient.send("/room", JSON.stringify(msg), {});
+            }
+        },
     },
     actions: {
         connectSocket: ({ commit, rootState }) => {
             commit("CONNECT_SOCKET", rootState.auth.authHeader);
         },
-        disconnectSocket: ({ commit }) => {
+        disconnectSocket: ({ commit, rootState }) => {
+            commit("sendAll", { type: "exit", userName: rootState.auth.user.nick, content: "", img: rootState.auth.user.img });
+            if (Object.keys(rootState.room.room).length !== 0) {
+                let isHost = rootState.auth.user.nick === rootState.room.room.host ? true : false;
+                let leaveType;
+                if (isHost) leaveType = "LeaveHost";
+                else leaveType = "Leave";
+                let msg = {
+                    type: leaveType,
+                    roomId: rootState.room.room.code,
+                    user: {
+                        userId: rootState.auth.user.userId,
+                        nick: rootState.auth.user.nick,
+                        team: 0,
+                        host: false,
+                    },
+                };
+                commit("sendRoom", msg);
+            }
             commit("DISCONNECT_SOCKET");
         },
     },

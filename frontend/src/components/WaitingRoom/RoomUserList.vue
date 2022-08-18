@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="d-flex align-center" style="width: 25%; height: 100%">
-                <RoomUserControl @exitEvent="exitRoomEvent" :isHost="isHost" :gameType="gameType" :stompClient="stompClient"></RoomUserControl>
+                <RoomUserControl @exitEvent="exitRoomEvent" :isHost="isHost" :gameType="gameType" :stompClient="stompClient" @gameStart="gameStart"></RoomUserControl>
             </div>
         </div>
     </content-box>
@@ -39,6 +39,7 @@ export default {
             isHost: null,
             sendVo: {},
             gameType: 0,
+            game: false,
         };
     },
     created: function () {
@@ -66,13 +67,33 @@ export default {
             };
             this.send(msg);
         }
+        this.INIT_ROOM_RECV();
+        this.SET_TOGGLE_TAB(false);
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exitRoom);
+        if (!this.game) {
+            this.exitRoom();
+        }
     },
     methods: {
-        ...mapMutations(room, ["ADD_USER", "DELETE_USER", "SET_USERS", "INIT_ROOM", "INIT_USERS", "SET_ROOMJOIN", "UPDATE_USER"]),
+        ...mapMutations(room, [
+            "ADD_USER",
+            "DELETE_USER",
+            "SET_USERS",
+            "INIT_ROOM",
+            "INIT_USERS",
+            "SET_ROOMJOIN",
+            "UPDATE_USER",
+            "INIT_ROOM_RECV",
+            "ADD_ROOM_RECV",
+            "SET_TOGGLE_TAB",
+            "SET_GAME_ROOM",
+        ]),
         ...mapActions(room, ["leaveRoom"]),
+        gameStart() {
+            this.game = true
+        },
         exitRoom() {
             let leaveType;
             if (this.isHost) leaveType = "LeaveHost";
@@ -90,6 +111,7 @@ export default {
             this.send(msg);
             this.INIT_ROOM();
             this.INIT_USERS();
+            this.SET_TOGGLE_TAB(true);
             //router before each를 통해 분기 처리, 나갈때 init해주고 게임시작 할 때 room으로 이동
         },
         exitRoomEvent() {
@@ -119,6 +141,8 @@ export default {
                 } else if (type === "LeaveHost") {
                     this.$router.push("/waiting");
                 } else if (type === "Start") {
+                    this.game = true
+                    this.SET_GAME_ROOM(this.room);
                     this.SET_ROOMJOIN()
                     if (this.gameType === 0) {
                         this.$router.push('/room')
@@ -126,6 +150,14 @@ export default {
                         this.$router.push('/runningroom')
                     }
                 }
+            }
+            if (type === "Message") {
+                const msg = {
+                    userName: user.nick,
+                    content: user.content,
+                    img: user.img,
+                };
+                this.ADD_ROOM_RECV(msg);
             }
         },
         sync() {

@@ -13,11 +13,10 @@ import RunningRoom from "@/views/RunningRoomView.vue";
 import RoomList from "@/components/WaitingRoom/RoomList.vue";
 import RoomUserList from "@/components/WaitingRoom/RoomUserList.vue";
 
-
 import Mypage from "@/views/MypageView.vue";
 import SignUp from "@/views/SignupView.vue";
 import Rank from "@/views/RankView.vue";
-
+import Logout from "@/views/LogoutView.vue";
 
 // const API_URL = API_BASE_URL + "/api/v1";
 
@@ -28,14 +27,13 @@ const routes = [
         path: "/",
         name: "home",
         component: Home,
-        meta: { unauthorized: true}
-
+        meta: { unauthorized: true },
     },
     {
         path: "/login",
         name: "login",
         component: Login,
-        meta: { unauthorized: true}
+        meta: { unauthorized: true },
     },
     {
         path: "/room",
@@ -59,8 +57,7 @@ const routes = [
         path: "/signup",
         name: "signup",
         component: SignUp,
-        meta: { unauthorized: true}
-
+        meta: { unauthorized: true },
     },
     {
         path: "/rank",
@@ -72,6 +69,11 @@ const routes = [
         name: "runningroom",
         component: RunningRoom,
     },
+    {
+        path: "/logout",
+        name: "logout",
+        component: Logout,
+    },
 ];
 
 const router = new VueRouter({
@@ -79,8 +81,6 @@ const router = new VueRouter({
     base: process.env.BASE_URL,
     routes,
 });
-
-
 
 router.beforeEach((to, from, next) => {
     // 이전 페이지에서 발생한 에러메시지 삭제
@@ -102,6 +102,5 @@ router.beforeEach((to, from, next) => {
         next({ name: "waiting" });
     }
 });
-
 
 export default router;

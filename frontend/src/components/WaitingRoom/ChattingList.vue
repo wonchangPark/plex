@@ -3,11 +3,31 @@
         <div class="d-flex flex-column pt-1 chatting_list" style="height: 100%; width: 100%">
             <div class="d-flex flex-column" style="height: 87%; width: 100%">
                 <div class="d-flex flex-column chatting-list-box" ref="chattingListBox">
-                    <ChattingItem v-for="(item, index) in recvList" :key="index" :name="item.userName" :content="item.content" :img="item.img ? item.img : primary"></ChattingItem>
+                    <div v-if="isAll">
+                        <ChattingItem
+                            v-for="(item, index) in allRecvList"
+                            :key="index"
+                            :name="item.userName"
+                            :content="item.content"
+                            :img="item.img"
+                        ></ChattingItem>
+                    </div>
+                    <div v-if="!isAll">
+                        <ChattingItem
+                            v-for="(item, index) in roomRecvList"
+                            :key="index"
+                            :name="item.userName"
+                            :content="item.content"
+                            :img="item.img"
+                        ></ChattingItem>
+                    </div>
                 </div>
             </div>
             <div class="d-flex flex-row align-center" style="height: 13%; width: 100%">
-                <input class="ml-4 chatting-input white" v-model="message" @keyup.enter="sendEvent" type="text" />
+                <button class="mx-2 chatting-sub" @click="toggle" style="color: white">
+                    {{ isAll ? "전체" : "방" }}
+                </button>
+                <input class="chatting-input white" v-model="message" @keyup.enter="sendEvent" type="text" />
                 <button class="mx-2 chatting-submit primary" @click="sendEvent">전송</button>
             </div>
         </div>
@@ -20,6 +40,7 @@ import ChattingItem from "./Item/ChattingItem.vue";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 const RoomStore = "roomStore";
 const SocketStore = "socketStore";
+const Room = "room";
 export default {
     name: "ChattingList",
     components: { ContentBox, ChattingItem },
@@ -30,63 +51,82 @@ export default {
             recvList: [],
             prevScrollHeight: 0,
             primary: "gummybear",
+            subscribe: null,
         };
     },
     created: function () {
         this.userName = this.getUser.nick;
         if (this.stompClient && this.stompClient.connected) {
-            this.stompClient.subscribe("/send", (res) => {
+            this.subscribe = this.stompClient.subscribe("/send", (res) => {
                 this.receive(JSON.parse(res.body));
             });
             window.addEventListener("beforeunload", this.exit);
-            this.send("enter", this.getUser.nick, "", this.getUser.img);
+            this.sendAll({ type: "enter", userName: this.getUser.nick, content: "", img: this.getUser.img });
         }
-        // this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+        //this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     mounted: function () {
         this.prevScrollHeight = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+        this.$refs.chattingListBox.scrollTop = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
     },
     beforeDestroy: function () {
         window.removeEventListener("beforeunload", this.exit);
+        this.subscribe.unsubscribe();
         this.exit();
     },
     methods: {
         ...mapMutations(RoomStore, ["ADD_CONNECT_USER", "REMOVE_CONNECT_USER"]),
         ...mapActions(RoomStore, ["getConnectUsers"]),
-        send(type, userName, content, img) {
-            //console.log("Send Message:" + content);
-            if (this.stompClient && this.stompClient.connected) {
-                const msg = {
-                    type,
-                    userName,
-                    content,
-                    img,
-                };
-                this.stompClient.send("/receive", JSON.stringify(msg), {});
-            }
+        ...mapMutations(Room, ["TOGGLE_TAB", "ADD_ALL_RECV"]),
+        ...mapMutations(SocketStore, ["sendAll", "sendRoom"]),
+        toggle() {
+            this.TOGGLE_TAB();
         },
-        receive({ type, content, userName, img }) {
-            if (type === "message") this.recvList.push({ userName, content, img });
-            else if (type === "enter") {
+        receive(msg) {
+            if (msg.type === "message") {
+                this.ADD_ALL_RECV(msg);
+            } else if (msg.type === "enter") {
                 this.getConnectUsers();
-            } else if (type === "exit") {
+            } else if (msg.type === "exit") {
                 this.getConnectUsers();
             }
         },
         sendEvent() {
-            this.send("message", this.getUser.nick, this.message, this.getUser.img);
-            this.message = "";
-
-            this.getConnectUsers();
+            if (this.message !== '') {
+                if (this.isAll) {
+                    const msg = {
+                        type: "message",
+                        userName: this.getUser.nick,
+                        content: this.message,
+                        img: this.getUser.img,
+                    };
+                    this.sendAll(msg);
+                } else {
+                    const msg = {
+                        type: "Message",
+                        roomId: this.room.code,
+                        user: {
+                            nick: this.getUser.nick,
+                            img: this.getUser.img,
+                            content: this.message,
+                        },
+                    };
+                    this.sendRoom(msg);
+                }
+                this.message = "";
+                this.$refs.chattingListBox.scrollTop = this.$refs.chattingListBox.scrollHeight - this.$refs.chattingListBox.clientHeight;
+                this.getConnectUsers();
+            }
         },
         exit() {
-            this.send("exit", this.getUser.nick, "", this.getUser.img);
+            this.sendAll({ type: "exit", userName: this.getUser.nick, content: "", img: this.getUser.img });
         },
     },
     computed: {
         ...mapState(["token", "auth"]),
         ...mapGetters(["getUser", "authHeader"]),
         ...mapState(SocketStore, ["stompClient", "connected"]),
+        ...mapState(Room, ["room", "allRecvList", "roomRecvList", "isAll"]),
     },
     updated() {
         if (Math.abs(this.prevScrollHeight - this.$refs.chattingListBox.scrollTop) < 5) {
@@ -109,7 +149,7 @@ export default {
 
 .chatting-list .chatting-input {
     height: 80%;
-    width: 95%;
+    width: 90%;
     border-radius: 5px;
 }
 
@@ -118,5 +158,14 @@ export default {
     width: 5%;
     border-radius: 5px;
     font-weight: bold;
+    font-size: 0.8vw;
+}
+
+.chatting-list .chatting-sub {
+    height: 80%;
+    width: 5%;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.8vw;
 }
 </style>

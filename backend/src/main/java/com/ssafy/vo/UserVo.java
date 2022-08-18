@@ -11,4 +11,5 @@ public class UserVo {
     private int team;
     private boolean host;
     private String img;
+    private String content;
 }

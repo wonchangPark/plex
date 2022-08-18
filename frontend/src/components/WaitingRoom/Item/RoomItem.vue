@@ -14,13 +14,16 @@
 <script>
 import { mapActions } from "vuex";
 const room = "room";
+let RoomStore = "roomStore";
 export default {
     name: "RoomItem",
     props: ["room"],
     methods: {
         ...mapActions(room, ["joinRoom"]),
+        ...mapActions(RoomStore, [ "getRooms"]),
         join() {
             this.joinRoom(this.room.code);
+            this.getRooms(1)
         },
     },
 };
