@@ -14,8 +14,9 @@
           캐릭터 변경
         </v-btn>
       </template>
-      <form @submit.prevent="submitImg(img)">
-        <v-card class="room-create align-center" color="brown" width="35vw">
+
+       <form @submit.prevent="submitImg(img)">
+        <v-card class="room-create align-center" color="brown" width="40vw">
           <v-list-item-content class="align-center justify-center">
             <v-container class="d-flex flex-column justify-center">
               <v-row class="d-flex mt-2 mb-2">
@@ -24,9 +25,9 @@
               :image = image
               class="d-flex justify-center align-center">
                 <v-col class="text-center" cols="5">
-                  <v-avatar color="white" size="150" >
+                  <v-avatar color="white" size="130" >
                     <a @click="sendGummibear(image)">
-                    <img :src="require(`@/assets/profile/${image}.png`)" alt="" style="width: 140px;">
+                    <img :src="require(`@/assets/profile/${image}.png`)" alt="" style="width: 100px;">
                     </a>
                   </v-avatar>
                 </v-col>
@@ -35,13 +36,14 @@
               <br>
                 <v-btn color="primary" elevation="0" 
                 class="page-btn black--text align-self-center" 
-                style="width:30vw; height:40px; font-weight: bold; font-size: 1.1rem;"
+                style="width:30vw; height:40px; font-weight: bold; font-size: 1.1vw;"
                 type="submit"> 
                 캐릭터 변경 </v-btn>
             </v-container>
           </v-list-item-content>
         </v-card>
       </form>
+
     </v-dialog>
   </div>
 </template>
