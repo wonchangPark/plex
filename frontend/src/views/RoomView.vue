@@ -551,7 +551,7 @@ export default {
         this.SET_ROOMCLOSE();
         this.INIT_ROOM()
         this.INIT_USERS()
-
+        this.SET_TOGGLE_TAB(true);
         window.removeEventListener("beforeunload", this.leaveSession);
         this.$router.push("/waiting");
     },
@@ -684,7 +684,7 @@ export default {
     //END OF TEACHABLE MACHINE METHODS
 
     ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
-    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM"]),
+    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM", "SET_TOGGLE_TAB"]),
   },
 
     computed: {
@@ -722,29 +722,25 @@ export default {
         //this.game.scene.getScene("waitingScene").gameCategory = 0;
     },
     created() {
-        if (this.roomJoin) {
-            console.log("방 입장")
-            this.mySessionId = this.gameRoom.code
-            this.roomNo = this.gameRoom.no
-            this.myUserName = this.getUser.nick
-            this.joinSession()
-            this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
-            this.teamNo = this.user.team
-            this.isHost = this.user.host
-            this.users.forEach(user => {
-                if (user.team === 1) {
-                    this.team1.push(user.nick)
-                } else {
-                    this.team2.push(user.nick)
-                }
-                this.personalScore[`${user.nick}`] = 0;
+        console.log("방 입장")
+        this.mySessionId = this.gameRoom.code
+        this.roomNo = this.gameRoom.no
+        this.myUserName = this.getUser.nick
+        this.joinSession()
+        this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
+        this.teamNo = this.user.team
+        this.isHost = this.user.host
+        this.users.forEach(user => {
+            if (user.team === 1) {
+                this.team1.push(user.nick)
+            } else {
+                this.team2.push(user.nick)
+            }
+            this.personalScore[`${user.nick}`] = 0;
 
-                //이미지 설정
-                this.imgArray[`${user.nick}`] = `${user.img}`;
-            })
-        } else {
-        this.$router.push("/waiting");
-    }
+            //이미지 설정
+            this.imgArray[`${user.nick}`] = `${user.img}`;
+        })
     },
     beforeDestroy() {
         console.log("destroy");

@@ -80,6 +80,7 @@ export default {
             }
         },
         startEvent() {
+            this.$emit('gameStart')
             this.SET_GAME_ROOM(this.room);
             if (this.isHost) {
                 let msg = {

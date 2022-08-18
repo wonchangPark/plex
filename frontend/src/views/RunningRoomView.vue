@@ -500,7 +500,7 @@ export default {
             this.SET_ROOMCLOSE();
             this.INIT_ROOM();
             this.INIT_USERS();
-
+            this.SET_TOGGLE_TAB(true);
             window.removeEventListener("beforeunload", this.leaveSession);
             this.$router.push("/waiting");
         },
@@ -633,7 +633,7 @@ export default {
 		//END OF TEACHABLE MACHINE METHODS
 
     ...mapActions(room, ["leaveRoom", "setGameHistory", "endGameHistory", "setGameScore"]),
-    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM"]),
+    ...mapMutations(room, ["SET_ROOMCLOSE", "INIT_USERS", "INIT_ROOM", "SET_TOGGLE_TAB"]),
     },
 
     computed: {
@@ -668,23 +668,19 @@ export default {
         //this.game.scene.getScene("waitingScene").gameCategory = 1;
     },
     created() {
-        if (this.roomJoin) {
-            console.log("방 입장")
-            this.mySessionId = this.gameRoom.code
-            this.roomNo = this.gameRoom.no
-            this.myUserName = this.getUser.nick
-            this.joinSession()
-            this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
-            this.teamNo = this.user.team
-            this.isHost = this.user.host
-            this.users.forEach(user => {
-                this.personalScore[`${user.nick}`] = 0
+        console.log("방 입장")
+        this.mySessionId = this.gameRoom.code
+        this.roomNo = this.gameRoom.no
+        this.myUserName = this.getUser.nick
+        this.joinSession()
+        this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
+        this.teamNo = this.user.team
+        this.isHost = this.user.host
+        this.users.forEach(user => {
+            this.personalScore[`${user.nick}`] = 0
 
-                this.imgArray[`${user.nick}`] = `${user.img}`;
-            })
-        } else {
-        this.$router.push("/waiting");
-    }
+            this.imgArray[`${user.nick}`] = `${user.img}`;
+        })
     },
     beforeDestroy() {
         if (this.runningAudioOn != undefined)
