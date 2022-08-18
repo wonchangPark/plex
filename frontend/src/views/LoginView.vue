@@ -33,8 +33,8 @@ export default {
 
 <style scoped>
 #login-page {
-  height: 100%;
-  width: 100%;
+  height: 90vh;
+  width: 100vw;
 }
 .login-box-logo{
     font-size: 5vw;

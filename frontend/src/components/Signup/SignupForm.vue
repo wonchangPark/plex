@@ -136,24 +136,25 @@ export default {
   font-size: 0.8vw;
 }
 .submit {
-  width: 25rem;
-  height: 2rem;
-  font-size: 1rem;
+  width: 25vw;
+  height: 2vh;
+  font-size: 1vw;
   font-weight: bold;
   border-radius: 5px;
   margin-top: 5%;
 }
 #overlap{
-  font-size: .9rem;
+  font-size: .9vw;
   font-weight: 800;
   line-height: 1.6;
   margin-left: 5%;
 }
 label{
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.2vw;
 }
 input {
+  width: 14vw;
   background: white;
   border-radius: 5px;
   border: 3px solid #ffb82f;
