@@ -1,7 +1,7 @@
 <template>
     <div class="modal">
         <div class="overlay">
-        <div class="modal-card">
+        <div class="modal-card" style="width: 50%;">
             <ContentBox :height="100" :width="100">
                 <div class="d-flex flex-column">
                     <div id="Main" class="flex-grow-1 d-flex flex-row justify-center primary--text font-weight-bold win-logo animate__heartBeat">{{WhoWins}}</div>
@@ -33,7 +33,7 @@
                     </v-container>
                 </div>
             </ContentBox>
-            </div>
+        </div>
         </div>
     </div>
 </template>
@@ -138,5 +138,9 @@ export default {
 .rank-label{
   font-size: 2vw;
   font-weight: bold;
+}
+#Main {
+    margin-left: 11vw;
+    margin-right: 9vw;
 }
 </style>
