@@ -23,7 +23,9 @@
                     <div style="heigth: 100%; width: 47%">
                         <ContentBox :height="100" :width="100">
                             <ScoreBoard v-if="countDown <= 0 && start" :score1="score1" :score2="score2"></ScoreBoard>
-                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start" @click="countDownStart()">Start
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; cursor: pointer;" v-if="!start && isHost" @click="countDownStart()">Start
+                            </div>
+                            <div class="d-flex justify-center align-center primary--text" style="width:100%; height:100%; font-size: 3vw; " v-if="!start && !isHost">Ready
                             </div>
                             <!-- <button class="btn btn-lg btn-success" v-if="!countDown" @click="gameHistory()">Start</button> -->
                             <CountDown v-if="countDown > 0" :countDown="countDown"></CountDown>
@@ -235,10 +237,10 @@ export default {
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
-                        this.musicOnGameEnd.volume = 0.05;
+                        this.musicOnGameEnd.volume = 0.15;
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
-                        setTimeout(() => (this.gameFinished = false), 7000);
+                        setTimeout(() => (this.gameFinished = false), 13000);
                         this.game.scene.getScene("ropeFightScene").gameActive = false;
                         setTimeout(() => (this.leaveSession()), 7000);
                     } else {
@@ -261,9 +263,10 @@ export default {
                     this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                     this.soundOnFall.play();
                     this.musicOnGameEnd = new Audio(this.gameEndMusic);
+                    this.musicOnGameEnd.volume = 0.15;
                     setTimeout(() => (this.gameFinished = true), 3000);
                     setTimeout(() => (this.musicOnGameEnd.play()), 3000);
-                    setTimeout(() => (this.gameFinished = false), 7000);
+                    setTimeout(() => (this.gameFinished = false), 13000);
                     this.game.scene.getScene("ropeFightScene").gameActive = false;
                     setTimeout(() => (this.leaveSession()), 7000);
                 } else {
@@ -404,12 +407,9 @@ export default {
         // console.log(this.$refs.teachable)
         // this.$refs.teachable.init()
         // this.init()
-        if (this.isHost) {
-            this.setGameHistory(this.roomNo)
-        }
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
-        this.musicOn.volume = 0.05;
+        this.musicOn.volume = 0.15;
         this.musicOn.play();
         this.musicOn.loop = true;
         this.game.scene.getScene("bootScene").StartScene(0);
@@ -731,6 +731,9 @@ export default {
         this.user = this.users.filter((user) => user.nick === this.myUserName)[0]
         this.teamNo = this.user.team
         this.isHost = this.user.host
+        if (this.isHost) {
+            this.setGameHistory(this.roomNo)
+        }
         this.users.forEach(user => {
             if (user.team === 1) {
                 this.team1.push(user.nick)

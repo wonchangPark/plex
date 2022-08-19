@@ -6,11 +6,11 @@
                     <img v-if="img" :src="require(`@/assets/profile/${img}.png`)" alt="profile" />
                 </v-avatar>
             </div>
-            <div class="white--text">
+            <div class="white--text" style="font-weight:bolder; font-size: 0.8vw">
                 {{ name }}
             </div>
         </div>
-        <div class="white--text" style="font-weight: bold; font-size: 0.8vw">
+        <div class="white--text" style="font-size: 1vw; font-weight: bold;">
             {{ content }}
         </div>
     </div>
@@ -31,12 +31,23 @@ export default {
 .chatting-item {
     border-radius: 15px;
     width: fit-content;
-    font-family: 'yangjin';
-    font-weight: 100;
+    font-family: 'IM_Hyemin-Regular';
+    font-weight: normal;
+    /* font-weight: 100; */
 }
 
-@font-face { font-family: 'yangjin';
-src: url('https://cdn.jsdelivr.net/gh/supernovice-lab/font@0.9/yangjin.woff') format('woff');
-font-weight: 100;
-font-style: normal; }
+@font-face {
+    font-family: 'IM_Hyemin-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/IM_Hyemin-Regular.woff2') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'YdestreetL';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/YdestreetL.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 </style>

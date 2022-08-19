@@ -52,7 +52,7 @@
             <label class="primary--text" for="nickname">닉네임</label>
           </v-col>
           <v-col cols="4">
-            <input id="nickname" @blur="nicknameCheck(credentials)" v-model="credentials.nick"
+            <input id="nickname" @keyup="nicknameCheck(credentials)" @blur="nicknameCheck(credentials)" v-model="credentials.nick"
             type="text"
             required
             maxlength="6"/>
@@ -133,26 +133,28 @@ export default {
 <style scoped>
 .check {
   font-weight: bold;
+  font-size: 0.8vw;
 }
 .submit {
-  width: 25rem;
-  height: 2rem;
-  font-size: 1rem;
+  width: 25vw;
+  height: 2vh;
+  font-size: 1vw;
   font-weight: bold;
   border-radius: 5px;
   margin-top: 5%;
 }
 #overlap{
-  font-size: .9rem;
+  font-size: .9vw;
   font-weight: 800;
   line-height: 1.6;
   margin-left: 5%;
 }
 label{
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.2vw;
 }
 input {
+  width: 10vw;
   background: white;
   border-radius: 5px;
   border: 3px solid #ffb82f;

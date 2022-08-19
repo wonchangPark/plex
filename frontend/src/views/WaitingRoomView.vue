@@ -21,7 +21,7 @@
                         <router-view />
                     </div>
                     <div class="d-flex justify-space-between align-center" style="width: 100%; height: 45%">
-                        <div class="d-flex justify-center align-center" style="width: 35%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 40%; height: 90%">
                             <ContentBox :width="100" :height="90">
                                 <div style="height: 100%; width: 100%">
                                     <TutorialCarousel style="height: 100%; width: 100%"></TutorialCarousel>
@@ -29,7 +29,7 @@
                             </ContentBox>
                             <!-- <UserData></UserData> -->
                         </div>
-                        <div class="d-flex justify-center align-center" style="width: 63%; height: 90%">
+                        <div class="d-flex justify-center align-center" style="width: 57%; height: 90%">
                             <ChattingList></ChattingList>
                         </div>
                     </div>
@@ -38,6 +38,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import UserList from "@/components/WaitingRoom/UserList.vue";
@@ -90,8 +91,8 @@ export default {
 </script>
 <style scoped>
 #waiting-room {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 95vh;
     display: flex;
 }
 </style>

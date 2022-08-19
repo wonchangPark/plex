@@ -23,4 +23,8 @@ public interface RoomService {
     boolean isGaming(Room room);
 
     boolean isAlreadyInRoom(User user);
+
+    void isPlayingTrue(Long roomNo);
+
+    void isPlayingFalse(Long roomNo);
 }

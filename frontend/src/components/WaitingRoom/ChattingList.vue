@@ -149,13 +149,13 @@ export default {
 
 .chatting-list .chatting-input {
     height: 80%;
-    width: 90%;
+    width: 85%;
     border-radius: 5px;
 }
 
 .chatting-list .chatting-submit {
     height: 80%;
-    width: 5%;
+    width: 10%;
     border-radius: 5px;
     font-weight: bold;
     font-size: 0.8vw;

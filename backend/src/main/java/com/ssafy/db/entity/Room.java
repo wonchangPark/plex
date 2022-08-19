@@ -3,6 +3,7 @@ package com.ssafy.db.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -48,6 +49,11 @@ public class Room {
     @NotNull
     private Boolean isPrivate;
 
+    @Column(name = "room_isPlaying")
+    @NotNull
+    private Boolean isPlaying;
+
+
     protected Room(){}
 
     protected Room(String name, String code, String host, int roomSize, int gameNo, boolean isPrivate) {
@@ -59,6 +65,7 @@ public class Room {
         this.startTime = LocalDateTime.now();
         this.gameNo = gameNo;
         this.isPrivate = isPrivate;
+        this.isPlaying = false;
     }
 
     public static Room createRoom(String name, String code, String host, int roomSize, int gameNo, boolean isPrivate){

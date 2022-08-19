@@ -14,7 +14,7 @@ const roomStore = {
         SET_ROOMS: (state, { rooms, lastPage, curPage }) => {
             while (rooms.length < 3) rooms.push({ visible: false });
             state.rooms = rooms;
-            state.lastPage = lastPage;
+            state.lastPage = lastPage === 0 ? 1 : lastPage;
             state.curPage = curPage;
         },
         SET_CUR_PAGE: (state, payload) => {
