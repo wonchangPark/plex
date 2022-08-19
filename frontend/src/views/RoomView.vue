@@ -240,7 +240,7 @@ export default {
                         this.musicOnGameEnd.volume = 0.05;
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
-                        setTimeout(() => (this.gameFinished = false), 7000);
+                        setTimeout(() => (this.gameFinished = false), 13000);
                         this.game.scene.getScene("ropeFightScene").gameActive = false;
                         setTimeout(() => (this.leaveSession()), 7000);
                     } else {
