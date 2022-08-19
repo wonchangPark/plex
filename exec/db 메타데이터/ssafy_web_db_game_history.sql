@@ -1,0 +1,55 @@
+-- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
+--
+-- Host: i7a307.p.ssafy.io    Database: ssafy_web_db
+-- ------------------------------------------------------
+-- Server version	8.0.30
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `game_history`
+--
+
+DROP TABLE IF EXISTS `game_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `game_history` (
+  `gamehistory_no` bigint NOT NULL AUTO_INCREMENT,
+  `gamehistory_endtime` datetime(6) DEFAULT NULL,
+  `gamehistory_starttime` datetime(6) NOT NULL,
+  `room_no` bigint DEFAULT NULL,
+  PRIMARY KEY (`gamehistory_no`),
+  KEY `FKaf6ojd213vqk9bdjm2g06u2mw` (`room_no`),
+  CONSTRAINT `FKaf6ojd213vqk9bdjm2g06u2mw` FOREIGN KEY (`room_no`) REFERENCES `room` (`room_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `game_history`
+--
+
+LOCK TABLES `game_history` WRITE;
+/*!40000 ALTER TABLE `game_history` DISABLE KEYS */;
+INSERT INTO `game_history` VALUES (1,'2022-08-18 08:55:34.000000','2022-08-18 17:55:28.351169',3),(2,'2022-08-18 08:57:53.000000','2022-08-18 17:57:48.434350',5),(3,'2022-08-18 08:58:30.000000','2022-08-18 17:58:23.688676',6),(4,'2022-08-18 08:59:03.000000','2022-08-18 17:58:55.432452',7),(5,'2022-08-18 11:51:17.000000','2022-08-18 20:50:14.621128',8),(6,'2022-08-18 11:53:44.000000','2022-08-18 20:52:18.210579',9),(7,'2022-08-18 11:54:26.000000','2022-08-18 20:54:17.268741',10),(8,'2022-08-18 11:55:03.000000','2022-08-18 20:54:58.252407',11);
+/*!40000 ALTER TABLE `game_history` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-08-18 21:24:33
