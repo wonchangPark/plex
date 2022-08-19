@@ -154,7 +154,7 @@ label{
   font-size: 1.2vw;
 }
 input {
-  width: 14vw;
+  width: 10vw;
   background: white;
   border-radius: 5px;
   border: 3px solid #ffb82f;
