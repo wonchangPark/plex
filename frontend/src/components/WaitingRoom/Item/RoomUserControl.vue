@@ -96,6 +96,12 @@ export default {
                     return;
                 }
             }
+            if(this.gameType === 1){
+                if(this.users.length < 2){
+                    alert("게임 시작을 위한 인원이 부족합니다");
+                    return;
+                }
+            }
 
             this.$emit('gameStart')
             this.SET_GAME_ROOM(this.room);
