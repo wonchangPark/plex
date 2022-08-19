@@ -237,7 +237,7 @@ export default {
                         this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                         this.soundOnFall.play();
                         this.musicOnGameEnd = new Audio(this.gameEndMusic);
-                        this.musicOnGameEnd.volume = 0.05;
+                        this.musicOnGameEnd.volume = 0.15;
                         setTimeout(() => (this.gameFinished = true), 3000);
                         setTimeout(() => (this.musicOnGameEnd.play()), 3000);
                         setTimeout(() => (this.gameFinished = false), 13000);
@@ -263,9 +263,10 @@ export default {
                     this.soundOnFall = new Audio(this.ropeFightFallSoundEffect);
                     this.soundOnFall.play();
                     this.musicOnGameEnd = new Audio(this.gameEndMusic);
+                    this.musicOnGameEnd.volume = 0.15;
                     setTimeout(() => (this.gameFinished = true), 3000);
                     setTimeout(() => (this.musicOnGameEnd.play()), 3000);
-                    setTimeout(() => (this.gameFinished = false), 7000);
+                    setTimeout(() => (this.gameFinished = false), 13000);
                     this.game.scene.getScene("ropeFightScene").gameActive = false;
                     setTimeout(() => (this.leaveSession()), 7000);
                 } else {
@@ -408,7 +409,7 @@ export default {
         // this.init()
         this.dataInit()
         this.musicOn = new Audio(this.ropeFightMusic);
-        this.musicOn.volume = 0.05;
+        this.musicOn.volume = 0.15;
         this.musicOn.play();
         this.musicOn.loop = true;
         this.game.scene.getScene("bootScene").StartScene(0);

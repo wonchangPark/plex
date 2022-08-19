@@ -215,12 +215,12 @@ export default {
                     this.game.scene.getScene("runningScene").GoRight(`${event.data}`);
                     if (event.data === this.myUserName) this.win = true;
                     this.runningEndAudioOn = new Audio(this.runningEndAudio);
-                    this.runningEndAudioOn.volume = 0.05;
+                    this.runningEndAudioOn.volume = 0.15;
                     this.runningEndAudioOn.play();
                     if (this.runningAudioOn != undefined)
                         this.runningAudioOn.pause();
                     this.gameEndAudioOn = new Audio(this.gameEndAudio);
-                    this.gameEndAudioOn.volume = 0.05;
+                    this.gameEndAudioOn.volume = 0.15;
                     setTimeout(()=>(this.gameEndAudioOn.play()), 3000);
                     setTimeout(()=>(this.gameFinished = true), 3000);
                     setTimeout(()=>(this.gameFinished = false), 13000);
@@ -368,7 +368,7 @@ export default {
         this.game.scene.getScene("runningScene").setRunningImg(Object.keys(this.personalScore), this.imgArray);
 
         this.runningAudioOn = new Audio(this.runningAudio);
-        this.runningAudioOn.volume = 0.05;
+        this.runningAudioOn.volume = 0.15;
         this.runningAudioOn.play();
         this.runningAudioOn.loop = true;
 
