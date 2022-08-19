@@ -22,7 +22,7 @@ Play Excercise(이하 PLEX) 는 비가 오나 눈이 오나 상관없이 집에�
 
 
 
-![Untitled (1)](README.assets/Untitled (1).png)
+![메인화면](README.assets/메인화면.png)
 
 메인화면
 
