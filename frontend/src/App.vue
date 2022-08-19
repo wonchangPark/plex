@@ -54,6 +54,8 @@ export default {
     flex-direction: column;
 }
 
+body::-webkit-scrollbar { display:none; }
+
 #content-body {
     display: flex;
     width: 100%;

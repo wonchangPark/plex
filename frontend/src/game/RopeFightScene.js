@@ -66,7 +66,7 @@ class RopeFightScene extends Scene {
         this.LeftDesk = this.add.image(800*this.WidthScale, 260*this.WidthScale, 'DeskLeft').setScale(this.WidthScale);
 
 
-        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "60", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#660000').setScale(5*this.WidthScale);
+        this.timerText = this.add.text(725*this.WidthScale, 50*this.WidthScale, "60", { fontFamily: 'DungGeunMo', align: 'center', stroke: '#000000', strokeThickness: 3 }).setColor('#747474').setScale(5*this.WidthScale);
 
 
         outEvent.on('Out', this.outHandler, this);
